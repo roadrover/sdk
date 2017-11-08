@@ -420,7 +420,7 @@ public class AVInManager extends BaseManager {
     /**
      * 获取CVBS类型
      * @param avId AVIN ID，见{@link com.roadrover.sdk.avin.IVIAVIn.Id}
-     * @return
+     * @return {@link com.roadrover.sdk.avin.VideoParam.CvbsType}
      */
     public int getCvbsType(int avId) {
         return getParamValue(VideoParam.makeId(avId, VideoParam.SubId.CVBS_TYPE));

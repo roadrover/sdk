@@ -90,7 +90,7 @@ public class VideoParam extends Param {
          * @return
          */
         public static String getName(int type) {
-            return LogNameUtil.getName(type, CvbsType.class, "Unknown CVBS type " + type);
+            return LogNameUtil.getName(type, CvbsType.class, "Unknown CVBS type " + type, "MIN", "MAX");
         }
 
         /**

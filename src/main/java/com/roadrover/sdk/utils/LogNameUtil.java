@@ -30,7 +30,7 @@ public class LogNameUtil {
      * @param unknownString 未定义的提示
      * @return
      */
-    public static String getName(int id, Class c, String unknownString) {
+    public static String getName(int id, Class c, String unknownString, String... exceptArray) {
         if (c != null) {
             Field[] fields = c.getDeclaredFields();
             if (fields != null) {
@@ -41,7 +41,19 @@ public class LogNameUtil {
                             try {
                                 int value = field.getInt(null);
                                 if (value == id) {
-                                    return field.getName();
+                                    final String string = field.getName();
+                                    boolean find = true;
+                                    if (null != exceptArray) {
+                                        for (int i = 0;i < exceptArray.length;i++) {
+                                            if (TextUtils.equals(string, exceptArray[i])) {
+                                                find = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (find) {
+                                        return string;
+                                    }
                                 }
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
