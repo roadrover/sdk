@@ -20,24 +20,35 @@ import java.util.Map;
 
 public class EnvironmentUtils {
 
-    public static final String INAND = "iNand";//iNand storage
-    public static final String SDCARD = "SD";// SD card storage
-    public static final String SDCARD1 = "SD1";// SD card1 storage
-    public static final String USB = "USB";// USB disk storage
-    public static final String USB1 = "USB1";// USB1 disk storage
-    public static final String USB2 = "USB2";// USB2 disk storage
-    public static final String USB3 = "USB3";// USB3 disk storage
-    public static final String USB4 = "USB4";// USB4 disk storage
-    public static final String USB5 = "USB5";// USB5 disk storage
-    public static final String USB6 = "USB6";// USB6 disk storage
-    public static final String USB7 = "USB7";// USB7 disk storage
+    /**iNand storage*/
+    public static final String INAND = "iNand";
+    /**SD card storage*/
+    public static final String SDCARD = "SD";
+    /**SD card1 storage*/
+    public static final String SDCARD1 = "SD1";
+    /**USB disk storage*/
+    public static final String USB = "USB";
+    /**USB1 disk storage*/
+    public static final String USB1 = "USB1";
+    /**USB2 disk storage*/
+    public static final String USB2 = "USB2";
+    /**USB3 disk storage*/
+    public static final String USB3 = "USB3";
+    /**USB4 disk storage*/
+    public static final String USB4 = "USB4";
+    /**USB5 disk storage*/
+    public static final String USB5 = "USB5";
+    /**USB6 disk storage*/
+    public static final String USB6 = "USB6";
+    /**USB7 disk storage*/
+    public static final String USB7 = "USB7";
 
-    private static final String CONFIG_NAME = "APPConfig.ini";//配置文件绝对路径
-    private static final String SECTION_NAME = "Environment";//INI文件中存储设备节点名字
-    private static Map<String, String> mStorageDevices = null;// 存储设备集合
-
-    private StorageManager mStorageManager = null; // 存储设备管理对象
-    private Context mContext = null;               // 上下文对象
+    /**存储设备集合*/
+    private static Map<String, String> mStorageDevices = null;
+    /**存储设备管理对象*/
+    private StorageManager mStorageManager = null;
+    /**上下文对象*/
+    private Context mContext = null;
 
     /**
      * 私有无参构造
@@ -77,8 +88,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get paths of all mounted storage
-     * @return return mounted storage paths stored in a string array. eg: "mnt/udisk1", "mnt/ext_sdcard1" ...
+     * 获取所有被挂载上的路径
+     * @return return 所有被挂载上的路径列表. 比如: "mnt/udisk1", "mnt/ext_sdcard1" ...
      */
     public String[] getStorageMountedPaths() {
 
@@ -153,6 +164,7 @@ public class EnvironmentUtils {
 
     /**
      * 判断传入路径是否为有效盘符路径
+     * @param path 存储设备路径
      */
     public boolean isValidPath(String path) {
         boolean ret = false;
@@ -173,6 +185,8 @@ public class EnvironmentUtils {
 
     /**
      * 判断传入路径是否为INAND
+     * @param path 传入的路径
+     * @return
      */
     public boolean isINandPath(String path) {
         boolean ret = false;
@@ -186,6 +200,8 @@ public class EnvironmentUtils {
 
     /**
      * 判断传入路径是否为SD
+     * @param path 传入的路径
+     * @return
      */
     public boolean isSDPath(String path) {
         boolean ret = false;
@@ -199,6 +215,8 @@ public class EnvironmentUtils {
 
     /**
      * 判断传入路径是否为USB
+     * @param path 传入的路径
+     * @return
      */
     public boolean isUSBPath(String path) {
         boolean ret = false;
@@ -213,8 +231,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of paths of all storage
-     * @return return storage paths stored in a string list.
+     * 获取所有存储设备列表
+     * @return 返回所有存储设备列表
      */
     public List<String> getStoragePaths() {
         List<String> ret = null;
@@ -245,8 +263,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of SD paths of all storage
-     * @return return SD storage paths stored in a string list.
+     * 获取所有的SD存储设备列表
+     * @return 返回的所有SD存储设备列表
      */
     public List<String> getSDStoragePaths() {
         List<String> ret = new ArrayList<>();
@@ -264,8 +282,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of USB paths of all storage
-     * @return return USB storage paths stored in a string list.
+     * 获取所有的USB存储设备列表
+     * @return 返回的所有USB存储设备列表
      */
     public List<String> getUSBStoragePaths() {
         List<String> ret = new ArrayList<>();
@@ -283,8 +301,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of paths of all mount storage
-     * @return return mount storage paths stored in a string list.
+     * 获取全部挂载上的存储设备列表
+     * @return 返回全部挂载上的存储设备列表
      */
     public List<String> getMountStoragePaths() {
         List<String> ret = new ArrayList<>();
@@ -302,8 +320,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of SD paths of all storage
-     * @return return mount SD storage paths stored in a string list.
+     * 获取全部挂载上的SD存储设备列表
+     * @return 返回全部挂载上的SD存储设备列表
      */
     public List<String> getMountSDStoragePaths() {
         List<String> ret = new ArrayList<>();
@@ -321,8 +339,8 @@ public class EnvironmentUtils {
     }
 
     /**
-     * get list of USB paths of all storage
-     * @return return mount USB storage paths stored in a string list.
+     * 获取全部挂载上的USB存储设备列表
+     * @return 返回全部挂载上的USB存储设备列表
      */
     public List<String> getMountUSBStoragePaths() {
         List<String> ret = new ArrayList<>();
@@ -342,7 +360,7 @@ public class EnvironmentUtils {
     /**
      * 判断指定路径是否挂载上
      *
-     * @param path
+     * @param path 指定的路径
      * @return 挂载成功返回true，否则返回false
      */
     public boolean isStorageMounted(String path) {
