@@ -15,18 +15,37 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+/**
+ * IVI 音频管理
+ */
 public class IVIAudioManager extends BaseManager {
     private IAudio mAudioInterface;
     private AudioListener mAudioListener;
     private VolumeBarListener mVolumeBarListener;
     private SparseIntArray mValueCaches = new SparseIntArray();
 
+    /**
+     * 音频监听
+     */
     public interface AudioListener {
+        /**
+         * 音量发生变化
+         * @param id {@link com.roadrover.sdk.audio.IVIAudio.Channel}
+         * @param value 音量值
+         */
         void onVolumeChanged(int id, int value);
+
+        /**
+         * 静音状态发生变化
+         * @param mute true静音，false不在静音
+         * @param source
+         */
         void onMuteChanged(boolean mute, int source);
     }
 
-    // 音量条接口，该回调只有SystemUi需要关心
+    /**
+     * 音量条接口，该回调只有SystemUi需要关心
+     */
     public interface VolumeBarListener {
         /**
          * 显示音量条，或者改变当前音量条的属性，比如从主音量变成了蓝牙音量
@@ -42,6 +61,12 @@ public class IVIAudioManager extends BaseManager {
         void onHideVolumeBar();
     }
 
+    /**
+     * 构造函数
+     * @param context          上下文
+     * @param connectListener  连接监听对象
+     * @param audioListener    音频监听对象
+     */
     public IVIAudioManager(Context context, ConnectListener connectListener, AudioListener audioListener) {
         super(context, connectListener);
         mAudioListener = audioListener;
@@ -125,6 +150,9 @@ public class IVIAudioManager extends BaseManager {
         }
     }
 
+    /**
+     * 音频回调对象
+     */
     private IAudioCallback mAudioCallback = new IAudioCallback.Stub() {
         @Override
         public void onVolumeChanged(int id, int value) {
@@ -274,7 +302,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个声音参数
-     * @param param
+     * @param param {@link AudioParam}
      */
     public void setParam(AudioParam param) {
         if (param == null) {
@@ -285,7 +313,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个默认的声音参数
-     * @param param
+     * @param param {@link AudioParam}
      */
     public void setDefaultParam(AudioParam param) {
         if (param == null) {
@@ -297,7 +325,7 @@ public class IVIAudioManager extends BaseManager {
     /**
      * 获取一个声音参数
      * @param id {@link com.roadrover.sdk.audio.AudioParam.Id}
-     * @return 整个音频的参数，例：主音量
+     * @return 整个音频的参数，例：主音量，{@link AudioParam}
      */
     public AudioParam getParam(int id) {
         if (mAudioInterface != null) {
@@ -423,6 +451,7 @@ public class IVIAudioManager extends BaseManager {
     /**
      * 设置指定channel的参数，例：设置PC setBuildInPreVolume(IVIAudio.Channel.PC, 4.65);
      * @param channel {@link com.roadrover.sdk.audio.IVIAudio.Channel}
+     * @param value   增益数值
      */
     public void setBuildInPreVolume(int channel, float value) {
         if (mAudioInterface != null) {
@@ -453,7 +482,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个声音参数
-     * @param param
+     * @param param {@link com.roadrover.sdk.audio.IVIAudio.Channel}
      */
     public void setBuildInPreVolume(IVIAudio.Channel param) {
         if (param == null) {
@@ -464,7 +493,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个默认的声音参数
-     * @param param
+     * @param param {@link com.roadrover.sdk.audio.IVIAudio.Channel}
      */
     public void setDefaultBuildInPreVolume(IVIAudio.Channel param) {
         if (param == null) {
@@ -602,6 +631,7 @@ public class IVIAudioManager extends BaseManager {
     /**
      * 设置指定channel的参数，例：设置PC setBuildInPreVolume(IVIAudio.Channel.PC, 4.65);
      * @param channel {@link com.roadrover.sdk.audio.IVIAudio.Channel}
+     * @param value   增益值
      */
     public void setSecondaryBuildInPreVolume(int channel, float value) {
         if (mAudioInterface != null) {
@@ -632,7 +662,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个声音参数
-     * @param param
+     * @param param {@link com.roadrover.sdk.audio.IVIAudio.Channel}
      */
     public void setSecondaryBuildInPreVolume(IVIAudio.Channel param) {
         if (param == null) {
@@ -643,7 +673,7 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置一个默认的声音参数
-     * @param param
+     * @param param {@link com.roadrover.sdk.audio.IVIAudio.Channel}
      */
     public void setDefaultSecondaryBuildInPreVolume(IVIAudio.Channel param) {
         if (param == null) {
@@ -655,7 +685,7 @@ public class IVIAudioManager extends BaseManager {
     /**
      * 获取一个声音参数
      * @param channel {@link com.roadrover.sdk.audio.IVIAudio.Channel}
-     * @return 整个音频的参数，例：PC
+     * @return 整个音频的参数，例：PC，见{@link com.roadrover.sdk.audio.IVIAudio.Channel}
      */
     public IVIAudio.Channel getSecondaryBuildInPreVolume(int channel) {
         if (mAudioInterface != null) {
@@ -771,12 +801,18 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置音量条显示和隐藏的监听
-     * @param listener
+     * @param listener 音量条监听对象，见{@link VolumeBarListener}
      */
     public void setVolumeBarListener(VolumeBarListener listener){
         mVolumeBarListener = listener;
     }
 
+    /**
+     * 更新缓存
+     * @param id
+     * @param value
+     * @return
+     */
     protected boolean updateCache(int id, int value) {
         if (mValueCaches.indexOfKey(id) < 0 || value != mValueCaches.get(id)) {
             mValueCaches.put(id, value);

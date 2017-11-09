@@ -3,7 +3,14 @@ package com.roadrover.sdk.audio;
 import com.roadrover.sdk.Param;
 import com.roadrover.sdk.utils.LogNameUtil;
 
+/**
+ * 音频参数
+ */
 public class AudioParam extends Param {
+
+    /**
+     * 平衡的基数，用来来消除Balance和Fade值的负数
+     */
     private static final int BALANCE_FADE_BASE = 100;
 
     /**
@@ -99,6 +106,9 @@ public class AudioParam extends Param {
          */
         public static final int EXPERT_AUDIO_EFFECT     = 26;
 
+        /**
+         * EQ数量，AK7601为十段EQ，其值为 {@value}
+         */
         public static final int EQ_COUNT                = 31;
 
         /**
@@ -106,6 +116,9 @@ public class AudioParam extends Param {
          */
         public static final int EQ_MODE                 = 32;
 
+        /**
+         * 中间喇叭，其值为 {@value}
+         */
         public static final int CENTER_SPEAKER          = 41;
 
         /**
@@ -124,20 +137,53 @@ public class AudioParam extends Param {
         public static final int ASL                     = 51;
 
         /**
-         * 原车功放音量
+         * 原车功放音量，其值为 {@value}
          */
         public static final int CAR_AMP_VOLUME          = 101;
+        /**
+         * 原车低音，其值为 {@value}
+         */
         public static final int CAR_AMP_BASS            = 102;
+        /**
+         * 原车中音，其值为 {@value}
+         */
         public static final int CAR_AMP_MIDDLE          = 103;
+        /**
+         * 原车高音，其值为 {@value}
+         */
         public static final int CAR_AMP_TREBLE          = 104;
+        /**
+         * 原车音量随速，其值为 {@value}
+         */
         public static final int CAR_AMP_ASL             = 105;
+        /**
+         * 原车音量随速类型，其值为 {@value}
+         */
         public static final int CAR_AMP_ASL_TYPE        = 106;
 
+        /**
+         * 音效band0增益，其值为 {@value}
+         */
         public static final int EQ_BAND0_GAIN           = 1000;
+        /**
+         * 音效band9增益，其值为 {@value}
+         */
         public static final int EQ_BAND9_GAIN           = 1009;
+        /**
+         * 音效band0的Q值，其值为 {@value}
+         */
         public static final int EQ_BAND0_Q              = 1020;
+        /**
+         * 音效band9的Q值，其值为 {@value}
+         */
         public static final int EQ_BAND9_Q              = 1029;
+        /**
+         * 音效band0的中心频率，其值为 {@value}
+         */
         public static final int EQ_BAND0_CENTER_FREQ    = 1040;
+        /**
+         * 音效band9的中心频率，其值为 {@value}
+         */
         public static final int EQ_BAND9_CENTER_FREQ    = 1049;
 
         /**
@@ -169,7 +215,7 @@ public class AudioParam extends Param {
 
         /**
          * 打印获取名字，通过id将名字打印出来
-         * @param id
+         * @param id {@link AudioParam.Id}
          * @return
          */
         public static String getName(int id) {
@@ -178,7 +224,7 @@ public class AudioParam extends Param {
 
         /**
          * 判断该id是否在10段EQ增益的 id 里面
-         * @param id
+         * @param id {@link AudioParam.Id}
          * @return
          */
         public static boolean isEqGainId(int id) {
@@ -187,7 +233,7 @@ public class AudioParam extends Param {
 
         /**
          * 判断该id是否是调节音量条的id
-         * @param id
+         * @param id {@link AudioParam.Id}
          * @return
          */
         public static boolean isVolumeId(int id) {
@@ -203,6 +249,9 @@ public class AudioParam extends Param {
      * EQ模式
      */
     public static class EqMode {
+        /**
+         * EQ开始，不是实际EQ模式，其值为{@value}
+         */
         public static final int START = 1;
 
         /**
@@ -244,6 +293,9 @@ public class AudioParam extends Param {
          * 柔和模式，其值为{@value}
          */
         public static final int SOFT = 8;
+        /**
+         * EQ结束，不是实际EQ模式，其值为{@value}
+         */
         public static final int END = 8;
 
         /**
@@ -252,7 +304,7 @@ public class AudioParam extends Param {
          * @return
          */
         public static String getName(int eqMode) {
-            return LogNameUtil.getName(eqMode, EqMode.class, "EQ mode " + eqMode);
+            return LogNameUtil.getName(eqMode, EqMode.class, "EQ mode " + eqMode, "START", "END");
         }
     }
 
@@ -296,24 +348,47 @@ public class AudioParam extends Param {
      * 最佳位置定义
      */
     public static class Position {
+        /**
+         * 前左，其值为{@value}
+         */
         public static final int FL = 0;
+        /**
+         * 前右，其值为{@value}
+         */
         public static final int FR = 1;
+        /**
+         * 后左，其值为{@value}
+         */
         public static final int RL = 2;
+        /**
+         * 后左，其值为{@value}
+         */
         public static final int RR = 3;
+        /**
+         * 中间，其值为{@value}
+         */
         public static final int CENTER = 4;
-        public static final int UNKNOWN = -1;   //硬件不支持最佳位置
+        /**
+         * 未知，硬件不支持最佳位置，其值为{@value}
+         */
+        public static final int UNKNOWN = -1;
 
+        /**
+         * 最小值，不是实际位置，其值为{@value}
+         */
         public static final int MIN = FL;
+        /**
+         * 最大值，不是实际位置，其值为{@value}
+         */
         public static final int MAX = CENTER;
+
+        /**
+         * 根据最佳位置的值获取其名称
+         * @param position 最佳位置的值
+         * @return
+         */
         public static String getName(int position) {
-            switch (position) {
-                case FL:        return "FL";
-                case FR:        return "FL";
-                case RL:        return "FL";
-                case RR:        return "FL";
-                case CENTER:    return "CENTER";
-                default:        return "Unknown position " + position;
-            }
+            return LogNameUtil.getName(position, Position.class, "Unknown position " + position, "MIN", "MAX");
         }
     }
 
@@ -361,7 +436,14 @@ public class AudioParam extends Param {
          * 自定义，值为{@value}
          */
         public static final int CUSTOM = 6;
+
+        /**
+         * 最小值，不是实际专家模式值，值为{@value}
+         */
         public static final int MIN = OFF;
+        /**
+         * 最大值，不是实际专家模式值，值为{@value}
+         */
         public static final int MAX = CUSTOM;
 
         /**
@@ -370,7 +452,7 @@ public class AudioParam extends Param {
          * @return
          */
         public static String getName(int effect) {
-            return LogNameUtil.getName(effect, ExpertAudioEffect.class, "Unknown expert audio effect " + effect);
+            return LogNameUtil.getName(effect, ExpertAudioEffect.class, "Unknown expert audio effect " + effect, "MIN", "MAX");
         }
     }
 
@@ -423,14 +505,30 @@ public class AudioParam extends Param {
         }
     }
 
+    /**
+     * 获取平衡中Balance的值（高16位）
+     * @param value {@link #getBalanceFadeCombine(int, int)}
+     * @return
+     */
     public static int getBalance(int value) {
         return ((value & 0xFFFF0000) >> 16) - BALANCE_FADE_BASE;
     }
 
+    /**
+     * 获取平衡中Fade的值（低16位）
+     * @param value {@link #getBalanceFadeCombine(int, int)}
+     * @return
+     */
     public static int getFade(int value) {
         return (value & 0xFFFF) - BALANCE_FADE_BASE;
     }
 
+    /**
+     * 获取平衡中的联合Balance和Fade的值（balance << 16 | fade）
+     * @param balance
+     * @param fade
+     * @return
+     */
     public static int getBalanceFadeCombine(int balance, int fade) {
         return ((balance + BALANCE_FADE_BASE) << 16) | (fade + BALANCE_FADE_BASE);
     }
@@ -470,6 +568,12 @@ public class AudioParam extends Param {
         }
     }
 
+    /**
+     * 获取数值的字符串表示
+     * @param id {@link AudioParam.Id}
+     * @param value 数值
+     * @return
+     */
     public static String getValueString(int id, int value) {
         if (id == Id.BALANCE_FADE) {
             int balance = getBalance(value);
