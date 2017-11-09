@@ -339,6 +339,7 @@ BluetoothManager
 蓝牙模块的接口类，所有调用回调，全部通过 IBluetoothCallback 回调通知，不直接返回       
 由于执行指令全部在线程中执行，不直接返回执行结果     
 
+```java
 interface IBluetooth {  
 
     /**
@@ -719,4 +720,4 @@ interface IBluetooth {
      */
     void closeRecording(IBluetoothExecCallback callback);  
 } 
-
+```
