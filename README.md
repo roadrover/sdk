@@ -332,7 +332,7 @@ int getZone(int zone);
 void setZone(int zone);  
 void openInZone(int zone);   
 
-七、蓝牙服务相关
+八、蓝牙服务相关
 --------------------
 蓝牙服务有一个单独的apk，ivi-btservice.apk，开机服务自启动  
 BluetoothManager     
