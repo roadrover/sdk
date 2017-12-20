@@ -8,6 +8,7 @@ import android.os.RecoverySystem;
 import android.text.TextUtils;
 
 import com.roadrover.sdk.BaseManager;
+import com.roadrover.sdk.car.CarManager;
 import com.roadrover.sdk.system.IVISystem.UpgradeStatus;
 import com.roadrover.sdk.system.IVISystem.ProgressListener;
 import com.roadrover.sdk.utils.Logcat;
@@ -66,6 +67,9 @@ public class SystemUpgrade implements BaseManager.ConnectListener {
     // system manager对象
     private SystemManager mSystemManager = null;
 
+    //car manager 对象
+    private CarManager mCarManager = null;
+
     /**
      * 文件升级线程
      */
@@ -79,6 +83,10 @@ public class SystemUpgrade implements BaseManager.ConnectListener {
                     // 进行重启mute
                     if (null != mSystemManager) {
                         mSystemManager.resetMute();
+                    }
+
+                    if (null != mCarManager) {
+                        mCarManager.pauseHeartbeat();
                     }
 
                     // 进行系统升级文件校验
@@ -147,6 +155,8 @@ public class SystemUpgrade implements BaseManager.ConnectListener {
         mContext = context;
 
         mHandler = new SafeHandler(this);
+
+        mCarManager = new CarManager(mContext,null,null);
     }
 
     @Override

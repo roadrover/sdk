@@ -71,6 +71,17 @@ public class ListUtils<T> {
         return false;
     }
 
+    /**
+     * 判断数组是否为空
+     * @param datas
+     * @return
+     */
+    public static boolean isEmpty(byte[] datas) {
+        if (null == datas || datas.length == 0) {
+            return true;
+        }
+        return false;
+    }
 
     /*
      * ArrayList转int[]
@@ -122,5 +133,30 @@ public class ListUtils<T> {
             }
         }
         return ret;
+    }
+
+    /**
+     * 比较两个列表是否完全相等
+     * @param srcs 原始列表
+     * @param dests 需要进行比较的列表
+     * @return
+     */
+    public static <T> boolean equals(List<T> srcs, List<T> dests) {
+        if (srcs == dests) {
+            return true;
+        }
+        if (srcs != null && dests != null) {
+            if (srcs.size() == dests.size()) {
+                boolean isEqual = true;
+                for (int i = 0; i < srcs.size(); ++i) {
+                    if (srcs.get(i) != dests.get(i)) {
+                        isEqual = false;
+                        break;
+                    }
+                }
+                return isEqual;
+            }
+        }
+        return false;
     }
 }

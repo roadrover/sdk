@@ -11,7 +11,6 @@ import com.roadrover.services.system.ISystem;
 import com.roadrover.services.system.ISystemCallback;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -28,9 +27,7 @@ public class SystemManager extends BaseManager {
     private SystemUpgrade mSystemUpgrade = null; // 系统升级类，需要移入服务内
 
     public SystemManager(Context context, ConnectListener listener) {
-        super(context, listener);
-
-        EventBus.getDefault().register(this);
+        super(context, listener, true);
 
         mSystemUpgrade = new SystemUpgrade(context);
     }
@@ -43,8 +40,6 @@ public class SystemManager extends BaseManager {
         mUserGpsCallback = null;
 
         super.disconnect();
-
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -234,52 +229,52 @@ public class SystemManager extends BaseManager {
     private ISystemCallback.Stub mISettingCallback = new ISystemCallback.Stub() {
         @Override
         public void onOpenScreen() throws RemoteException {
-            EventBus.getDefault().post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.OPEN_TYPE));
+            post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.OPEN_TYPE));
         }
 
         @Override
         public void onCloseScreen(int from) throws RemoteException {
-            EventBus.getDefault().post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.CLOSE_TYPE, from));
+            post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.CLOSE_TYPE, from));
         }
 
         @Override
         public void onScreenBrightnessChange(int id, int brightness) throws RemoteException {
-            EventBus.getDefault().post(new IVISystem.EventScreenBrightnessChange(id, brightness));
+            post(new IVISystem.EventScreenBrightnessChange(id, brightness));
         }
 
         @Override
         public void onCurrentScreenBrightnessChange(int id, int brightness) throws RemoteException {
-            EventBus.getDefault().post(new IVISystem.EventCurrentScreenBrightnessChange(id, brightness));
+            post(new IVISystem.EventCurrentScreenBrightnessChange(id, brightness));
         }
 
         @Override
         public void quitApp() {
-            EventBus.getDefault().post(new IVISystem.EventQuitApp());
+            post(new IVISystem.EventQuitApp());
         }
 
         @Override
         public void startNavigationApp() {
-            EventBus.getDefault().post(new IVISystem.EventStartNavigationApp());
+            post(new IVISystem.EventStartNavigationApp());
         }
 
         @Override
         public void onMediaAppChanged(String packageName, boolean isOpen) {
-            EventBus.getDefault().post(new IVISystem.EventMediaAppChanged(packageName, isOpen));
+            post(new IVISystem.EventMediaAppChanged(packageName, isOpen));
         }
 
         @Override
         public void gotoSleep() {
-            EventBus.getDefault().post(new IVISystem.EventGoToSleep());
+            post(new IVISystem.EventGoToSleep());
         }
 
         @Override
         public void wakeUp() {
-            EventBus.getDefault().post(new IVISystem.EventWakeUp());
+            post(new IVISystem.EventWakeUp());
         }
 
         @Override
         public void onFloatBarVisibility(int visibility) {
-            EventBus.getDefault().post(new IVISystem.EventFloatBarVisibility(visibility));
+            post(new IVISystem.EventFloatBarVisibility(visibility));
         }
     };
 
@@ -542,12 +537,12 @@ public class SystemManager extends BaseManager {
 
         @Override
         public void onGpsLocationInfoChanged(String longitude, String latitude, float accuracy, double altitude, float fSpeed) {
-            EventBus.getDefault().post(new IVISystem.EventGpsChanged(longitude, latitude, accuracy, altitude, fSpeed));
+            post(new IVISystem.EventGpsChanged(longitude, latitude, accuracy, altitude, fSpeed));
         }
 
         @Override
         public void onGpsCountChanged(int iGpsInView, int iGpsInUse, int iGlonassInView, int iGLonassInUse) {
-            EventBus.getDefault().post(new IVISystem.EventGpsCountChanged(iGpsInView, iGpsInUse, iGlonassInView, iGLonassInUse));
+            post(new IVISystem.EventGpsCountChanged(iGpsInView, iGpsInUse, iGlonassInView, iGLonassInUse));
         }
     };
     private IGpsCallback.Stub mUserGpsCallback = null;
@@ -681,4 +676,5 @@ public class SystemManager extends BaseManager {
             }
         }
     }
+
 }

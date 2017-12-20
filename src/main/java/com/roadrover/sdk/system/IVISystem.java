@@ -284,7 +284,33 @@ public class IVISystem {
     /** launcher包名 */
     public static final String PACKAGE_LAUNCHER = "com.android.launcher3";
     /** 原生设置包名 */
-    public static final String PACKAGE_ANDROID_SETTINGS = "com.android.settings";                   // 原生设置
+    public static final String PACKAGE_ANDROID_SETTINGS = "com.android.settings";
+    /** Google服务设置包名 */
+    public static final String PACKAGE_GOOGLE_ANDROID_GMS = "com.google.android.gms";
+    /** 空调包名 */
+    public static final String PACKAGE_AIRCONDITION = "com.roadrover.aircondition";
+    /** roadrover日历包名 */
+    public static final String PACKAGE_ROADROVER_CALENDAR = "com.roadrover.calendar";
+    /** roadrover计算器包名 */
+    public static final String PACKAGE_ROADROVER_CALCULATOR = "com.roadrover.calculator";
+    /** 文本阅读器包名 */
+    public static final String PACKAGE_READER = "com.roadrover.reader";
+    /** 车辆信息应用包名 */
+    public static final String PACKAGE_CAR_INFORM = "com.roadrover.carinform";
+    /** 语音包名 */
+    public static final String PACKAGE_VOICE_ASSISTANT = "com.roadrover.voiceassistant";
+    /** 车联网包名 */
+    public static final String PACKAGE_CAR_NET = "com.roadrover.carnetworking";
+
+    // 三方应用包名定义 start
+    /** 美行导航 */
+    public static final String PACKAGE_MEIXING_NAVI = "com.mxnavi.mxnavi";
+    /** 亿联 */
+    public static final String PACKAGE_ELINK = "net.easyconn";
+    /** waze导航 */
+    public static final String PACKAGE_WAZE = "com.waze";
+
+    // 三方应用包名定义 end
 
     /**
      * Activity定义，只能在这里保留一份，其他地方必须引用这里
@@ -317,7 +343,7 @@ public class IVISystem {
     /** 倒车 Activity名 */
     public static final String ACTIVITY_CCD = PACKAGE_CCD + ".ui.activity.MainActivity";
     /** 语音 Activity名 */
-    public static final String ACTIVITY_VOICE_ASSISTANT = "com.roadrover.voiceassistant.activity.MainActivity";
+    public static final String ACTIVITY_VOICE_ASSISTANT = PACKAGE_VOICE_ASSISTANT + ".activity.MainActivity";
     /** 文件管理器主 Activity名 */
     public static final String ACTIVITY_FILE_MANAGER = "com.roadrover.filemanager.activity.FileManagerActivity";
     /** 图库主Activity名 */
@@ -358,6 +384,18 @@ public class IVISystem {
     public static final String ACTIVITY_SETTINGS_DATETIME = PACKAGE_SETTINGS + ".ui.activity.DateTimeSettingActivity";
     /** 高级设置页面Activity名 */
     public static final String ACTIVITY_ADVANCED_SETTING = PACKAGE_SETTINGS + ".ui.activity.AdvancedActivity";
+    /** 空调主Activity名 */
+    public static final String ACTIVITY_AIRCONDITION = PACKAGE_AIRCONDITION + ".activity.MainActivity";
+    /** roadrover日历主Activity名 */
+    public static final String ACTIVITY_ROADROVER_CALENDAR = PACKAGE_ROADROVER_CALENDAR + ".MainActivity";
+    /** roadrover计算器主Activity名 */
+    public static final String ACTIVITY_ROADROVER_CALCULATOR = PACKAGE_ROADROVER_CALCULATOR + ".Calculator";
+    /** 文本阅读器主Activity名 */
+    public static final String ACTIVITY_READER = PACKAGE_READER + ".FileListActivity";
+    /** 车辆信息主Activity名 */
+    public static final String ACTIVITY_CAR_INFORM = PACKAGE_CAR_INFORM + ".activity.MainActivity";
+    /** 车联网主Activity名 */
+    public static final String ACTIVITY_CAR_NET = PACKAGE_CAR_NET + ".business.home.CarnetworkingActivity";
     // 本机APP Activity名定义 end
 
     // android 原生APP Activity名定义 start
@@ -381,6 +419,10 @@ public class IVISystem {
     public static final String ACTIVITY_GOOGLE_SEARCH = "com.google.android.googlequicksearchbox.SearchActivity";
     /** 谷歌地图 Activity名 */
     public static final String ACTIVITY_GOOGLE_MAPS = "com.google.android.maps.MapsActivity";
+    /** 应用管理 Activity名 */
+    public static final String ACTIVITY_MANAGE_APPLICATION = PACKAGE_ANDROID_SETTINGS + ".ManageApplications";
+    /** Google服务设置 Activity名 */
+    public static final String ACTIVITY_GOOGLE_ANDROID_GMS_SETTINGS = PACKAGE_GOOGLE_ANDROID_GMS + ".app.settings.GoogleSettingsLink";
     // android 原生APP Activity名定义 end
 
     // 三方应用Activity名定义 start
@@ -417,7 +459,9 @@ public class IVISystem {
     /** 三方APP Skype Activity名 */
     public static final String ACTIVITY_SKYPE = "com.skype.raider.Main";
     /** 三方APP 亿联 Activity名 */
-    public static final String ACTIVITY_ELINK = "net.easyconn.WelcomeActivity";
+    public static final String ACTIVITY_ELINK = PACKAGE_ELINK + ".WelcomeActivity";
+    /** 三方APP 美行导航 Activity名 */
+    public static final String ACTIVITY_MEIXING_NAVI = PACKAGE_MEIXING_NAVI + ".MXNavi";
 
     // 三方应用Activity名定义 end
 
@@ -471,6 +515,60 @@ public class IVISystem {
     public static final String ACTION_SCREENSHOT_FINISHED = "com.roadrover.systemui.action.screenshot.finished";
     /** 截屏广播带的参数 */
     public static final String PARAM_SCREENSHOT_PATH = "path";
+
+    /** 下载完成通知其它应用广播 */
+    public static final String ACTION_DOWNLOAD_FINISHED = "com.roadrover.provider.action.download.finished";
+    /** 下载广播带的参数 */
+    public static final String PARAM_DOWNLOAD_ID = "id";
+
+    // 美行地图定义的广播 start
+    /***导航过程中向控发送引导类型和引导属性/导航转向信息协议****/
+    public static final String ACTION_TO_CTRL_TURNING_INFO = "com.mxnavi.mxnavi.TO_CTRL_TURNING_INFO";
+    /***导航向中控发送引导停止消息****/
+    public static final String ACTION_TO_CTRL_STOP_GUIDANCE = "com.mxnavi.mxnavi.TO_CTRL_STOP_GUIDANCE";
+    /***自车行政区变更时，导航向中控发消息****/
+    public static final String ACTION_NAVIGATION_CURRENT_DISTRICT = "com.mxnavi.mxnavi.NAVI_CURRENT_DISTRICT";
+    /***导航指南针协议****/
+    public static final String ACTION_TO_CTRL_COMPASS_INFO = "com.mxnavi.mxnavi.TO_CTRL_COMPASS_INFO";
+    /***电子眼协议****/
+    public static final String ACTION_TO_CTRL_EEYE_INFO = "com.mxnavi.mxnavi.TO_CTRL_EEYE_INFO";
+    /***引导类型有2种方式:0=普通引导类型,  1= 12点钟方向引导类型; ****/
+    public static final String PARAM_IS_TWELVE_CLOCK = "IsTwelveClock";
+    /***普通引导类型id****/
+    public static final String PARAM_NORMAL_TURN_ID = "normal_turnID";
+    /***12点钟方向引导类型id****/
+    public static final String PARAM_TWELVE_CLOCK_TURN_ID = "TwelveClock_turnID";
+    /***12点钟背景****/
+    public static final String PARAM_ARRAY_TURN = "arrayTurn";
+    /***引导点属性****/
+    public static final String PARAM_GUIDE_TYPE = "guidetype";
+    /***到下一引导点的距离(米)****/
+    public static final String PARAM_DISTANCE = "distance";
+    /***到目的地的距离(米)****/
+    public static final String PARAM_DEST_DISTANCE = "destdistance";
+    /***当前道路名称****/
+    public static final String PARAM_ROAD_NAME = "roadname";
+    /***下一道路名称****/
+    public static final String PARAM_NEXT_ROAD_NAME = "nextroadname";
+    /***到达目的地时间****/
+    public static final String PARAM_DEST_TIME = "desttime";
+    /***目的地名称****/
+    public static final String PARAM_DEST_NAME = "destname";
+    /***电子眼类型****/
+    public static final String PARAM_MX_EEYE_TYPE = "type";
+    /***到下一电子眼的距离，以米为单位****/
+    public static final String PARAM_MX_EEYE_DISTANCE = "distance";
+    /***限速****/
+    public static final String PARAM_MX_SPEED_LIMIT = "speedLimit";
+    /***车头方向****/
+    public static final String PARAM_MX_DIRECTION = "direction";
+    /***自车行政区省****/
+    public static final String PARAM_MX_PROVINCE = "Province";
+    /***自车行政区市****/
+    public static final String PARAM_MX_CITY = "City";
+    /***自车行政区区****/
+    public static final String PARAM_MX_COUNTY = "County";
+    // 美行地图定义的广播 end
 
     /**
      * gps 数据变化

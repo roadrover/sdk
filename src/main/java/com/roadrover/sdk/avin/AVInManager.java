@@ -11,7 +11,6 @@ import com.roadrover.services.avin.IAVIn;
 import com.roadrover.services.avin.IAVInCallback;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -21,13 +20,20 @@ import java.util.List;
  * AVIn管理类
  */
 public class AVInManager extends BaseManager {
+    /**
+     * {@link IAVIn}接口对象
+     */
     private IAVIn mAVInInterface;
+    /**{@link com.roadrover.sdk.avin.IVIAVIn.AVInListener} 监听对象*/
     private IVIAVIn.AVInListener mAvInListener;
+    /**{@link com.roadrover.sdk.avin.IVIAVIn.Id}*/
     private int mAvId = IVIAVIn.Id.NONE;
+    /**媒体是否打开*/
     private boolean mMediaIsOpen = false;
-    private EventBus mEventBus = new EventBus();
 
+    /**请求视频信号EventBus事件类*/
     private static class EventRequestVideoSignal {
+        /**{@link com.roadrover.sdk.avin.IVIAVIn.Id}*/
         public int mAvId;
 
         public EventRequestVideoSignal(int avId) {
@@ -44,7 +50,7 @@ public class AVInManager extends BaseManager {
 
         int signal = getVideoSignal(event.mAvId);
         Logcat.d(IVIAVIn.Id.getName(event.mAvId) + " signal is " + IVIAVIn.Signal.getName(signal));
-        mEventBus.post(new IVIAVIn.EventVideoSignalChanged(event.mAvId, signal));
+        post(new IVIAVIn.EventVideoSignalChanged(event.mAvId, signal));
     }
 
     /**
@@ -65,20 +71,12 @@ public class AVInManager extends BaseManager {
      * @param useDefaultEventBus    是否默认使用EventBus
      */
     public AVInManager(Context context, ConnectListener connectListener, IVIAVIn.AVInListener avInListener, boolean useDefaultEventBus) {
-        super(context, connectListener);
+        super(context, connectListener, useDefaultEventBus);
         mAvInListener = avInListener;
-        if (useDefaultEventBus) {
-            mEventBus = EventBus.getDefault();
-        } else {
-            mEventBus = new EventBus();
-        }
-        mEventBus.register(this);
     }
 
     @Override
     public void disconnect() {
-        mEventBus.unregister(this);
-
         if (mAVInInterface != null) {
             try {
                 mAVInInterface.unRegisterCallback(mAVInCallback);
@@ -193,55 +191,55 @@ public class AVInManager extends BaseManager {
     private IAVInCallback mAVInCallback = new IAVInCallback.Stub() {
         @Override
         public void onVideoSignalChanged(int avId, int signal) {
-            mEventBus.post(new IVIAVIn.EventVideoSignalChanged(avId, signal));
+            post(new IVIAVIn.EventVideoSignalChanged(avId, signal));
         }
 
         @Override
         public void onVideoPermitChanged(boolean show) {
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.VIDEO_PERMIT, show ? 1 : 0));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.VIDEO_PERMIT, show ? 1 : 0));
         }
 
         @Override
         public void stop() throws RemoteException {
             mMediaIsOpen = false;
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.STOP));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.STOP));
         }
 
         @Override
         public void resume() throws RemoteException {
             mMediaIsOpen = true;
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.RESUME));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.RESUME));
         }
 
         @Override
         public void quitApp() {
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.QUIT_APP));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.QUIT_APP));
         }
 
         @Override
         public void next() {
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.NEXT));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.NEXT));
         }
 
         @Override
         public void prev() {
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.PREV));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.PREV));
         }
 
         @Override
         public void select(int index) {
-            mEventBus.post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.SELECT, index));
+            post(new IVIAVIn.EventControl(IVIAVIn.EventControl.Action.SELECT, index));
         }
 
         @Override
         public void onCvbsTypeChanged(int avId, int cvbsType) {
-            mEventBus.post(new IVIAVIn.EventCvbsTypeChanged(avId, cvbsType));
+            post(new IVIAVIn.EventCvbsTypeChanged(avId, cvbsType));
         }
 
         @Override
         public void onSourcePluginChanged(int avId, boolean plugin) {
             Logcat.d(IVIAVIn.Id.getName(avId) + " plug in changed to " + plugin);
-            mEventBus.post(new IVIAVIn.EventSourcePluginChanged(avId, plugin));
+            post(new IVIAVIn.EventSourcePluginChanged(avId, plugin));
         }
     };
 
@@ -502,7 +500,7 @@ public class AVInManager extends BaseManager {
      */
     public void requestVideoSignalEvent(int avId) {
         Logcat.d(IVIAVIn.Id.getName(avId));
-        mEventBus.post(new EventRequestVideoSignal(avId));
+        post(new EventRequestVideoSignal(avId));
     }
 
     /**
@@ -657,7 +655,7 @@ public class AVInManager extends BaseManager {
      */
     public void requestSourcePluginEvent(int avId) {
         if (mAVInInterface != null) {
-            mEventBus.post(new IVIAVIn.EventSourcePluginChanged(avId, getSourcePlugin(avId)));
+            post(new IVIAVIn.EventSourcePluginChanged(avId, getSourcePlugin(avId)));
         }
     }
 
@@ -765,20 +763,4 @@ public class AVInManager extends BaseManager {
             Logcat.d("Service not connected");
         }
     }
-
-    /**
-     * 注册EventBus
-     * @param object
-     */
-	public void registerEventBus(Object object) {
-		mEventBus.register(object);
-	}
-
-    /**
-     * 反注册EventBus
-     * @param object
-     */
-	public void unregisterEventBus(Object object) {
-		mEventBus.unregister(object);
-	}
 }

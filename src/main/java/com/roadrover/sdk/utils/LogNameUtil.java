@@ -118,4 +118,51 @@ public class LogNameUtil {
         }
         return def;
     }
+
+    /**
+     * 将 object 对象里面的 int, String, long, float 等可以打印的数据，打印出来
+     * @param object 对象
+     * @return 返回打印结果
+     */
+    public static String toString(Object object) {
+        String ret = "";
+        if (object != null) {
+            Field[] fields = FieldUtil.getAllDeclaredFields(object.getClass()); // 获取所有的属性
+            if (!ListUtils.isEmpty(fields)) {
+                try {
+                    for (Field field : fields) {
+                        field.setAccessible(true);
+                        try {
+                            field.get(null); // 常量不做处理
+                            continue;
+                        } catch (Exception e) {
+
+                        }
+
+                        if (field.getType() == int.class) {
+                            ret += (field.getName() + "=" + field.getInt(object));
+                        } else if (field.getType() == long.class) {
+                            ret += (field.getName() + "=" + field.getLong(object));
+                        } else if (field.getType() == float.class) {
+                            ret += (field.getName() + "=" + field.getFloat(object));
+                        } else if (field.getType() == String.class) {
+                            ret += (field.getName() + "=" + field.get(object));
+                        } else if (field.getType() == short.class) {
+                            ret += (field.getName() + "=" + field.getShort(object));
+                        } else if (field.getType() == short.class) {
+                            ret += (field.getName() + "=" + field.getDouble(object));
+                        }  else if (field.getType() == boolean.class) {
+                            ret += (field.getName() + "=" + field.getBoolean(object));
+                        } else { // 其他类型不打印
+                            continue;
+                        }
+                        ret += " ";
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
+    }
 }

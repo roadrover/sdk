@@ -138,6 +138,28 @@ public class SettingModel {
     }
 
     /**
+     * 获取默认导航
+     * @param context 上下文
+     * @return 返回默认导航的包名
+     */
+    public static String getNavigationPackage(Context context) {
+        if (context == null) {
+            Logcat.w("context is null!");
+            return "";
+        }
+        return getContent(context, IVISetting.Global.NAME, IVISetting.Global.DefaultNaviPackage);
+    }
+
+    /**
+     * 注册监听默认导航改变的消息
+     * @param context 上下文
+     * @param listener 监听器
+     */
+    public static void registerNavigationListener(Context context, ModelListener listener) {
+        registerModelListener(context, IVISetting.Global.NAME, IVISetting.Global.DefaultNaviPackage, listener);
+    }
+
+    /**
      * 根据名字和每项获取设置的内容，返回一个int
      * @param context 上下文对象
      * @param name    名字, 比如{@link com.roadrover.sdk.setting.IVISetting.Network#NAME}

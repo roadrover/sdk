@@ -140,6 +140,82 @@ interface IAudio {
     void resetSecondaryBuildInPreVolumeValue();
 
     /**
+     * 开发者接口，判断主音频设备是否有效
+     * @return true 有效，false无效
+     */
+    boolean isMasterAudioDeviceAvailable();
+    /**
+     * 开发者接口，获取音量增益的最小值
+     * @return 音量增益的最小值
+     */
+    float getMasterVolumeGainMinValue();
+    /**
+     * 开发者接口，获取音量增益的最大值
+     * @return 音量增益的最大值
+     */
+    float getMasterVolumeGainMaxValue();
+    /**
+     * 开发者接口，获取音量增益的默认值
+     * @param volume 音量值
+     * @return 音量增益的默认值
+     */
+    float getMasterVolumeGainDefaultValue(int volume);
+    /**
+     * 开发者接口，获取音量增益的值
+     * @param volume 音量值
+     * @return 音量增益的值
+     */
+    float getMasterVolumeGainValue(int volume);
+    /**
+     * 开发者接口，设置音量增益的值
+     * @param volume 音量值
+     * @param value 音量增益的值
+     */
+    void setMasterVolumeGainValue(int volume, float value);
+    /**
+     * 开发者接口，重置所有音量增益的值
+     */
+    void resetMasterVolumeGainValue();
+
+    /**
+     * 开发者接口，判断辅助音频设备是否有效
+     * @return true 有效，false无效
+     */
+    boolean isSecondaryAudioDeviceAvailable();
+    /**
+     * 开发者接口，获取辅助音量增益的最小值
+     * @return 辅助音量增益的最小值
+     */
+    float getSecondaryVolumeGainMinValue();
+    /**
+     * 开发者接口，获取辅助音量增益的最大值
+     * @return 辅助音量增益的最大值
+     */
+    float getSecondaryVolumeGainMaxValue();
+    /**
+     * 开发者接口，获取辅助音量增益的默认值
+     * @param volume 音量值
+     * @return 辅助音量增益的默认值
+     */
+    float getSecondaryVolumeGainDefaultValue(int volume);
+    /**
+     * 开发者接口，获取辅助音量增益的值
+     * @param  volume 音量值
+     * @return 辅助音量增益的值
+     */
+    float getSecondaryVolumeGainValue(int volume);
+    /**
+     * 开发者接口，设置辅助音音量增益的值
+     * @param volume 音量值
+     * @param value 辅助音量增益的值
+     */
+    void setSecondaryVolumeGainValue(int volume, float value);
+    /**
+     * 开发者接口，重置所有辅助音量增益的值
+     */
+    void resetSecondaryVolumeGainValue();
+
+    /**
      * 显示音量条
      */
     void showVolumeBar();
@@ -155,14 +231,34 @@ interface IAudio {
     void toggleVolumeBar();
 
     /**
-    * 显示次通道（后排或者乘客区）的音量条
-    */
+     * 显示次通道（后排或者乘客区）的音量条
+     */
     void showSecondaryVolumeBar();
 
     /**
-    * 获取当前激活的音量ID
-    */
+     * 获取当前激活的音量ID
+     */
     int getActiveVolumeId();
+
+    /**
+     * 获取前置最小音量
+     */
+    int getMasterVolumeMin();
+
+    /**
+     * 获取前置最大音量
+     */
+    int getMasterVolumeMax();
+
+    /**
+     * 获取辅助最小音量
+     */
+    int getSecondaryVolumeMin();
+
+    /**
+     * 获取辅助最大音量
+     */
+    int getSecondaryVolumeMax();
 
     /**
      * 请求内部先静音，隔一段时候反静音

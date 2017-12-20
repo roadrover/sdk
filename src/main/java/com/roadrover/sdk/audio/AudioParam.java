@@ -105,6 +105,11 @@ public class AudioParam extends Param {
          * 专家音效，其值为 {@value}
          */
         public static final int EXPERT_AUDIO_EFFECT     = 26;
+        
+		/**
+         * AC8平台响度功能，其值为 {@value}
+         */
+        public static final int LOUDNESS                = 27;
 
         /**
          * EQ数量，AK7601为十段EQ，其值为 {@value}

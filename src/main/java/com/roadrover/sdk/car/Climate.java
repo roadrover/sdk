@@ -57,8 +57,19 @@ public class Climate {
         public static final int REAR_LEFT_TEMP        = 57;   // 后排左边温度
         public static final int REAR_RIGHT_TEMP       = 58;   // 后排右边温度
         public static final int REAR_AUTO_FAN_LEVEL   = 59;   // 后排自动风速档次(0: 关，1-3档次)
+        public static final int UP_DOWN_TEMP          = 63;   //温度上下调节  1：上调，2: 下调
+        public static final int NEGATIVE_ICONS        = 64;   //负离子
+        public static final int SYNC_ZONE             = 66;   //多区(异步)
+        public static final int AC_SWITCH             = 68;   //AC请求开关
         public static final int SHOW_CLIMATE_UI       = 80;   // 主空调页面打开和关闭 0：关闭   1：打开
         public static final int INSIDE_TEMP           = 81;   // 车内温度，定义和车外温度是一样的
+        public static final int ELECTRIC_TEMP         = 82;   //电动空调（低配）温度控制；只有1-15 15个档位，无具体温度值
+        public static final int START_CLIMATE_COMMON  = 84;   //显示空调界面（适用于常显）
+        public static final int UP_DOWN_LEFT_TEMP     = 85;   //左温度上下调节
+        public static final int UP_DOWN_RIGHT_TEMP    = 86;   //右温度上下调节
+        public static final int FRONT_LEFT_TEMP_VOICE         = 129;  // 前排左边温度,通过声控功能启动
+        public static final int FRONT_RIGHT_TEMP_VOICE        = 130;  // 前排右边温度,通过声控功能启动
+
     }
 
     public class AIR_CIRCLE_MODE {

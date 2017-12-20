@@ -391,4 +391,20 @@ interface IBluetooth {
      * 关闭录音
      */
     void closeRecording(IBluetoothExecCallback callback);
+
+    /**
+    * 设置自动连接
+    * @param autoLink
+    */
+    void setAutoLink(boolean autoLink, IBluetoothExecCallback callback);
+
+    /**
+    * 判断自动连接是否开启
+    */
+    boolean isAutoLinkOn();
+
+    /**
+    * 判断蓝牙开关是否开启
+    */
+    boolean isPowerOn();
 }

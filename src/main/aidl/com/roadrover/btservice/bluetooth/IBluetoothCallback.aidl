@@ -51,4 +51,10 @@ interface IBluetoothCallback {
     * @param value     信号值 0-5
     */
     void onBtSignalValue(int value);
+
+    /**
+    * 蓝牙开关状态
+    * @param value
+    */
+    void onPowerStatus(boolean value);
 }

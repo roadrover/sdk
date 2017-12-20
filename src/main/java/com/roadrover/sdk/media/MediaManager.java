@@ -2,10 +2,7 @@ package com.roadrover.sdk.media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
@@ -19,7 +16,6 @@ import com.roadrover.services.media.IMediaScannerCallback;
 import com.roadrover.services.media.StMusic;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -72,7 +68,6 @@ public class MediaManager extends BaseManager {
     private Set<MediaScannerCallback> mMediaScannerListeners = new HashSet<>();
     private int mMediaType = IVIMedia.Type.NONE; // 记录 mediaType，如果服务挂掉了，重新open
     private int mMediaZone = IVIMedia.Zone.UNKNOWN;
-    private EventBus mEventBus;
 
     /**
      * 媒体扫描回调的接口类
@@ -137,6 +132,11 @@ public class MediaManager extends BaseManager {
             mScanType = scanType;
             mSqlType = sqlType;
         }
+
+        public String toString() {
+            return "scanType:" + IVIMedia.MediaScannerType.getName(mScanType) +
+                    " sqlType:" + IVIMedia.MediaSqlDataType.getName(mSqlType);
+        }
     }
 
     /**
@@ -161,6 +161,17 @@ public class MediaManager extends BaseManager {
             mPath = path;
             mOldPath = oldPath;
         }
+
+        /**
+         * 将整个对象打印成一个String
+         * @return
+         */
+        public String toString() {
+            return "mScanType:" + IVIMedia.MediaScannerType.getName(mScanType) +
+                    " mSqlType:" + IVIMedia.MediaSqlDataType.getName(mSqlType) +
+                    " mPath:" + mPath +
+                    " mOldPath:" + mOldPath;
+        }
     }
 
     /**
@@ -179,6 +190,10 @@ public class MediaManager extends BaseManager {
             mPath = path;
             mIsDiskPowerDown = isDiskPowerDown;
         }
+
+        public String toString() {
+            return LogNameUtil.toString(this);
+        }
     }
 
     /**
@@ -193,6 +208,10 @@ public class MediaManager extends BaseManager {
          */
         public EventMount(String path) {
             mPath = path;
+        }
+
+        public String toString() {
+            return LogNameUtil.toString(this);
         }
     }
 
@@ -276,6 +295,16 @@ public class MediaManager extends BaseManager {
          * 视频是否被允许显示，比如手刹控制，值为{@value}
          */
         public static final int VIDEO_PERMIT = 15;
+
+        /**
+         * 跳转进度，其他APP控制音乐，值为{@value}
+         */
+        public static final int SEEK_TO = 16;
+
+        /**
+         * 播放暂停，值为{@value}
+         */
+        public static final int PLAY_PAUSE = 17;
 
         public int mControl;
         public int mValue;
@@ -470,6 +499,10 @@ public class MediaManager extends BaseManager {
                     mMediaControlListener.pause();
                     break;
 
+                case EventMediaControl.PLAY_PAUSE:
+                    mMediaControlListener.playPause();
+                    break;
+
                 case EventMediaControl.STOP:
                     mMediaControlListener.stop();
                     break;
@@ -514,6 +547,10 @@ public class MediaManager extends BaseManager {
                     mMediaControlListener.onVideoPermitChanged(event.mValue == 1);
                     break;
 
+                case EventMediaControl.SEEK_TO:
+                    mMediaControlListener.seekTo(event.mValue);
+                    break;
+
                 default:
                     Logcat.d("Unknown action " + event.mControl);
                     break;
@@ -539,14 +576,8 @@ public class MediaManager extends BaseManager {
      * @param useDefaultEventBus 是否使用默认的EventBus，如果需要不使用默认的EventBus，可以使用false
      */
     public MediaManager(Context context, ConnectListener listener, IVIMedia.MediaControlListener mediaControlListener, boolean useDefaultEventBus) {
-        super(context, listener);
+        super(context, listener, useDefaultEventBus);
         mMediaControlListener = mediaControlListener;
-        if (useDefaultEventBus) {
-            mEventBus = EventBus.getDefault();
-        } else {
-            mEventBus = new EventBus();
-        }
-        mEventBus.register(this);
     }
 
     /**
@@ -568,7 +599,6 @@ public class MediaManager extends BaseManager {
         mMediaControlListener = null;
         mGetAllMediaListCallback = null;
         mAppGetAllMediaListCallback = null;
-        mEventBus.unregister(this);
     }
 
     @Override
@@ -607,78 +637,88 @@ public class MediaManager extends BaseManager {
     private IMediaControlCallback.Stub mMediaControlCallback = new IMediaControlCallback.Stub() {
         @Override
         public void suspend() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.SUSPEND));
+            post(new EventMediaControl(EventMediaControl.SUSPEND));
         }
 
         @Override
         public void resume() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.RESUME));
+            post(new EventMediaControl(EventMediaControl.RESUME));
         }
 
         @Override
         public void quitApp() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.QUIT_APP));
+            post(new EventMediaControl(EventMediaControl.QUIT_APP));
         }
 
         @Override
         public void pause() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.PAUSE));
+            post(new EventMediaControl(EventMediaControl.PAUSE));
         }
 
         @Override
         public void play() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.PLAY));
+            post(new EventMediaControl(EventMediaControl.PLAY));
+        }
+
+        @Override
+        public void playPause() throws RemoteException {
+            post(new EventMediaControl(EventMediaControl.PLAY_PAUSE));
         }
 
         @Override
         public void stop() throws RemoteException {
             mMediaType = IVIMedia.Type.NONE;
-            mEventBus.post(new EventMediaControl(EventMediaControl.STOP));
+            post(new EventMediaControl(EventMediaControl.STOP));
         }
 
         @Override
         public void next() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.NEXT));
+            post(new EventMediaControl(EventMediaControl.NEXT));
         }
 
         @Override
         public void prev() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.PREV));
+            post(new EventMediaControl(EventMediaControl.PREV));
         }
 
         @Override
         public void setVolume(float volume) throws RemoteException {
-            mEventBus.post(EventMediaControl.setVolume(volume));
+            post(EventMediaControl.setVolume(volume));
         }
 
         @Override
         public void select(int index) throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.SELECT, index));
+            post(new EventMediaControl(EventMediaControl.SELECT, index));
         }
 
         @Override
         public void playRandom() throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.PLAY_RANDOM));
+            post(new EventMediaControl(EventMediaControl.PLAY_RANDOM));
         }
 
         @Override
         public void setPlayMode(int mode) throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.SET_PLAY_MODE, mode));
+            post(new EventMediaControl(EventMediaControl.SET_PLAY_MODE, mode));
         }
 
         @Override
         public void filter(String title, String singer) throws RemoteException {
-            mEventBus.post(EventMediaControl.filter(title, singer));
+            post(EventMediaControl.filter(title, singer));
         }
 
         @Override
         public void setFavour(boolean favour) throws RemoteException {
-            mEventBus.post(new EventMediaControl(EventMediaControl.SET_FAVOUR, favour ? 1 : 0));
+            post(new EventMediaControl(EventMediaControl.SET_FAVOUR, favour ? 1 : 0));
         }
 
         @Override
         public void onVideoPermitChanged(boolean show) {
-            mEventBus.post(new EventMediaControl(EventMediaControl.VIDEO_PERMIT, show ? 1 : 0));
+            post(new EventMediaControl(EventMediaControl.VIDEO_PERMIT, show ? 1 : 0));
+        }
+
+        @Override
+        public void seekTo(int msec) {
+            post(new EventMediaControl(EventMediaControl.SEEK_TO, msec));
         }
     };
 
@@ -738,13 +778,13 @@ public class MediaManager extends BaseManager {
     private IGetMediaListCallback.Stub mGetAllMediaListCallback = new IGetMediaListCallback.Stub() {
         @Override
         public void onProgress(List<StMusic> stAudios, String path) throws RemoteException {
-            mEventBus.post(new EventGetMediaListCallback(EventGetMediaListCallback.PROGRESS_TYPE,
+            post(new EventGetMediaListCallback(EventGetMediaListCallback.PROGRESS_TYPE,
                     EventGetMediaListCallback.GET_APP_MEDIA, stAudios, path));
         }
 
         @Override
         public void onFinish(List<StMusic> stAudios, String path) throws RemoteException {
-            mEventBus.post(new EventGetMediaListCallback(EventGetMediaListCallback.FINISH_TYPE,
+            post(new EventGetMediaListCallback(EventGetMediaListCallback.FINISH_TYPE,
                     EventGetMediaListCallback.GET_APP_MEDIA, stAudios, path));
         }
     };
@@ -778,13 +818,13 @@ public class MediaManager extends BaseManager {
     private IGetMediaListCallback.Stub mGetAppointPathMediaInfoCallback = new IGetMediaListCallback.Stub() {
         @Override
         public void onProgress(List<StMusic> stAudios, String path) throws RemoteException {
-            mEventBus.post(new EventGetMediaListCallback(EventGetMediaListCallback.PROGRESS_TYPE,
+            post(new EventGetMediaListCallback(EventGetMediaListCallback.PROGRESS_TYPE,
                     EventGetMediaListCallback.GET_APPOINT_PATH, stAudios, path));
         }
 
         @Override
         public void onFinish(List<StMusic> stAudios, String path) throws RemoteException {
-            mEventBus.post(new EventGetMediaListCallback(EventGetMediaListCallback.FINISH_TYPE,
+            post(new EventGetMediaListCallback(EventGetMediaListCallback.FINISH_TYPE,
                     EventGetMediaListCallback.GET_APPOINT_PATH, stAudios, path));
         }
     };
@@ -927,39 +967,39 @@ public class MediaManager extends BaseManager {
 
         @Override
         public void onScanStart(int type, int sqlType) throws RemoteException {
-            mEventBus.post(new EventScanStart(type, sqlType));
+            post(new EventScanStart(type, sqlType));
         }
 
         @Override
         public void onScanFinish(int type, int sqlType, String path, String oldPath) throws RemoteException {
-            mEventBus.post(new EventScanFinished(type, sqlType, path, oldPath));
+            post(new EventScanFinished(type, sqlType, path, oldPath));
         }
 
         @Override
         public void onEject(String path, boolean isDiskPowerDown) throws RemoteException {
-            mEventBus.post(new EventEject(path, isDiskPowerDown));
+            post(new EventEject(path, isDiskPowerDown));
         }
 
         @Override
         public void onMount(String path) throws RemoteException {
-            mEventBus.post(new EventMount(path));
+            post(new EventMount(path));
         }
     };
 
     private IMediaInfoCallback.Stub mMediaInfoCallback = new IMediaInfoCallback.Stub() {
         @Override
         public void onMediaChange(int mediaType, String name, String info, int artWidth, int artHeight, byte[] artBytes, int index, int totalCount, boolean popup) {
-            mEventBus.post(new IVIMedia.MediaInfo(mediaType, name, info, artWidth, artHeight, artBytes, index, totalCount, popup));
+            post(new IVIMedia.MediaInfo(mediaType, name, info, artWidth, artHeight, artBytes, index, totalCount, popup));
         }
 
         @Override
         public void onPlayStateChange(int mediaType, int playState, int position, int duration) {
-            mEventBus.post(new IVIMedia.MediaState(mediaType, playState, position, duration));
+            post(new IVIMedia.MediaState(mediaType, playState, position, duration));
         }
 
         @Override
         public void onMediaZoneChanged(int mediaType, int zone) {
-            mEventBus.post(new IVIMedia.MediaZone(mediaType, zone));
+            post(new IVIMedia.MediaZone(mediaType, zone));
         }
     };
 
@@ -1252,6 +1292,22 @@ public class MediaManager extends BaseManager {
     }
 
     /**
+     * 拖动当前播放的音乐的进度
+     * @param msec 毫秒
+     */
+    public void seekTo(int msec) {
+        if (mMediaInterface != null) {
+            try {
+                mMediaInterface.seekTo(msec);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+    }
+
+    /**
      * 请求获取当前的媒体信息，例：Launcher播控键起来后需要刷新当前的媒体信息，可以通过调用该方法进行获取 </br></br>
      * 流程如下：</br>
      *    1) <b>首先需要监听 IVIMedia.MediaInfo，IVIMedia.MediaState 两个EventBus消息</b></br>
@@ -1281,7 +1337,7 @@ public class MediaManager extends BaseManager {
         if (mMediaInterface != null) {
             try {
                 boolean permit = mMediaInterface.isVideoPermit();
-                mEventBus.post(new EventMediaControl(EventMediaControl.VIDEO_PERMIT, permit ? 1 : 0));
+                post(new EventMediaControl(EventMediaControl.VIDEO_PERMIT, permit ? 1 : 0));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1417,22 +1473,6 @@ public class MediaManager extends BaseManager {
     }
 
     /**
-     * 注册eventBus的监听
-     * @param object
-     */
-    public void registerEventBus(Object object) {
-        mEventBus.register(object);
-    }
-
-    /**
-     * 注销eventBus的监听
-     * @param object
-     */
-    public void unregisterEventBus(Object object) {
-        mEventBus.unregister(object);
-    }
-
-    /**
      * 监听mediaInfo改变 event 事件
      * @param event
      */
@@ -1509,5 +1549,28 @@ public class MediaManager extends BaseManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 文件写入完成 </br>
+     * 部分平台刚刚插入U盘时，拷贝文件，通过MultiFileObserver没办法监听到，所以增加接口，在拷贝文件，写入文件时候通知Services </br>
+     * @param path 文件路径
+     */
+    public void sendWriteFinishedEvent(String path) {
+        if (mMediaInterface != null) {
+            try {
+                mMediaInterface.sendWriteFinishedEvent(path);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 返回当前的媒体类型
+     * @return {@link com.roadrover.sdk.media.IVIMedia.Type}
+     */
+    public int getMediaType() {
+        return mMediaType;
     }
 }

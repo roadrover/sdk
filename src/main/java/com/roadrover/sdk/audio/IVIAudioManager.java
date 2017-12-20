@@ -11,7 +11,6 @@ import com.roadrover.services.audio.IAudio;
 import com.roadrover.services.audio.IAudioCallback;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -68,14 +67,12 @@ public class IVIAudioManager extends BaseManager {
      * @param audioListener    音频监听对象
      */
     public IVIAudioManager(Context context, ConnectListener connectListener, AudioListener audioListener) {
-        super(context, connectListener);
+        super(context, connectListener, true);
         mAudioListener = audioListener;
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void disconnect() {
-        EventBus.getDefault().unregister(this);
         super.disconnect();
     }
 
@@ -158,27 +155,27 @@ public class IVIAudioManager extends BaseManager {
         public void onVolumeChanged(int id, int value) {
             Logcat.d(AudioParam.Id.getName(id) + " : " + value);
             if (updateCache(id, value)) {
-                EventBus.getDefault().post(new IVIAudio.EventVolumeChanged(id, value));
+                post(new IVIAudio.EventVolumeChanged(id, value));
             }
         }
 
         @Override
         public void onMuteChanged(boolean mute, int source) {
             if (updateCache(AudioParam.Id.MUTE, mute ? 1 : 0)){
-                EventBus.getDefault().post(new IVIAudio.EventMuteChanged(mute, source));
+                post(new IVIAudio.EventMuteChanged(mute, source));
             }
         }
 
         @Override
         public void onVolumeBar(int id, int value, int maxValue) {
             Logcat.d(AudioParam.Id.getName(id) + " value: " + value + " max value: " + maxValue);
-            EventBus.getDefault().post(new IVIAudio.EventVolumeBar(id, value, maxValue));
+            post(new IVIAudio.EventVolumeBar(id, value, maxValue));
         }
 
         @Override
         public void onSecondaryMuteChanged(boolean mute) {
             if (updateCache(AudioParam.Id.MUTE_SECONDARY, mute ? 1 : 0)){
-                EventBus.getDefault().post(new IVIAudio.EventSecondaryMuteChanged(mute));
+                post(new IVIAudio.EventSecondaryMuteChanged(mute));
             }
         }
     };
@@ -711,6 +708,312 @@ public class IVIAudioManager extends BaseManager {
         }
 
         return null;
+    }
+
+    /**
+     * 开发者接口，判断前置音频设备是否有效
+     * @return 前置音频设备是否有效
+     */
+    public boolean isMasterAudioDeviceAvailable() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.isMasterAudioDeviceAvailable();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return false;
+    }
+
+    /**
+     * 开发者接口，获取音量增益的最小值
+     * @return 音量增益的最小值
+     */
+    public float getMasterVolumeGainMinValue() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeGainMinValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取音量增益的最大值
+     * @return 音量增益的最大值
+     */
+    public float getMasterVolumeGainMaxValue() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeGainMaxValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取音量增益的默认值
+     * @param volume 音量值
+     * @return 音量增益的默认值
+     */
+    public float getMasterVolumeGainDefaultValue(int volume) {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeGainDefaultValue(volume);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取音量增益的值
+     * @param volume 音量值
+     * @return 音量增益的值
+     */
+    public float getMasterVolumeGainValue(int volume) {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeGainValue(volume);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，设置音量增益的值
+     * @param volume 音量值
+     * @param value 音量增益值
+     */
+    public void setMasterVolumeGainValue(int volume, float value) {
+        if (mAudioInterface != null) {
+            try {
+                mAudioInterface.setMasterVolumeGainValue(volume, value);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+    }
+
+    /**
+     * 开发者接口，重置所有音量增益的值
+     */
+    public void resetMasterVolumeGainValue() {
+        if (mAudioInterface != null) {
+            try {
+                mAudioInterface.resetMasterVolumeGainValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+    }
+
+    /**
+     * 开发者接口，判断辅助音频设备是否有效
+     * @return 辅助音频设备而是否有效
+     */
+    public boolean isSecondaryAudioDeviceAvailable() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.isSecondaryAudioDeviceAvailable();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return false;
+    }
+
+    /**
+     * 开发者接口，获取辅助音量增益的最小值
+     * @return 辅助音量增益的最小值
+     */
+    public float getSecondaryVolumeGainMinValue() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeGainMinValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取辅助音量增益的最大值
+     * @return 辅助音量增益的最大值
+     */
+    public float getSecondaryVolumeGainMaxValue() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeGainMaxValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取辅助音量增益的默认值
+     * @param volume 音量值
+     * @return 辅助音量增益的默认值
+     */
+    public float getSecondaryVolumeGainDefaultValue(int volume) {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeGainDefaultValue(volume);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，获取辅助音量增益的值
+     * @param volume 音量值
+     * @return 辅助音量增益的值
+     */
+    public float getSecondaryVolumeGainValue(int volume) {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeGainValue(volume);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0.0f;
+    }
+
+    /**
+     * 开发者接口，设置辅助音音量增益的值
+     * @param volume 音量值
+     * @param value 辅助音量增益的值
+     */
+    public void setSecondaryVolumeGainValue(int volume, float value) {
+        if (mAudioInterface != null) {
+            try {
+                mAudioInterface.setSecondaryVolumeGainValue(volume, value);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+    }
+
+    /**
+     * 开发者接口，重置所有辅助音量增益的值
+     */
+    public void resetSecondaryVolumeGainValue() {
+        if (mAudioInterface != null) {
+            try {
+                mAudioInterface.resetSecondaryVolumeGainValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+    }
+
+    /**
+     * 获取前置最小音量
+     * @return 前置最小音量
+     */
+    public int getMasterVolumeMin() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeMin();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0;
+    }
+
+    /**
+     * 获取前置最大音量
+     * @return 前置最大音量
+     */
+    public int getMasterVolumeMax() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getMasterVolumeMax();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0;
+    }
+
+    /**
+     * 获取辅助最小音量
+     * @return 辅助最小音量
+     */
+    public int getSecondaryVolumeMin() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeMin();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0;
+    }
+
+    /**
+     * 获取辅助最大音量
+     * @return 辅助最大音量
+     */
+    public int getSecondaryVolumeMax() {
+        if (mAudioInterface != null) {
+            try {
+                return mAudioInterface.getSecondaryVolumeMax();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("Service not connected");
+        }
+        return 0;
     }
 
     /**

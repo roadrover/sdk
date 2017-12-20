@@ -20,7 +20,6 @@ import com.roadrover.sdk.utils.ListUtils;
 import com.roadrover.sdk.utils.Logcat;
 import com.roadrover.sdk.utils.TimerUtil;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -47,8 +46,7 @@ public class BluetoothManager extends BaseManager {
      * @param listener 连接的监听
      */
     public BluetoothManager(Context context, ConnectListener listener) {
-        super(context, listener);
-        EventBus.getDefault().register(this);
+        super(context, listener, true);
     }
 
     /**
@@ -57,8 +55,6 @@ public class BluetoothManager extends BaseManager {
     @Override
     public void disconnect() {
         super.disconnect();
-
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -81,39 +77,45 @@ public class BluetoothManager extends BaseManager {
         @Override
         public void onConnectStatus(int status, String addr, String name) throws RemoteException {
             Logcat.d("nStatus:" + status + " addr:" + addr + " name:" + name);
-            EventBus.getDefault().post(new IVIBluetooth.EventLinkDevice(status, addr, name));
+            post(new IVIBluetooth.EventLinkDevice(status, addr, name));
         }
 
         @Override
         public void onCallStatus(int status, String phoneNumber, String contactName) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.CallStatus(status, phoneNumber, contactName));
+            post(new IVIBluetooth.CallStatus(status, phoneNumber, contactName));
         }
 
         @Override
         public void onVoiceChange(int type) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.EventVoiceChange(type));
+            post(new IVIBluetooth.EventVoiceChange(type));
         }
 
         @Override
         public void onA2DPConnectStatus(int a2dpStatus, boolean isStoped) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.EventModuleConnectStatus(a2dpStatus, isStoped));
+            post(new IVIBluetooth.EventModuleConnectStatus(a2dpStatus, isStoped));
         }
 
         @Override
         public void onBtMusicId3Info(String name, String artist, String album, long duration) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.EventMp3Id3Info(name, artist, album, duration));
+            post(new IVIBluetooth.EventMp3Id3Info(name, artist, album, duration));
         }
 
         @Override
         public void onBtBatteryValue(int value) throws RemoteException {
             Logcat.d("onBtBatteryValue  value="+value);
-            EventBus.getDefault().post(new IVIBluetooth.EventBatteryValue(value));
+            post(new IVIBluetooth.EventBatteryValue(value));
         }
 
         @Override
         public void onBtSignalValue(int value) throws RemoteException {
             Logcat.d("onBtSignalValue  value="+value);
-            EventBus.getDefault().post(new IVIBluetooth.EventSignalValue(value));
+            post(new IVIBluetooth.EventSignalValue(value));
+        }
+
+        @Override
+        public void onPowerStatus(boolean value) throws RemoteException {
+            Logcat.d("onPowerStatus  value="+value);
+            post(new IVIBluetooth.EventPowerState(value));
         }
 
     };
@@ -206,12 +208,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mModuleNameCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventModuleNameCallback(msg));
+            post(new EventModuleNameCallback(msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventModuleNameCallback(errorCode));
+            post(new EventModuleNameCallback(errorCode));
         }
     };
 
@@ -279,12 +281,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mModulePINCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventModulePINCallback(msg));
+            post(new EventModulePINCallback(msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventModulePINCallback(errorCode));
+            post(new EventModulePINCallback(errorCode));
         }
     };
     private IBluetoothExecCallback.Stub mUserModulePINCallback;
@@ -353,13 +355,13 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mBluetoothLinkDeviceCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventLinkDeviceCallback(msg));
+            post(new EventLinkDeviceCallback(msg));
             // 成功后的取消定时器操作在IBluetoothCallback onEventLinkDevice 中执行
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventLinkDeviceCallback(errorCode));
+            post(new EventLinkDeviceCallback(errorCode));
             stopLinkDeviceTimer(); // 如果出错了，直接停止定时器
         }
     };
@@ -426,12 +428,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mUnlinkDeviceCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventUnlinkDeviceCallback(msg));
+            post(new EventUnlinkDeviceCallback(msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventUnlinkDeviceCallback(errorCode));
+            post(new EventUnlinkDeviceCallback(errorCode));
         }
     };
     private IBluetoothExecCallback.Stub mUserUnlinkDeviceCallback;
@@ -497,12 +499,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mBluetoothDeleteDeviceCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.EventDeleteDevice(true, 0, msg));
+            post(new IVIBluetooth.EventDeleteDevice(true, 0, msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new IVIBluetooth.EventDeleteDevice(false, errorCode, ""));
+            post(new IVIBluetooth.EventDeleteDevice(false, errorCode, ""));
         }
     };
 
@@ -770,12 +772,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothLinkDeviceCallback.Stub mBluetoothStateCallback = new IBluetoothLinkDeviceCallback.Stub() {
         @Override
         public void onSuccess(int status, String addr, String name) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothStateCallback(status, addr, name));
+            post(new EventBluetoothStateCallback(status, addr, name));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothStateCallback(errorCode));
+            post(new EventBluetoothStateCallback(errorCode));
         }
     };
 
@@ -898,7 +900,7 @@ public class BluetoothManager extends BaseManager {
                 @Override
                 public void timeout() {
                     stopGetVCardTimer();
-                    EventBus.getDefault().post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_FAILURE,
+                    post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_FAILURE,
                             IVIBluetooth.BluetoothExecErrorMsg.ERROR_TIMER_OUT, "", null)); // 超时
                 }
             }, false);
@@ -1098,17 +1100,17 @@ public class BluetoothManager extends BaseManager {
     private ISearchDeviceCallback.Stub mISearchDeviceCallback = new ISearchDeviceCallback.Stub() {
         @Override
         public void onSuccess(BluetoothDevice btDevices) throws RemoteException {
-            EventBus.getDefault().post(new EventSearchDevice(EventSearchDevice.SUCCESS_TYPE, btDevices));
+            post(new EventSearchDevice(EventSearchDevice.SUCCESS_TYPE, btDevices));
         }
 
         @Override
         public void onProgress(BluetoothDevice btDevices) throws RemoteException {
-            EventBus.getDefault().post(new EventSearchDevice(EventSearchDevice.PROGRESS_TYPE, btDevices));
+            post(new EventSearchDevice(EventSearchDevice.PROGRESS_TYPE, btDevices));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventSearchDevice(EventSearchDevice.FAILUE_TYPE, errorCode));
+            post(new EventSearchDevice(EventSearchDevice.FAILUE_TYPE, errorCode));
         }
     };
     private ISearchDeviceCallback.Stub mAppSearchDeviceCallback = null; // 用户接口
@@ -1177,12 +1179,12 @@ public class BluetoothManager extends BaseManager {
     private IDeviceCallback.Stub mIDeviceCallback = new IDeviceCallback.Stub() {
         @Override
         public void onSuccess(List<BluetoothDevice> btDevices, BluetoothDevice curBluetoothDevice) throws RemoteException {
-            EventBus.getDefault().post(new EventDeviceCallback(btDevices, curBluetoothDevice));
+            post(new EventDeviceCallback(btDevices, curBluetoothDevice));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventDeviceCallback(errorCode));
+            post(new EventDeviceCallback(errorCode));
         }
     };
     private IDeviceCallback.Stub mUserDeviceCallback;
@@ -1309,12 +1311,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mBluetoothNameCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothNameCallback(msg));
+            post(new EventBluetoothNameCallback(msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothNameCallback(errorCode));
+            post(new EventBluetoothNameCallback(errorCode));
         }
     };
 
@@ -1396,12 +1398,12 @@ public class BluetoothManager extends BaseManager {
     private IBluetoothExecCallback.Stub mBluetoothPinCallback = new IBluetoothExecCallback.Stub() {
         @Override
         public void onSuccess(String msg) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothPinCallback(msg));
+            post(new EventBluetoothPinCallback(msg));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
-            EventBus.getDefault().post(new EventBluetoothPinCallback(errorCode));
+            post(new EventBluetoothPinCallback(errorCode));
         }
     };
 
@@ -1458,6 +1460,35 @@ public class BluetoothManager extends BaseManager {
             }
         }
         return "";
+    }
+
+    /**
+     * 设置蓝牙模块自动连接开关
+     * @param on true 打开自动连接， false 关闭自动连接
+     * @param callback
+     */
+    public void setAutoLink(boolean on, IBluetoothExecCallback.Stub callback){
+        if (isSendToService(callback)){
+            try {
+                mIBluetooth.setAutoLink(on, callback);
+            } catch (RemoteException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 获取自动连接状态
+     * @return true, 自动连接已开启；false, 自动连接未开启
+     */
+    public boolean isAutoLinkOn(){
+        boolean autoLink = false;
+        try {
+            autoLink = mIBluetooth.isAutoLinkOn();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return autoLink;
     }
 
     // AVRCP 控制指令 start
@@ -1681,21 +1712,21 @@ public class BluetoothManager extends BaseManager {
         public void onProgress(List<BluetoothVCardBook> books) throws RemoteException {
             Logcat.d("books.size:" + books.size());
             startGetVCardTimer();
-            EventBus.getDefault().post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_PROGRESS, -1, "", books));
+            post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_PROGRESS, -1, "", books));
         }
 
         @Override
         public void onFailure(int errorCode) throws RemoteException {
             stopGetVCardTimer();
 
-            EventBus.getDefault().post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_FAILURE, errorCode, "", null));
+            post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_FAILURE, errorCode, "", null));
         }
 
         @Override
         public void onSuccess(String msg) throws RemoteException {
             stopGetVCardTimer();
 
-            EventBus.getDefault().post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_SUCCESS, -1, msg, null));
+            post(new IVIBluetooth.EventVCard(IVIBluetooth.EventVCard.ON_SUCCESS, -1, msg, null));
         }
     };
 
@@ -1822,7 +1853,7 @@ public class BluetoothManager extends BaseManager {
                     CmdExecResultUtil.execError(mBluetoothLinkDeviceCallback, IVIBluetooth.BluetoothExecErrorMsg.ERROR_TIMER_OUT);
 
                     // 连接超时
-                    EventBus.getDefault().post(new IVIBluetooth.EventLinkDevice(
+                    post(new IVIBluetooth.EventLinkDevice(
                             IVIBluetooth.BluetoothConnectStatus.CONNECTFAIL,
                             "",
                             ""
@@ -1885,6 +1916,22 @@ public class BluetoothManager extends BaseManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 蓝牙开关状态
+     */
+    public boolean isPowerOn() {
+        if (mIBluetooth != null) {
+            try {
+                return mIBluetooth.isPowerOn();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.d("mIBluetooth is null");
+        }
+        return false;
     }
 
     /**

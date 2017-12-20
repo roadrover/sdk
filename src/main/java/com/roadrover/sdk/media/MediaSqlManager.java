@@ -10,7 +10,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.roadrover.sdk.utils.ListUtils;
 import com.roadrover.sdk.utils.Logcat;
+import com.roadrover.services.media.StMusic;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +31,16 @@ public class MediaSqlManager {
 	 */
 	public static final String[] MENU_TYPES = {"\'audio\'", "\'video\'", "\'book\'",
 			"\'picture\'", "\'log\'", "\'apk\'"}; // 需要从数据库中查找的类型
+
+	/**
+	 * 数据库数据类型
+	 */
+	private static final String PATH     = "path";
+	private static final String NAME     = "name";
+	private static final String TRACK    = "track";
+	private static final String ALBUM    = "album";
+	private static final String ARTIST   = "artist";
+	private static final String DURATION = "duration";
 
 	private Context mContext = null;
 	
@@ -134,7 +146,7 @@ public class MediaSqlManager {
 			return new ArrayList<>();
 		}
 
-		String[] slSearchType = { "path" };
+		String[] slSearchType = {PATH};
 		String selection;
 		String[] selectionArgs = null;
 		if (TextUtils.isEmpty(path)) { // 路径为空
@@ -172,7 +184,80 @@ public class MediaSqlManager {
 		}
 		return pathStrings;
 	}
-	
+
+	/**
+	 * 查询单个音频信息
+	 * @param path 路径
+	 * @return 获取到，返回音乐信息，如果没有获取到，则返回 null
+     */
+	public StMusic queryAudioInfo(String path) {
+		List<StMusic> stMusics = queryAudioInfoS(path);
+		if (!ListUtils.isEmpty(stMusics)) {
+			return stMusics.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * 查询所有音频信息列表，里面包括id3信息等
+	 * @return
+     */
+	public List<StMusic> queryAudioInfoS() {
+		return queryAudioInfoS("");
+	}
+
+	/**
+	 * 查询指定目录下音频信息列表，里面包括id3信息等
+	 * @param path 指定路径
+	 * @return 返回列表
+     */
+	public List<StMusic> queryAudioInfoS(String path) {
+		if (null == mContext) {
+			Logcat.w("mContext is null!");
+			return new ArrayList<>();
+		}
+		Uri uri = Uri.parse(URI_STRING);
+		if (!checkValidProvider(uri)) {
+			Logcat.w("uri is not valid:" + uri);
+			return new ArrayList<>();
+		}
+
+		String selection;
+		String[] selectionArgs;
+		if (TextUtils.isEmpty(path)) {
+			selection = "type=?";
+			selectionArgs = new String[]{MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", "")};
+		} else {
+			selection = "type=? and path like ?";
+			selectionArgs = new String[]{MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", ""), path + "%"};
+		}
+
+		Cursor cursor = mContext.getContentResolver().query(uri,
+				new String[]{PATH, TRACK, ALBUM, ARTIST, NAME, DURATION},
+				selection, selectionArgs, null);
+		List<StMusic> stMusics = new ArrayList<>();
+		try {
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					StMusic stMusic = StMusic.createStMusic(cursor.getString(cursor.getColumnIndex(PATH)),
+							cursor.getString(cursor.getColumnIndex(TRACK)),
+							cursor.getString(cursor.getColumnIndex(ALBUM)),
+							cursor.getString(cursor.getColumnIndex(ARTIST)),
+							cursor.getString(cursor.getColumnIndex(NAME)),
+							cursor.getLong(cursor.getColumnIndex(DURATION)));
+					stMusics.add(stMusic);
+				}
+			}
+		} catch (Exception e) {
+
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+		return stMusics;
+	}
+
 	/**
 	 * 将数据插入媒体数据库中
 	 * @param path 路径

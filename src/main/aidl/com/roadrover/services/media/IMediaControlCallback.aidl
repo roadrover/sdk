@@ -3,33 +3,53 @@ package com.roadrover.services.media;
 
 interface IMediaControlCallback {
     /**
-    * 挂起媒体
-    */
+     * 挂起媒体
+     */
     void suspend();
 
     /**
-    * 恢复媒体
-    */
+     * 恢复媒体
+     */
     void resume();
 
+    /**
+     * 暂停
+     */
     void pause();
+
+    /**
+     * 播放
+     */
     void play();
 
     /**
-    * 退出媒体应用
-    */
+     * 播放暂停
+     */
+    void playPause();
+
+    /**
+     * 退出媒体应用
+     */
     void quitApp();
 
     /**
-    * 停止媒体
-    */
+     * 停止媒体
+     */
     void stop();
 
     /**
-    * 设置媒体音量，1最大，0最小
-    */
+     * 设置媒体音量，1最大，0最小
+     */
     void setVolume(float volume);
+
+    /**
+     * 下一曲
+     */
     void next();
+
+    /**
+     * 下一曲
+     */
     void prev();
 
     /**
@@ -64,4 +84,10 @@ interface IMediaControlCallback {
     * 视频是否被允许显示，比如手刹控制
     */
     void onVideoPermitChanged(boolean show);
+
+    /**
+     * 拖动音乐进度，从外部控制音乐进度
+     * @param msec 进度，ms
+     */
+    void seekTo(int msec);
 }

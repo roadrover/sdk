@@ -10,6 +10,7 @@ import android.os.IInterface;
 import android.text.TextUtils;
 
 import com.roadrover.sdk.system.IVISystem;
+import com.roadrover.sdk.utils.EventBusUtil;
 import com.roadrover.sdk.utils.Logcat;
 
 import java.util.ArrayList;
@@ -78,6 +79,16 @@ public abstract class BaseManager {
 		 * 语音服务的action
 		 */
 		public static final String VOICE_ACTION     = "com.roadrover.services.action.voice";
+
+		/**
+		 * 汽车仪表通信的服务的action
+		 */
+		public static final String CLUSTER_ACTION   = "com.roadrover.services.action.cluster";
+
+		/**
+		 * 导航服务的action
+		 */
+		public static final String NAVIGATION_ACTION = "com.roadrover.services.action.navigation";
 	}
 
 	/**
@@ -98,6 +109,7 @@ public abstract class BaseManager {
 	protected Context mContext = null;
 	private boolean mIsConnected = false; // 是否已经绑定服务
 	private ConnectListener mConnectListener;
+    private EventBusUtil mEventBus;
 
 	protected Set<IInterface> mICallbackS = new HashSet<IInterface>(); // 采用Set缓存回调集合
 	private boolean mIsRegisterReceiver = false; // 判断是否已经注册广播接收者
@@ -110,13 +122,16 @@ public abstract class BaseManager {
 	 * 构造函数
 	 * @param context 上下文
 	 * @param listener 服务监听
+     * @param useDefaultEventBus 是否使用默认的EventBus，如果需要不使用默认的EventBus，可以使用false
      */
-	protected BaseManager(Context context, ConnectListener listener) {
+	protected BaseManager(Context context, ConnectListener listener, boolean useDefaultEventBus) {
 		if (context != null) { // 获取应用 application的上下文，免得在 manager 里面持有外部Activity的指针
 			mContext = context.getApplicationContext();
 		}
 		mConnectListener = listener;
 		connect();
+
+        mEventBus = new EventBusUtil(this, useDefaultEventBus);
 	}
 
 	/**
@@ -231,6 +246,11 @@ public abstract class BaseManager {
 		if (null != mContext){
 			mContext = null;
 		}
+
+        if (mEventBus != null) {
+            mEventBus.destroy(this);
+            mEventBus = null;
+        }
 	}
 
 	/**
@@ -297,4 +317,44 @@ public abstract class BaseManager {
 			}
 		}
 	};
+
+    /**
+     * 注册EventBus
+     * @param object 宿主对象
+     */
+    public void registerEventBus(Object object) {
+        if (mEventBus != null) {
+            mEventBus.register(object);
+        }
+    }
+
+    /**
+     * 反注册EventBus
+     * @param object 宿主对象
+     */
+    public void unregisterEventBus(Object object) {
+        if (mEventBus != null) {
+            mEventBus.unregister(object);
+        }
+    }
+
+    /**
+     * 发送一个消息
+     * @param object 事件对象
+     */
+    protected void post(Object object) {
+        if (mEventBus != null) {
+            mEventBus.post(object);
+        }
+    }
+
+    /**
+     * 发送一个粘性消息
+     * @param object 时间对象
+     */
+    protected void postSticky(Object object) {
+        if (mEventBus != null) {
+            mEventBus.postSticky(object);
+        }
+    }
 }

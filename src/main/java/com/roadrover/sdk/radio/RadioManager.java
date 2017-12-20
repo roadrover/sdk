@@ -10,7 +10,6 @@ import com.roadrover.services.radio.IRadio;
 import com.roadrover.services.radio.IRadioCallback;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -37,6 +36,7 @@ public class RadioManager extends BaseManager {
 		void resume();
 		void pause();
 		void play();
+		void playPause();
 		void stop();
 		void next();
 		void prev();
@@ -60,14 +60,12 @@ public class RadioManager extends BaseManager {
 	}
 
 	public RadioManager(Context context, ConnectListener connectListener, RadioListener radioListener) {
-		super(context, connectListener);
+		super(context, connectListener, true);
 		mRadioListener = radioListener;
-		EventBus.getDefault().register(this);
 	}
 
 	@Override
 	public void disconnect() {
-		EventBus.getDefault().unregister(this);
 		mRadioListener = null;
 		mRadioCallback = null;
 		super.disconnect();
@@ -165,6 +163,10 @@ public class RadioManager extends BaseManager {
                     mRadioListener.play();
                     break;
 
+				case IVIRadio.EventControl.Action.PLAY_PAUSE:
+					mRadioListener.playPause();
+					break;
+
 				case IVIRadio.EventControl.Action.STOP:
 					mRadioListener.stop();
 					break;
@@ -216,24 +218,24 @@ public class RadioManager extends BaseManager {
 	private IRadioCallback mRadioCallback = new IRadioCallback.Stub() {
 		@Override
 		public void onFreqChanged(int freq) {
-			EventBus.getDefault().post(new IVIRadio.EventFreqChanged(freq));
+			post(new IVIRadio.EventFreqChanged(freq));
 		}
 
 		@Override
 		public void onScanResult(int freq, int signalStrength) {
-			EventBus.getDefault().post(new IVIRadio.EventScanResult(freq, signalStrength));
+			post(new IVIRadio.EventScanResult(freq, signalStrength));
 
 
 		}
 
 		@Override
 		public void onScanStart(boolean isScanAll) {
-			EventBus.getDefault().post(new IVIRadio.EventScanStart(isScanAll));
+			post(new IVIRadio.EventScanStart(isScanAll));
 		}
 
 		@Override
 		public void onScanEnd(boolean isScanAll) {
-			EventBus.getDefault().post(new IVIRadio.EventScanEnd(isScanAll));
+			post(new IVIRadio.EventScanEnd(isScanAll));
 		}
 
 		@Override
@@ -242,93 +244,99 @@ public class RadioManager extends BaseManager {
 			if(mRadioScanAbortListener!=null){
 				mRadioScanAbortListener.onScanAbort(isScanAll);
 			}
-			EventBus.getDefault().post(new IVIRadio.EventScanAbort(isScanAll));
+			post(new IVIRadio.EventScanAbort(isScanAll));
 		}
 
 		@Override
 		public void onSignalUpdate(int freq, int signalStrength) {
-			EventBus.getDefault().post(new IVIRadio.EventSignalUpdate(freq, signalStrength));
+			post(new IVIRadio.EventSignalUpdate(freq, signalStrength));
 		}
 
         @Override
         public void suspend() throws RemoteException {
-            EventBus.getDefault().post(new IVIRadio.EventControl(
+            post(new IVIRadio.EventControl(
                     IVIRadio.EventControl.Action.SUSPEND));
         }
 
         @Override
         public void resume() throws RemoteException {
-            EventBus.getDefault().post(new IVIRadio.EventControl(
+            post(new IVIRadio.EventControl(
                     IVIRadio.EventControl.Action.RESUME));
         }
 
         @Override
         public void pause() throws RemoteException {
-            EventBus.getDefault().post(new IVIRadio.EventControl(
+            post(new IVIRadio.EventControl(
                     IVIRadio.EventControl.Action.PAUSE));
         }
 
         @Override
         public void play() throws RemoteException {
-            EventBus.getDefault().post(new IVIRadio.EventControl(
+            post(new IVIRadio.EventControl(
                     IVIRadio.EventControl.Action.PLAY));
         }
+
+		@Override
+		public void playPause() throws RemoteException {
+			post(new IVIRadio.EventControl(
+					IVIRadio.EventControl.Action.PLAY_PAUSE));
+		}
 
         @Override
 		public void stop() {
 			mIsOpen = false;
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.STOP));
 		}
 
 		@Override
 		public void next() {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.NEXT));
 		}
 
 		@Override
 		public void prev() {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.PREV));
 		}
 
 		@Override
 		public void quitApp() {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.QUIT_APP));
 		}
 
 		@Override
 		public void select(int index) {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.SELECT, index));
 		}
 
 		@Override
 		public void setFavour(boolean isFavour) {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.SET_FAVOUR, isFavour ? 1 : 0));
 		}
 
 		@Override
 		public void onRdsPsChanged(int pi, int freq, String ps) {
-			EventBus.getDefault().post(new IVIRadio.EventRdsPs(pi, freq, ps));
+			post(new IVIRadio.EventRdsPs(pi, freq, ps));
 		}
 
 		@Override
 		public void onRdsRtChanged(int pi, int freq, String rt) {
-			EventBus.getDefault().post(new IVIRadio.EventRdsRt(pi, freq, rt));
+			post(new IVIRadio.EventRdsRt(pi, freq, rt));
 		}
 
 		@Override
 		public void onRdsMaskChanged(int pi, int freq, int pty, int tp, int ta) {
-			EventBus.getDefault().post(new IVIRadio.EventRdsMask(pi, freq, pty, tp, ta));
+			post(new IVIRadio.EventRdsMask(pi, freq, pty, tp, ta));
 		}
 
 		@Override
 		public void onTuneRotate(boolean add) {
-			EventBus.getDefault().post(new IVIRadio.EventControl(
+			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.TUNE_ROTATE, add ? 1 : 0));
 		}
 	};

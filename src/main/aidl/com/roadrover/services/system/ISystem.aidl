@@ -134,4 +134,5 @@ interface ISystem {
      * 启用/禁用TP触摸
      */
     void setTPTouch(boolean enable);
+
 }

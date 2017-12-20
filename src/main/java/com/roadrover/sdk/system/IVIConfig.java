@@ -1,6 +1,7 @@
 package com.roadrover.sdk.system;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
@@ -10,6 +11,7 @@ import com.roadrover.sdk.avin.IVITV;
 import com.roadrover.sdk.avin.VideoParam;
 import com.roadrover.sdk.bluetooth.IVIBluetooth;
 import com.roadrover.sdk.car.IVICar;
+import com.roadrover.sdk.cluster.IVICluster;
 import com.roadrover.sdk.radio.IVIRadio;
 import com.roadrover.sdk.utils.EnvironmentUtils;
 import com.roadrover.sdk.utils.IniFileUtil;
@@ -33,6 +35,8 @@ public class IVIConfig {
 
     private static final String SECTION_ENVIRONMENT = "Environment"; // 存储设备section名称
     private static final String SECTION_CAMERA_INDEX = "CameraIndex";
+    private static final String SECTION_CAMERA_AVIN_PORT = "AVINVideoPort"; //AC8 CameraIndex和Port需要分开设置
+    private static final String SECTION_AVIN_AUDIO_PORT = "AVINAudioPort"; //AC8 AVIN音频端口配置
     private static final String SECTION_AVINPUT = "AVInput";         // AV Input显示
     private static final String SECTION_AVIN_VIDEO_ADJUST = "AVInVideoAdjust";  // 是否支持AVIN视频参数调节功能
     private static final String SECTION_POWER = "Power";
@@ -45,6 +49,7 @@ public class IVIConfig {
     private static final String SECTION_MODE_CONTROL = "ModeControl";
     private static final String SECTION_MEMORY_TO_HOME = "MemoryToHome";
     private static final String SECTION_MAP_DATA = "MapData";
+    private static final String SECTION_KEY_ANTI_SHAKE = "KeyAntiShake";
 
     private static final String SECTION_HOME = "Home";
     private static final String SECTION_AUDIO = "Audio";
@@ -77,6 +82,7 @@ public class IVIConfig {
     // 收音机
     private static final String RADIO_LOCATION = "Location";
     private static final String RADIO_NEED_RDS = "NeedRds";
+    private static final String RADIO_NEED_LOCATION = "NeedLocation";
     private static final String RADIO_RENAME_STATION = "RenameStation";
     private static final String RADIO_ID = "RadioId"; // 收音机id
     private static final String RADIO_PRESTORE_FM = "RadioPrestoreFm";//预存电台
@@ -122,6 +128,7 @@ public class IVIConfig {
     private static final String CONNECTED_GOTO_PAGE = "CONNECTED_GOTO_PAGE"; // 连接之后，强制调转哪个页面
     private static final String BLUETOOTH_CONTACT = "BT_CONTACT"; // 蓝牙联系人名字的格式
     private static final String LETTER_SLIDE_BAR = "LETTER_SLIDE_BAR"; // 蓝牙通讯录界面是否需要显示滑动条
+    private static final String BLUETOOTH_NAVI_START = "BT_NAVI_START"; // 蓝牙通话界面是否显示启动导航按钮
     private static final String T3_BT_SERIAL_FILE = "/dev/ttyS3";
     private static final String BLUETOOTH_CONTACT_SORT = "BT_CONTACT_SPECIAL_FIRST"; // 蓝牙电话本排序方式，特殊字符排前还是排后
 
@@ -182,6 +189,7 @@ public class IVIConfig {
     private static final String MUSIC_FORMAT = "Music";
     private static final String IMAGE_FORMAT = "Image";
     private static final String MEDIA_NEED_PLAYTIME = "needPlayTime";
+    private static final String MEDIA_CHANGE_MIN_TIME = "ChangeMinTime";
 
     // 音频
     // 内置前置音量不可以被应用更改，由硬件工程师根据不同的平台预先调好
@@ -195,6 +203,10 @@ public class IVIConfig {
     private static final String TV2_PRE_VOLUME = "TV2_PreVolume";       //TV2内置前置音量
     private static final String AUX_PRE_VOLUME = "AUX_PreVolume";       //AUX内置前置音量
     private static final String A2DP_PRE_VOLUME = "A2DP_PreVolume";     //A2DP内置前置音量
+
+    // 音量曲线
+    private static final String AK7601_VOLUME_CURVE = "AK7601VolumeCurve";
+    private static final String BD37534_VOLUME_CURVE = "BD37534VolumeCurve";
 
     // 状态栏设置
     private static final String SECTION_SYSTEM_UI = "SystemUI"; // 状态栏
@@ -218,6 +230,11 @@ public class IVIConfig {
     // 行车秘书
     private static final String SECTION_CAR_ASSISTANT = "CarAssistant";
     private static final String USABLE_SCREEN_HEIGHT = "UsableScreenHeight";
+
+    // 平台类配置
+    private static final String SECTION_PLATFORM = "Platform"; // 平台配置
+    private static final String MCU_SERIAL_BAUD_RATE = "MCU_SERIAL_BAUD_RATE"; // mcu串口波特率
+    private static final String CLUSTER_ID = "cluster"; // 仪表通信的方式
 
     private static IniFileUtil mIniFileUtil = null; // INI文件工具类对象
 
@@ -331,6 +348,24 @@ public class IVIConfig {
     }
 
     /**
+     * 获取CVBS Camera的Port口
+     * @param avId
+     * @return AVIn的Port，用于需要Camera的Index和Port需要分开设的情况（AC8）
+     */
+    public static int getCameraAVInPort(int avId) {
+        return getInteger(SECTION_CAMERA_AVIN_PORT, IVIAVIn.Id.getName(avId), 1);
+    }
+
+    /**
+     * 获取AVIN Audio 端口配置
+     * @param avId 音源类型 : AV AV2 TV TV2 Aux
+     * @return
+     */
+    public static int getAVINAudioPort(int avId) {
+        return getInteger(SECTION_AVIN_AUDIO_PORT, IVIAVIn.Id.getName(avId), 0);
+    }
+
+    /**
      * 获取AVIN是否支持视频参数调节功能
      *
      * @return true支持，false不支持，默认为true
@@ -382,6 +417,10 @@ public class IVIConfig {
 
     public static boolean isRadioNeedTA() {
         return getBoolean(SECTION_RADIO, RADIO_NEED_TA, true);
+    }
+
+    public static boolean isNeedLocation() {
+        return getBoolean(SECTION_RADIO, RADIO_NEED_LOCATION, true);
     }
 
     /**
@@ -676,6 +715,14 @@ public class IVIConfig {
         return getBoolean(SECTION_BLUETOOTH, LETTER_SLIDE_BAR, true);
     }
 
+    /**
+     * 获取蓝牙通话界面是否显示导航按钮
+     * @return
+     */
+    public static boolean getBluetoothNaviBtnVisibility() {
+        return getBoolean(SECTION_BLUETOOTH, BLUETOOTH_NAVI_START, true);
+    }
+
     public static boolean isBluetoothContactSpecialFirst() {
         return getBoolean(SECTION_BLUETOOTH, BLUETOOTH_CONTACT_SORT,false);
     }
@@ -809,6 +856,46 @@ public class IVIConfig {
                 Logcat.w("Not realization channel: " + IVIAudio.Channel.getName(channel));
                 return defaultValue;
         }
+    }
+
+    /**
+     * 获取AK7601音量曲线
+     * @return
+     */
+    public static float[] getAK7601VolumeCurve() {
+        return getVolumeCurve(AK7601_VOLUME_CURVE);
+    }
+
+    /**
+     * 获取BD37534音量曲线
+     * @return
+     */
+    public static float[] getBD37534VolumeCurve() {
+        return getVolumeCurve(BD37534_VOLUME_CURVE);
+    }
+
+    /**
+     * 获取音频区音量曲线，音频曲线中配置中允许有xxx(音量)，以便于说明
+     * @param name {@link #AK7601_VOLUME_CURVE} 或者 {@link #BD37534_VOLUME_CURVE}
+     * @return
+     */
+    private static float[] getVolumeCurve(@NonNull String name) {
+        float[] ret = null;
+        String[] array = getCutStringArray(SECTION_AUDIO, name, "(");
+        if (null != array) {
+            final int length = array.length;
+            ret = new float[length];
+            for (int i = 0;i < length;i++) {
+                try {
+                    ret[i] = Float.parseFloat(array[i]);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
     }
 
     /**
@@ -1016,6 +1103,14 @@ public class IVIConfig {
     }
 
     /**
+     * 获取媒体信息改变最小时间
+     * @return
+     */
+    public static int getMediaChangeMinTime(int def) {
+        return getInteger(SECTION_MEDIA, MEDIA_CHANGE_MIN_TIME, def);
+    }
+
+    /**
      * 获取配置的视频通道
      * @param avId 见{@link com.roadrover.sdk.avin.IVIAVIn.Id}
      * @return
@@ -1115,6 +1210,27 @@ public class IVIConfig {
             }
         }
         return ret;
+    }
+
+    /**
+     * 获取配置文件中的 StringArray
+     * @param section
+     * @param name
+     * @param cut
+     * @return
+     */
+    private static String[] getCutStringArray(String section, String name, String cut) {
+        String[] strings = getStringArray(section, name);
+        if (null != strings) {
+            final int length = strings.length;
+            for (int i = 0;i < length;i++) {
+                final String string = strings[i];
+                if (!TextUtils.isEmpty(string)) {
+                    strings[i] = string.substring(0, string.indexOf(cut));
+                }
+            }
+        }
+        return strings;
     }
 
     /**
@@ -1324,5 +1440,35 @@ public class IVIConfig {
      */
     public static boolean isPanelLightAllowControl() {
         return getBoolean(SECTION_PANEL_LIGHT, PANEL_LIGHT_CONTROL, false);
+    }
+
+    /**
+     * 获取MCU串口波特率，默认为 115200
+     * @return
+     */
+    public static int getMcuSerialBaudRate() {
+        return getInteger(SECTION_PLATFORM, MCU_SERIAL_BAUD_RATE, 115200);
+    }
+
+    /**
+     * 获取按键防抖的时间
+     * @param id 按键ID，见{@link com.roadrover.sdk.car.IVICar.Key.Id}
+     * @return
+     */
+    public static int getKeyAntiShakeTime(int id) {
+        int ret = 0;
+        final String name = IVICar.Key.getName(id);
+        if (!TextUtils.isEmpty(name)) {
+            ret = getInteger(SECTION_KEY_ANTI_SHAKE, name, ret);
+        }
+        return ret;
+    }
+
+    /**
+     * 获取仪表通信的方式
+     * @return
+     */
+    public static int getClusterId() {
+        return getInteger(SECTION_PLATFORM, CLUSTER_ID, IVICluster.ID.UNKNOWN);
     }
 }

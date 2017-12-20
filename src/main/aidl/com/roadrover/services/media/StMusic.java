@@ -3,6 +3,7 @@ package com.roadrover.services.media;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 /**
  * Created by y on 2017/2/24.
@@ -88,5 +89,17 @@ public class StMusic implements Parcelable {
         stMusic.mName = name;
         stMusic.mDuration = duration;
         return stMusic;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o != null && o instanceof StMusic) {
+            StMusic other = (StMusic) o;
+            return TextUtils.equals(mPath, other.mPath);
+        }
+        return super.equals(o);
     }
 }

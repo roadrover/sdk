@@ -18,6 +18,7 @@ public class IVIBluetooth {
     public static class ID {
         public static final int LR181 = 0; // 文强的LR181蓝牙模块
         public static final int BC5 = 1; // BC5蓝牙模块
+        public static final int BA450 = 2; // 文强的BA450蓝牙模块
     }
 
     /**
@@ -198,12 +199,25 @@ public class IVIBluetooth {
         }
 
         /**
+         * 蓝牙是否是连接状态
+         * @return 连接状态返回true，其他返回false
+         */
+        public boolean isConnected() {
+            return mStatus == CONNECTED;
+        }
+
+        /**
          * 返回指定状态的名字，一般用于打印
          * @param status 例：1 返回 "CONNECTED"
          * @return
          */
         public static String getName(int status) {
             return LogNameUtil.getName(status, BluetoothConnectStatus.class);
+        }
+
+        @Override
+        public String toString() {
+            return getName() + " " + LogNameUtil.toString(this);
         }
     }
 
@@ -577,6 +591,11 @@ public class IVIBluetooth {
         public static final int THREE_TALKING  = 8;
 
         /**
+         * 第三方通话挂断状态，其值为 {@value}
+         */
+        public static final int THREE_HANGUP = 9;
+
+        /**
          * 蓝牙是否正在使用，非常态和非挂断状态都认为蓝牙正在使用，需要发出声音
          * @param status {@link CallStatus}
          * @return 是返回true
@@ -702,6 +721,11 @@ public class IVIBluetooth {
         public String getName() {
             return CallStatus.getName(mStatus);
         }
+
+        @Override
+        public String toString() {
+            return getName() + " " + LogNameUtil.toString(this);
+        }
     }
 
     /**
@@ -740,6 +764,19 @@ public class IVIBluetooth {
             this.status = status;
             this.addr = addr;
             this.name = name;
+        }
+
+        /**
+         * 当前是否是连接状态
+         * @return
+         */
+        public boolean isConnected() {
+            return status == BluetoothConnectStatus.CONNECTED;
+        }
+
+        @Override
+        public String toString() {
+            return BluetoothConnectStatus.getName(status) + " " + LogNameUtil.toString(this);
         }
     }
 
@@ -842,6 +879,10 @@ public class IVIBluetooth {
             this.album = album;
             this.duration = duration;
         }
+
+        public String toString() {
+            return LogNameUtil.toString(this);
+        }
     }
 
     /**
@@ -916,6 +957,36 @@ public class IVIBluetooth {
          * @param value 0-5
          */
         public EventSignalValue(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * 自动连接的Event类
+     */
+    public static class EventAutoLink {
+        public boolean value;
+
+        /**
+         * 构造
+         * @param value 0-5
+         */
+        public EventAutoLink(boolean value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * 蓝牙开关的Event类
+     */
+    public static class EventPowerState {
+        public boolean value;
+
+        /**
+         * 构造
+         * @param value
+         */
+        public EventPowerState(boolean value) {
             this.value = value;
         }
     }

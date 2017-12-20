@@ -50,6 +50,10 @@ interface IRadioCallback {
      */
     void play();
     /**
+     * 播放暂停
+     */
+    void playPause();
+    /**
      * 停止
      */
     void stop();

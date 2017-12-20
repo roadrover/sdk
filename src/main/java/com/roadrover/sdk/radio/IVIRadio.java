@@ -42,6 +42,10 @@ public class IVIRadio {
         public static final int NONE = -1;
         public static final int AM = 0;
         public static final int FM = 1;
+
+        public static String getName(int band) {
+            return LogNameUtil.getName(band, Band.class);
+        }
     }
 
     public static class Location {
@@ -264,6 +268,7 @@ public class IVIRadio {
             public static final int RESUME = 9;
             public static final int PAUSE = 10;
             public static final int PLAY = 11;
+            public static final int PLAY_PAUSE = 12;
         }
         public int mAction;
         public int mValue;

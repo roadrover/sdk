@@ -155,4 +155,13 @@ interface ICarCallback {
      * @param datas 仪表发送过来的数据
      */
     void onClusterMessage(in byte[] datas);
+
+    /**
+     * 胎压状态发生变化
+     * @param id          ID 定义 见{@link com.roadrover.sdk.car.TirePressure}
+     * @param rawValue    数据 见{@link com.roadrover.sdk.car.TirePressure}
+     * @param extraValue  附加状态数据 见{@link com.roadrover.sdk.car.TirePressure}
+     * @param dotType     温度小数点标志 见{@link com.roadrover.sdk.car.TirePressure}
+     */
+    void onTirePressureChanged(int id, int rawValue, int extraValue, int dotType);
 }

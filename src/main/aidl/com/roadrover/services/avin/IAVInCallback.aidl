@@ -34,6 +34,7 @@ interface IAVInCallback {
     void quitApp();
     /**
      * 选择指定下标播放
+     * @param index 指定的下标
      */
     void select(int index);
     /**

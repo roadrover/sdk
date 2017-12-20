@@ -76,13 +76,17 @@ public class VideoParam extends Param {
          */
         public static final int PAL = 2;
         /**
+         * SECAM制式, 其值 {@value}
+         */
+        public static final int SECAM = 3;
+        /**
          * 最小值, 其值 {@value}
          */
         public static final int MIN = AUTO;
         /**
          * 最大值, 其值 {@value}
          */
-        public static final int MAX = PAL;
+        public static final int MAX = SECAM;
 
         /**
          * 获取CVBS类型的名字
@@ -111,6 +115,9 @@ public class VideoParam extends Param {
          * @return
          */
         public static int getVideoWidth(int type) {
+            if (AUTO == type) {
+                type = IVIConfig.getAVInDefaultCVBSType();
+            }
             return getCVBSVideoWidth(type);
         }
 
@@ -120,7 +127,16 @@ public class VideoParam extends Param {
          * @return
          */
         private static int getCVBSVideoHeight(int type) {
-            return (type == PAL) ? 576 : 480;
+            switch (type) {
+                case NTSC:
+                    return 480;
+                case PAL:
+                    // fall through
+                case SECAM:
+                    // fall through
+                default:
+                    return 576;
+            }
         }
 
         /**

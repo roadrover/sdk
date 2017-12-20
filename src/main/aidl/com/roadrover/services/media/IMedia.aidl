@@ -124,6 +124,12 @@ interface IMedia {
     void next();
 
     /**
+     * 拖动当前音乐的进度
+     * param msec 单位毫秒
+     */
+    void seekTo(int msec);
+
+    /**
     * 打开媒体UI（APK）
     */
     void launchApp(int mediaType);
@@ -186,4 +192,11 @@ interface IMedia {
      * @param path 文件路径
      */
     void sendDeleteFileEvent(String path);
+
+    /**
+     * 文件写入完成 </br>
+     * 部分平台刚刚插入U盘时，拷贝文件，通过MultiFileObserver没办法监听到，所以增加接口，在拷贝文件，写入文件时候通知Services </br>
+     * @param path 文件路径
+     */
+    void sendWriteFinishedEvent(String path);
 }

@@ -268,20 +268,31 @@ public class IVIAVIn {
         void select(int index);
     }
 
+    /**视频信号变化EventBus事件类*/
     public static class EventVideoSignalChanged {
+        /**{@link IVIAVIn.Id}*/
         public int mAvId;
+        /**{@link IVIAVIn.Signal}*/
         public int mSignal;
         public EventVideoSignalChanged(int avId, int signal) {
             mAvId = avId;
             mSignal = signal;
         }
+
+        /**
+         * 是否有信号
+         * @return true有信号，false无信号
+         */
         public boolean hasSignal() {
             return Signal.hasSignal(mSignal);
         }
     }
 
+    /**CVBS视频类型变化EventBus事件类*/
     public static class EventCvbsTypeChanged {
+        /**{@link IVIAVIn.Id}*/
         public int mAvId;
+        /**{@link com.roadrover.sdk.avin.VideoParam.CvbsType}*/
         public int mCvbsType;
         public EventCvbsTypeChanged(int avId, int cvbsType) {
             mAvId = avId;
@@ -289,8 +300,11 @@ public class IVIAVIn {
         }
     }
 
+    /**源插入状态变化EventBus事件类*/
     public static class EventSourcePluginChanged {
+        /**{@link IVIAVIn.Id*/
         public int mAvId;
+        /**true插入，false未插入*/
         public boolean mPlugin;
         public EventSourcePluginChanged(int avId, boolean plugin) {
             mAvId = avId;
@@ -298,6 +312,7 @@ public class IVIAVIn {
         }
     }
 
+    /**EventBus事件控制类*/
     public static class EventControl {
         public static class Action {
             public static final int PREV = 1;
@@ -309,7 +324,9 @@ public class IVIAVIn {
             public static final int RESUME = 7;
         }
 
+        /**{@link IVIAVIn.EventControl.Action}*/
         public int mAction;
+        /**参数值*/
         public int mValue;
 
         public EventControl(int action) {

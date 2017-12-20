@@ -488,6 +488,8 @@ public class IVICar {
             public static final int SCAN_UP = 42;
             public static final int SCAN_DOWN = 43;
             public static final int ALL_SCAN = 47;
+            public static final int SPIN_UP = 48;
+            public static final int SPIN_DOWN = 49;
             public static final int CLOSE_MEDIA = 50;
             public static final int UP = 58;
             public static final int DOWN = 59;
@@ -506,6 +508,9 @@ public class IVICar {
             public static final int STANDBY_CLOCK = 84;
             public static final int STANDBY_BK_OFF = 85;
             public static final int STANDBY = 86;
+            public static final int PAUSE = 87;
+            public static final int SET = 88;
+
             public static final int BT = 89;
             public static final int KEY_0 = 90;
             public static final int KEY_1 = 91;
@@ -546,6 +551,8 @@ public class IVICar {
             public static final int DUAL_ROTATE_CW = 193;    // 双区车型的旋钮，顺时针，由应用处理
             public static final int DUAL_ROTATE_CCW = 194;   // 双区车型的旋钮，逆时针，由应用处理
             public static final int ALL_MUTE = 195;          // 下旋钮短按双区静音，前后台同时MUTE,主要应用在双区媒体的按键控制上
+            public static final int REAR_BACK = 198;         // 后排：返回
+            public static final int PM_TWO_POINT_FIVE = 199; // PM2.5打开
             public static final int REBOOT = 1000;      // 重启
             public static final int PREV_ANSWER = 1001; // 正常状态是上一曲，来电状态是接听
             public static final int NEXT_HANGUP = 1002; // 正常状态是下一曲，来电或者通话状态是挂断
@@ -606,8 +613,10 @@ public class IVICar {
             public static final String DUAL_ROTATE_CW = "dual_rotate_cw"; // 双区车型的旋钮，顺时针，由应用处理
             public static final String DUAL_ROTATE_CCW = "dual_rotate_ccw";// 双区车型的旋钮，逆时针，由应用处理
             public static final String ALL_MUTE = "all_mute";              // 下旋钮短按双区静音，前后台同时MUTE,主要应用在双区媒体的按键控制上
+            public static final String REAR_BACK   = "rear_back";         // 后排：返回
             public static final String EQ = "eq";                          // EQ均衡器
             public static final String ANDROID_KEY = "android_key";        // 系统按键
+            public static final String BT = "bt";                           // 接听电话
         }
 
         public static class Type {
@@ -678,8 +687,10 @@ public class IVICar {
             mNameToIdMap.put(Name.DUAL_ROTATE_CW,    Id.DUAL_ROTATE_CW);
             mNameToIdMap.put(Name.DUAL_ROTATE_CCW,   Id.DUAL_ROTATE_CCW);
             mNameToIdMap.put(Name.ALL_MUTE,   Id.ALL_MUTE);
+            mNameToIdMap.put(Name.REAR_BACK,    Id.REAR_BACK);
             mNameToIdMap.put(Name.EQ,         Id.EQ);
             mNameToIdMap.put(Name.ANDROID_KEY, Id.ANDROID_KEY);
+            mNameToIdMap.put(Name.BT, Id.BT);
         }
 
         public Key(int id, int type) {
@@ -836,9 +847,12 @@ public class IVICar {
         }
 
         public static class DeviceId {
-            public static final int AVM360       = 1;         // 360全景
-            public static final int AMBIENTLIGHT = 8;         // 氛围灯
-            public static final int CARSET       = 10;        // 原车设置
+            public static final int AVM360       = 0x01;         // 360全景
+            public static final int DRIVING_RECORDER = 0x02;    //行车记录仪
+            public static final int PM2_PONIT_5 = 0x04;         //PM2.5
+            public static final int AMBIENTLIGHT = 0x08;         // 氛围灯
+            public static final int AUTO_PARK  = 0x09;         // 自动泊车
+            public static final int CARSET       = 0x0A;        // 原车设置
         }
 
 
@@ -1283,4 +1297,13 @@ public class IVICar {
             mDatas = datas;
         }
     }
+
+    /**
+     * 发送触摸坐标给单片机
+     */
+    public static class TouchClickEvent {
+        public static final int UP = 1;     //弹起
+        public static final int DOWN = 0;  //按下
+    }
+
 }

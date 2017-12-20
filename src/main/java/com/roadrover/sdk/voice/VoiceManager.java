@@ -9,7 +9,6 @@ import com.roadrover.sdk.BaseManager;
 import com.roadrover.services.voice.IVoice;
 import com.roadrover.services.voice.IVoiceCallback;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
@@ -31,15 +30,12 @@ public class VoiceManager extends BaseManager {
      * @param listener 监听连接是否成功的回调
      */
     public VoiceManager(Context context, ConnectListener listener) {
-        super(context, listener);
-
-        EventBus.getDefault().register(this);
+        super(context, listener, true);
     }
 
     @Override
     public void disconnect() {
         super.disconnect();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -356,7 +352,7 @@ public class VoiceManager extends BaseManager {
     private IVoiceCallback.Stub mIVoiceCallback = new IVoiceCallback.Stub() {
         @Override
         public void openVoiceApp() throws RemoteException {
-            EventBus.getDefault().post(new IVIVoice.EventVoiceCallback(IVIVoice.EventVoiceCallback.OPEN_VOICE_APP));
+            post(new IVIVoice.EventVoiceCallback(IVIVoice.EventVoiceCallback.OPEN_VOICE_APP));
         }
     };
 

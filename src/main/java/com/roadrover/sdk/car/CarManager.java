@@ -16,7 +16,6 @@ import com.roadrover.services.car.ICarCallback;
 import com.roadrover.services.car.IMcuUpgradeCallback;
 import com.roadrover.sdk.utils.Logcat;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -60,6 +59,9 @@ public class CarManager extends BaseManager {
 
         // 车外温度信息
         void onOutsideTempChanged(float tempC);
+
+        //胎压信息
+        void onTirePressureChanged(int id, int rawValue, int extraValue, int dotType);
 
         // 按键消息
         void onKeyPushed(int id, int type);
@@ -108,14 +110,12 @@ public class CarManager extends BaseManager {
     }
 
     public CarManager(Context context, ConnectListener connectListener, CarListener carListener) {
-        super(context, connectListener);
+        super(context, connectListener, true);
         mCarListener = carListener;
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void disconnect() {
-        EventBus.getDefault().unregister(this);
         super.disconnect();
     }
 
@@ -150,11 +150,11 @@ public class CarManager extends BaseManager {
 
         // 主动发送一次版本号给需要者
         if (!TextUtils.isEmpty(protocolMcuVersion)) {
-            EventBus.getDefault().post(new IVICar.EventMcuVersion(protocolMcuVersion));
+            post(new IVICar.EventMcuVersion(protocolMcuVersion));
         }
 
         // 主动发送一次车灯消息，360全景需要用，左右转向灯会触发360全景
-        EventBus.getDefault().post(new IVICar.Light(0, mLightStatusMask));
+        post(new IVICar.Light(0, mLightStatusMask));
 
         // 主动发送一次手刹消息
         requestHandbrakeEvent();
@@ -257,6 +257,13 @@ public class CarManager extends BaseManager {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTirePressureChanged(TirePressure tire) {
+        if (mCarListener != null) {
+            mCarListener.onTirePressureChanged(tire.mId, tire.rawValue, tire.extraValue, tire.dotType);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onKeyPushed(IVICar.Key key) {
         if (mCarListener != null) {
             mCarListener.onKeyPushed(key.mId, key.mType);
@@ -279,7 +286,7 @@ public class CarManager extends BaseManager {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRadarChanged(IVICar.Radar radar) {
-        mRadar = radar;        if (mCarListener != null) {
+        if (mCarListener != null) {
             mCarListener.onRadarChanged(radar);
         }
     }
@@ -385,140 +392,146 @@ public class CarManager extends BaseManager {
     private ICarCallback mCarCallback = new ICarCallback.Stub() {
         @Override
         public void onMcuVersion(String version) {
-            EventBus.getDefault().post(new IVICar.EventMcuVersion(version));
+            post(new IVICar.EventMcuVersion(version));
         }
 
         @Override
         public void onAccChanged(boolean on) {
-            EventBus.getDefault().postSticky(new IVICar.Acc(on));
+            postSticky(new IVICar.Acc(on));
         }
 
         @Override
         public void onCcdChanged(int status) {
-            EventBus.getDefault().postSticky(new IVICar.Ccd(status));
+            postSticky(new IVICar.Ccd(status));
         }
 
         @Override
         public void onHandbrakeChanged(boolean hold) {
-            EventBus.getDefault().post(new IVICar.Handbrake(hold));
+            post(new IVICar.Handbrake(hold));
         }
 
         @Override
         public void onDoorChanged(int changeMask, int statusMask) {
             mDoorOldStatusMask = mDoorStatusMask;
             mDoorStatusMask = statusMask;
-            EventBus.getDefault().post(new IVICar.Door(changeMask, statusMask));
+            post(new IVICar.Door(changeMask, statusMask));
         }
 
         @Override
         public void onLightChanged(int changeMask, int statusMask) {
             mLightStatusMask = statusMask;
-            EventBus.getDefault().post(new IVICar.Light(changeMask, statusMask));
+            post(new IVICar.Light(changeMask, statusMask));
         }
 
         @Override
         public void onHeadLightChanged(boolean on) {
-            EventBus.getDefault().post(new IVICar.HeadLight(on));
+            post(new IVICar.HeadLight(on));
         }
 
         @Override
         public void onClimateChanged(int id, int rawValue) {
             mClimates.set(id, rawValue);
             if (id == Climate.Id.INSIDE_TEMP) {
-                EventBus.getDefault().post(new IVICar.InsideTemp(rawValue));
+                post(new IVICar.InsideTemp(rawValue));
             } else {
-                EventBus.getDefault().post(new Climate(id, rawValue));
+                post(new Climate(id, rawValue));
             }
         }
 
         @Override
         public void onOutsideTempChanged(int rawValue) {
-            EventBus.getDefault().post(new IVICar.OutsideTemp(rawValue));
+            post(new IVICar.OutsideTemp(rawValue));
+        }
+
+        @Override
+        public void onTirePressureChanged(int id, int rawValue, int extraValue, int dotType) {
+            post(new TirePressure(id, rawValue, extraValue, dotType));
         }
 
         @Override
         public void onKeyPushed(int id, int type) {
-            EventBus.getDefault().post(new IVICar.Key(id, type));
+            post(new IVICar.Key(id, type));
         }
 
         @Override
         public void onAlertMessage(int messageCode) {
-            EventBus.getDefault().post(new IVICar.AlertMessage(messageCode));
+            post(new IVICar.AlertMessage(messageCode));
         }
 
         @Override
         public void onRealTimeInfoChanged(int id, float value) {
-            EventBus.getDefault().post(new IVICar.RealTimeInfo(id, value));
+            post(new IVICar.RealTimeInfo(id, value));
         }
 
         @Override
         public void onTripChanged(int id, int index, float value) {
-            EventBus.getDefault().post(new Trip(id, index, value));
+            post(new Trip(id, index, value));
         }
 
         @Override
         public void onExtraStateChanged(int id, float value) {
-            EventBus.getDefault().post(new IVICar.ExtraState(id, value));
+            post(new IVICar.ExtraState(id, value));
         }
 
         @Override
         public void onRadarChanged(int radarType, byte[] radarData) {
-            EventBus.getDefault().post(new IVICar.Radar(radarType, radarData));
+            mRadar = new IVICar.Radar(radarType, radarData);
+            post(mRadar);
         }
 
         @Override
         public void onCarSettingChanged(int carId, byte[] data) {
-            EventBus.getDefault().post(new IVICar.Setting(carId, data));
+            post(new IVICar.Setting(carId, data));
         }
 
         @Override
         public void onExtraDeviceChanged(int carId, int deviceId, byte[] extraDeviceData) {
-            EventBus.getDefault().post(new IVICar.ExtraDevice(carId, deviceId, extraDeviceData));
+            post(new IVICar.ExtraDevice(carId, deviceId, extraDeviceData));
         }
 
         @Override
         public void onCmdParamChanged(int id, byte[] paramData) {
-            EventBus.getDefault().post(new IVICar.CmdParam(id, paramData));
+            post(new IVICar.CmdParam(id, paramData));
         }
 
         @Override
         public void onMaintenanceChanged(int id, int mileage, int days) {
-            EventBus.getDefault().post(new IVICar.Maintenance(id, mileage, days));
+            post(new IVICar.Maintenance(id, mileage, days));
         }
 
         @Override
         public void onCarVINChanged(String VIN, int keyNumber) {
-            EventBus.getDefault().post(new IVICar.CarVIN(VIN, keyNumber));
+            post(new IVICar.CarVIN(VIN, keyNumber));
         }
 
         @Override
         public void onCarReportChanged(int carid, int type, int[] list) {
-            EventBus.getDefault().post(new IVICar.CarReport(carid, type, list));
+            post(new IVICar.CarReport(carid, type, list));
         }
 
         @Override
         public void onAutoParkChanged(int status) {
-            EventBus.getDefault().post(new IVICar.AutoPark(status));
+            post(new IVICar.AutoPark(status));
         }
 		
 		@Override
         public void onEnergyFlowChanged(int battery, int engineToTyre, int engineToMotor, int motorToTyre, int motorToBattery){
-            EventBus.getDefault().post(new IVICar.EnergyFlow(battery, engineToTyre, engineToMotor, motorToTyre, motorToBattery));
+            post(new IVICar.EnergyFlow(battery, engineToTyre, engineToMotor, motorToTyre, motorToBattery));
         }
 
         @Override
         public void onFastReverseChanged(boolean on) {
-            EventBus.getDefault().post(new IVICar.FastReverse(on));
+            post(new IVICar.FastReverse(on));
         }
 
         @Override
         public void onADKeyChanged(int channel, int value) throws RemoteException {
-            EventBus.getDefault().post(new IVICar.StudyKeyItem(channel, value));
+            post(new IVICar.StudyKeyItem(channel, value));
         }
 
         @Override
         public void onClusterMessage(byte[] datas) throws RemoteException {
-            EventBus.getDefault().post(new IVICar.EventClusterMessage(datas));
+            post(new IVICar.EventClusterMessage(datas));
         }
     };
 
@@ -873,7 +886,7 @@ public class CarManager extends BaseManager {
         if (mCarInterface != null) {
             try {
                 int status = mCarInterface.getHandbrakeStatus();
-                EventBus.getDefault().post(new IVICar.Handbrake(status));
+                post(new IVICar.Handbrake(status));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -889,6 +902,23 @@ public class CarManager extends BaseManager {
         if (mCarInterface != null) {
             try {
                 mCarInterface.sendTouchClick(x, y);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 发送触摸消息给单片机
+     * 行车记录仪触摸事件
+     * @param x  x轴坐标
+     * @param y  y轴坐标
+     * @param type 见{@link com.roadrover.sdk.car.IVICar.TouchClickEvent}
+     */
+    public void setTouch(int x, int y, int type){
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.setTouch(x, y, type);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1142,22 +1172,22 @@ public class CarManager extends BaseManager {
 
                     @Override
                     public void onSuccess(String mcuVersion) throws RemoteException {
-                        EventBus.getDefault().post(EventUpgradeMcu.success(mcuVersion));
+                        post(EventUpgradeMcu.success(mcuVersion));
                     }
 
                     @Override
                     public void onFailure(int errorCode) throws RemoteException {
-                        EventBus.getDefault().post(EventUpgradeMcu.failure(errorCode));
+                        post(EventUpgradeMcu.failure(errorCode));
                     }
 
                     @Override
                     public void onProgress(int progress) throws RemoteException {
-                        EventBus.getDefault().post(EventUpgradeMcu.progress(progress));
+                        post(EventUpgradeMcu.progress(progress));
                     }
 
                     @Override
                     public void onWaitMcuReboot() throws RemoteException {
-                        EventBus.getDefault().post(EventUpgradeMcu.waitMcuReboot());
+                        post(EventUpgradeMcu.waitMcuReboot());
                     }
                 });
             } catch (RemoteException e) {
@@ -1272,7 +1302,7 @@ public class CarManager extends BaseManager {
         }
 
         int status = getCcdStatus();
-        EventBus.getDefault().post(new IVICar.Ccd(status));
+        post(new IVICar.Ccd(status));
     }
 
     /**
@@ -1329,4 +1359,32 @@ public class CarManager extends BaseManager {
             }
         }
     }
+
+    /**
+     * 上位机系统升级和恢复时需暂停心跳
+     */
+    public void pauseHeartbeat() {
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.pauseHeartbeat();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 请求发送所有service端缓存的CMD_TPMS参数，通过CarListener回调或者EventBus获取
+     */
+    public void requestCmdTpmsEvent() {
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.requestCmdTpmsEvent();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

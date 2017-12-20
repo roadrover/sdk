@@ -7,6 +7,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.roadrover.sdk.system.IVISystem;
+import com.roadrover.sdk.utils.IniFileUtil;
+import com.roadrover.sdk.utils.Logcat;
+
+import java.io.File;
 
 /**
  * Setting定义
@@ -27,6 +31,14 @@ public class IVISetting {
      */
     public static final String ACTION = "com.roadrover.settings.model";
 
+    /** 设置配置文件路径 */
+    public static final String FILEPATH = "/etc/ivi-settings.ini";
+    /** visible */
+    public static final String VISIBLE = "Visible";
+    /** enable */
+    public static final String ENABLE = "Enable";
+    /** ini file object */
+    private static IniFileUtil mIniFile = null;
     /**
      * 启动设置页面
      * @param childName 设置名称，见{@link Global} {@link System} {@link Network}，为空则跳转设置主页面
@@ -189,6 +201,10 @@ public class IVISetting {
         public static final String WhetherRecord = "WhetherRecord";
         /**默认方控还是学习方控, 其值 {@value}*/
         public static final String SquareControl = "SquareControl";
+        /**主管模式密码*/
+        public static final String SuperPassword = "SuperPassword";
+        /**普工模式密码*/
+        public static final String OrdinaryPassword = "OrdinaryPassword";
     }
 
     /**
@@ -456,6 +472,10 @@ public class IVISetting {
      * System close
      */
     public static class SystemClose {
+        /**否,不封闭系统，主管模式 其值 {@value}*/
+        public static final String SUPER = "SUPER";
+        /**否,不封闭系统，普工模式 其值 {@value}*/
+        public static final String ORDINARY = "ORDINARY";
         /**否, 其值 {@value}*/
         public static final String NO = "NO";
         /**是, 其值 {@value}*/
@@ -828,5 +848,95 @@ public class IVISetting {
      */
     public static String getSquareControl(Context context) {
         return SettingModel.getContent(context, IVISetting.Global.NAME, Global.SquareControl);
+    }
+
+    /**
+     * 获取封闭系统的状态
+     * @param context
+     * @return  {@link SystemClose}  NO,SUPER  是未封闭主管模式   ORDINARY 是未封闭普工模式   YES 是全封闭
+     */
+    public static String getSystemClose(Context context) {
+        return SettingModel.getContent(context, IVISetting.Global.NAME, Global.SystemClose);
+    }
+
+    /**
+     * 获取wifi功能的可见性
+     * @return
+     */
+    public static boolean getWifiStatusVisible() {
+        return getVisible(Network.NAME, Network.WifiStatus);
+    }
+
+    /**
+     * 获取移动网络的可见性
+     * @return
+     */
+    public static boolean getMobileNetworkVisible() {
+        return getVisible(Network.NAME, Network.MobileNetwork);
+    }
+
+    /**
+     * 获取便携式热点的可见性
+     * @return
+     */
+    public static boolean getPortableHotSpotVisible() {
+        return getVisible(Network.NAME, Network.PortableHotSpot);
+    }
+
+    /**
+     * 获取移动网络的使能性
+     * @return
+     */
+    public static boolean getMobileNetworkEnable() {
+        return getEnable(Network.NAME, Network.MobileNetwork);
+    }
+
+    /**
+     * 获取可见性
+     * @param section
+     * @param key
+     * @return
+     */
+    public static boolean getVisible(@NonNull String section, @NonNull String key) {
+        return getProperty(section, key, VISIBLE);
+    }
+
+    /**
+     * 获取使能性
+     * @param section
+     * @param key
+     * @return
+     */
+    public static boolean getEnable(@NonNull String section, @NonNull String key) {
+        return getProperty(section, key, ENABLE);
+    }
+
+    /**
+     * 解析配置文件{@link #FILEPATH} 中的目标可见性或使能性
+     * @param section 比如：{@link Network#NAME}
+     * @param key 比如：{@link Network#WifiStatus}
+     * @param property {@link #VISIBLE} 或者{@link #ENABLE}
+     * @return
+     */
+    private static boolean getProperty(@NonNull String section, @NonNull String key, @NonNull String property) {
+        if (mIniFile == null) {
+            mIniFile = new IniFileUtil(new File(FILEPATH));
+        }
+        return parseBoolean(mIniFile.get(section, key + property), true);
+    }
+
+    /**
+     * 解析boolean对象
+     */
+    protected static boolean parseBoolean(Object object, boolean defValue) {
+        boolean ret = defValue;
+        if (object instanceof String) {
+            try {
+                ret = Boolean.parseBoolean((String) object);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
     }
 }

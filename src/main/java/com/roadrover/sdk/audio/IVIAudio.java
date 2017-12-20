@@ -20,6 +20,15 @@ public class IVIAudio {
          * BD37534，其值为 {@value}
          */
         public static final int BD37534 = 2;
+
+        /**
+         * 获取音效芯片名称
+         * @param id 见{@link ChipId}
+         * @return
+         */
+        public static final String getName(int id) {
+            return LogNameUtil.getName(id, ChipId.class, "Unknown chip id: " + id);
+        }
     }
 
     /**

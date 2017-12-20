@@ -2,8 +2,10 @@ package com.roadrover.sdk.media;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.text.TextUtils;
 
 import com.roadrover.sdk.audio.IVIAudio;
+import com.roadrover.sdk.utils.ByteUtil;
 import com.roadrover.sdk.utils.LogNameUtil;
 
 import java.nio.ByteBuffer;
@@ -366,6 +368,23 @@ public class IVIMedia {
             image.copyPixelsFromBuffer(ByteBuffer.wrap(mPixels));
             return image;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+            if (o != null && o instanceof ArtImage) {
+                ArtImage other = (ArtImage) o;
+                if (other.mHeight == mHeight &&
+                        other.mWidth == mWidth &&
+                        ByteUtil.equals(other.mPixels, mPixels)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     /**
@@ -424,6 +443,35 @@ public class IVIMedia {
         public boolean isValid() {
             return mMediaType != Type.NONE;
         }
+
+        /**
+         * 将类的数据转换成string打印出来
+         * @return
+         */
+        public String toString() {
+            return LogNameUtil.toString(this);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+            if (o != null && o instanceof MediaInfo) {
+                MediaInfo other = (MediaInfo) o;
+                if (other.mMediaType == mMediaType &&
+                        TextUtils.equals(other.mName, mName) &&
+                        TextUtils.equals(other.mInfo, mInfo) &&
+                        other.mIndex == mIndex &&
+                        other.mPopup == mPopup ) {
+                    if (other.mArtImage == mArtImage ||
+                            (other.mArtImage != null && other.mArtImage.equals(mArtImage))) { // 判断两个对象数据完全一样
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     /**
@@ -480,6 +528,14 @@ public class IVIMedia {
         }
 
         /**
+         * 当前是否是播放状态
+         * @return 播放状态返回true，其他返回false
+         */
+        public boolean isPlaying() {
+            return mState == PLAYING;
+        }
+
+        /**
          * 通过状态获取名字，一般用作打印 log
          * @param state {@link MediaState}
          * @return 例：1 返回 "STOPPED"
@@ -494,10 +550,7 @@ public class IVIMedia {
          */
         @Override
         public String toString() {
-            return "MediaType: " + IVIMedia.Type.getName(mMediaType) +
-                    " State: " + getName(mState) +
-                    " Position: " + mPosition +
-                    " Duration: " + mDuration;
+            return LogNameUtil.toString(this);
         }
     }
 
@@ -573,6 +626,12 @@ public class IVIMedia {
         void play();
 
         /**
+         * 播放暂停 </br>
+         * 效果和UI上的播放暂停按钮相同，一般用于方控 </br>
+         */
+        void playPause();
+
+        /**
          * 设置自有媒体音量 </br>
          * 一般在有导航提示音的时候调用 </br>
          * @param volume  0.最小值，1.0最大值
@@ -634,6 +693,12 @@ public class IVIMedia {
          * 视频是否被允许显示，比如手刹控制
          */
         void onVideoPermitChanged(boolean show);
+
+        /**
+         * 拖动进度
+         * @param msec 单位ms
+         */
+        void seekTo(int msec);
     }
 
     /**
