@@ -37,8 +37,10 @@ public class EventBusUtil {
      */
     public void register(Object object) {
         try {
-            if (mEventBus != null && !mEventBus.isRegistered(object)) {
-                mEventBus.register(object);
+            if (object != null) {
+                if (mEventBus != null && !mEventBus.isRegistered(object)) {
+                    mEventBus.register(object);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

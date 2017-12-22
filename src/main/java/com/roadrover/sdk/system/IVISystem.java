@@ -6,7 +6,7 @@ import android.view.View;
 import com.roadrover.sdk.utils.LogNameUtil;
 
 /**
- * 系统按键
+ * 系统服务定义类
  */
 
 public class IVISystem {
@@ -27,7 +27,7 @@ public class IVISystem {
         public static final int CLOSE_TYPE = 1;
 
         /**
-         * 应用调用的关闭，应用调用的关闭，点屏幕可以解锁
+         * 应用调用的关闭，点屏幕可以解锁
          */
         public static final int APP_CLOSE_SCREEN = 0;
 
@@ -35,6 +35,11 @@ public class IVISystem {
          * 系统调用的关闭，点屏幕不可以解锁
          */
         public static final int SYS_CLOSE_SCREEN = 1;
+
+        /**
+         * 应用调用的，进入时钟界面，点屏幕不可以解锁
+         */
+        public static final int APP_SCREEN_CLOCK = 2;
 
         public int mType;
         public int mFrom; // 调用源
@@ -45,6 +50,23 @@ public class IVISystem {
         public EventScreenOperate(int type, int from) {
             mType = type;
             mFrom = from;
+        }
+
+        /**
+         * 打印类型的名字
+         * @param type {@link EventScreenOperate}
+         * @return
+         */
+        public static String getTypeName(int type) {
+            switch (type) {
+                case OPEN_TYPE:
+                    return "OPEN_TYPE";
+
+                case CLOSE_TYPE:
+                    return "CLOSE_TYPE";
+
+            }
+            return "unknown type:" + type;
         }
 
         /**
@@ -59,6 +81,9 @@ public class IVISystem {
 
                 case SYS_CLOSE_SCREEN:
                     return "SYS_CLOSE_SCREEN";
+
+                case APP_SCREEN_CLOCK:
+                    return "APP_SCREEN_CLOCK";
             }
             return "unknown form:" + from;
         }
@@ -277,6 +302,8 @@ public class IVISystem {
     public static final String PACKAGE_ANDROID_AUTO = "com.google.android.projection.sink";
     /** 360全景包名 */
     public static final String PACKAGE_AVM = "com.roadrover.avm";
+	/**外挂360全景设备包名*/
+    public static final String PACKAGE_AVM_EXTRA = "com.roadrover.carcameras";
     /** 音频设置包名 */
     public static final String PACKAGE_AUDIO_SETTING = "com.roadrover.audiosettings";
     /** 文件管理器包名 */
@@ -362,6 +389,8 @@ public class IVISystem {
     public static final String ACTIVITY_LAUNCHER_NAVI = "com.android.launcher3.LaunchNaviActivity";
     /** 360全景 Activity名 */
     public static final String ACTIVITY_AVM = "com.roadrover.avm.AVMActivity";
+    /** 外挂360全景设备Activity名*/
+    public static final String ACTIVITY_AVM_EXTRA = "com.roadrover.carcameras.activity.AVMActivity";
     /** Android auto 主 Activity名 */
     public static final String ACTIVITY_ANDROID_AUTO = "com.google.android.projection.sink.ui.MainActivity";
     /** 小畅车联 Activity名 */

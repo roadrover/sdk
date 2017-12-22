@@ -154,30 +154,6 @@ public class IVIConfig {
     private static final String KEY_ACTION = "KeyAction"; // 在关屏状态下，有作用，并且保持关屏状态
     private static final String KEY_NO_ACTION = "KeyNoAction"; // 在关屏状态下，按键不执行动作
 
-    public static class PowerKeyAction {
-        public static final int NONE = 0; // 不动作
-        public static final int BKL_OFF = 1; // 关背光
-        public static final int BKL_OFF_AND_PAUSE_MEDIA = 2; // 关背光、暂停媒体
-        public static final int BKL_OFF_AND_QUIT_APP = 3; // 关背光、结束当前媒体应用,
-        public static final int MUTE_AND_QUIT_APP_AND_CLOCK = 4; // 静音、结束应用、进入时钟界面
-        public static final int MUTE = 5; // 静音
-        public static final int REBOOT = 9; // 复位
-
-        public static String getDesc(int action) {
-            switch (action) {
-                case NONE:                              return "NONE";
-                case BKL_OFF:                           return "BackLight OFF";
-                case BKL_OFF_AND_PAUSE_MEDIA:           return "BackLight OFF, Mute, Pause Media";
-                case BKL_OFF_AND_QUIT_APP:              return "BackLight OFF, Mute, Quit App";
-                case MUTE_AND_QUIT_APP_AND_CLOCK:       return "Mute, Quit App, Enter Clock UI";
-                case MUTE:                              return "Mute";
-                case REBOOT:                            return "Reboot";
-                default:
-                    return "Unknown action " + action;
-            }
-        }
-    }
-
     // Media Demo
     public static final String AUDIO_DIR = "AudioDir";// AudioDir
     public static final String PICTURE_DIR = "PictureDir";// PictureDir
@@ -235,6 +211,10 @@ public class IVIConfig {
     private static final String SECTION_PLATFORM = "Platform"; // 平台配置
     private static final String MCU_SERIAL_BAUD_RATE = "MCU_SERIAL_BAUD_RATE"; // mcu串口波特率
     private static final String CLUSTER_ID = "cluster"; // 仪表通信的方式
+
+    //倒车默认音量
+    private static final String SECTION_CCD_VOLUME = "CcdVolume";
+    private static final String CCD_VOLUME_PERCENT_DEFUALT = "CcdVolumePercentDefault";
 
     private static IniFileUtil mIniFileUtil = null; // INI文件工具类对象
 
@@ -384,11 +364,11 @@ public class IVIConfig {
     }
 
     public static int getPowerKeyLongAction() {
-        return getInteger(SECTION_POWER, POWER_LONG_ACTION, PowerKeyAction.NONE);
+        return getInteger(SECTION_POWER, POWER_LONG_ACTION, IVIKey.PowerKeyAction.NONE);
     }
 
     public static int getPowerKeyShortAction() {
-        return getInteger(SECTION_POWER, POWER_SHORT_ACTION, PowerKeyAction.BKL_OFF_AND_PAUSE_MEDIA);
+        return getInteger(SECTION_POWER, POWER_SHORT_ACTION, IVIKey.PowerKeyAction.BKL_OFF_AND_PAUSE_MEDIA);
     }
 
     public static int getPowerKeyLongMaxCount() {
@@ -1470,5 +1450,14 @@ public class IVIConfig {
      */
     public static int getClusterId() {
         return getInteger(SECTION_PLATFORM, CLUSTER_ID, IVICluster.ID.UNKNOWN);
+    }
+
+    /**
+     * 获取倒车时降低音量默认值
+     * @param def 默认的音量
+     * @return
+     */
+    public static int getCcdVolumePercentDefault(int def) {
+        return getInteger(SECTION_CCD_VOLUME, CCD_VOLUME_PERCENT_DEFUALT, def);
     }
 }
