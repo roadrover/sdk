@@ -22,8 +22,7 @@ public class RadioManager extends BaseManager {
 	private boolean mIsOpen = false;
 	private int mFreq = -1;
 	private int mAudioZone = IVIMedia.Zone.UNKNOWN;
-
-	RadioScanAbortListener mRadioScanAbortListener ;   // 直接监听 收音机 搜索过程中停止
+	private RadioScanAbortListener mRadioScanAbortListener ;   // 直接监听 收音机 搜索过程中停止
 
 	public interface RadioListener {
 		void onFreqChanged(int freq);
@@ -48,15 +47,12 @@ public class RadioManager extends BaseManager {
 		void onRdsMaskChanged(int pi, int freq, int pty, int tp, int ta);
 	}
 
-
 	public interface RadioScanAbortListener {
 		void onScanAbort(boolean isScanAll);
-
 	}
 
 	public void setRadioScanAbortListener(RadioScanAbortListener radioScanAbortListener) {
 		this.mRadioScanAbortListener = radioScanAbortListener ;
-
 	}
 
 	public RadioManager(Context context, ConnectListener connectListener, RadioListener radioListener) {
@@ -66,8 +62,10 @@ public class RadioManager extends BaseManager {
 
 	@Override
 	public void disconnect() {
+		mRadioInterface = null;
 		mRadioListener = null;
 		mRadioCallback = null;
+		mRadioScanAbortListener = null;
 		super.disconnect();
 	}
 
@@ -224,8 +222,6 @@ public class RadioManager extends BaseManager {
 		@Override
 		public void onScanResult(int freq, int signalStrength) {
 			post(new IVIRadio.EventScanResult(freq, signalStrength));
-
-
 		}
 
 		@Override
@@ -241,7 +237,7 @@ public class RadioManager extends BaseManager {
 		@Override
 		public void onScanAbort(boolean isScanAll) {
 			//用来 在event 的收到 onScanAbort 时， 之间搜索结果可能没有及时收到 存在时序差  该接口只做逻辑不做UI操作
-			if(mRadioScanAbortListener!=null){
+			if(mRadioScanAbortListener != null){
 				mRadioScanAbortListener.onScanAbort(isScanAll);
 			}
 			post(new IVIRadio.EventScanAbort(isScanAll));

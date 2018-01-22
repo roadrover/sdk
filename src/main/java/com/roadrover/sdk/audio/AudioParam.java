@@ -228,6 +228,15 @@ public class AudioParam extends Param {
         }
 
         /**
+         * 根据名字获取其id的值
+         * @param name {@link AudioParam.Id#getName(int)}
+         * @return
+         */
+        public static int getId(String name) {
+            return LogNameUtil.getValue(Id.class, name, NONE);
+        }
+
+        /**
          * 判断该id是否在10段EQ增益的 id 里面
          * @param id {@link AudioParam.Id}
          * @return
@@ -470,6 +479,18 @@ public class AudioParam extends Param {
      */
     public AudioParam(int id, int min, int max, int defaultValue) {
         super(id, min, max, defaultValue);
+    }
+
+    /**
+     * 构造函数
+     * @param id {@link AudioParam.Id}
+     * @param min 当前id的值的最小值，比如音量，最小值0
+     * @param max 当前id的值的最大值，比如主音量，最大值30
+     * @param defaultValue 默认的音量值
+     * @param value  当前音量值
+     */
+    public AudioParam(int id, int min, int max, int defaultValue, int value) {
+        super(id, min, max, defaultValue, value);
     }
 
     /**

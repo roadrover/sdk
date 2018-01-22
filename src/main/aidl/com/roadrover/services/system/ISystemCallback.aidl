@@ -63,4 +63,10 @@ interface ISystemCallback {
      * @param visibility 对应 View.GONE View.VISIBILITY 等参数
      */
     void onFloatBarVisibility(int visibility);
+
+    /**
+     * T-box开关发生改变
+     * @param isOpen {@link com.roadrover.sdk.system.IVISystem.EventTboxOpen}
+     */
+    void onTboxChange(boolean isOpen);
 }

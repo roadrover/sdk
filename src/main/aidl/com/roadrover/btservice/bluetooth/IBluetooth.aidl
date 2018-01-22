@@ -407,4 +407,5 @@ interface IBluetooth {
     * 判断蓝牙开关是否开启
     */
     boolean isPowerOn();
+
 }

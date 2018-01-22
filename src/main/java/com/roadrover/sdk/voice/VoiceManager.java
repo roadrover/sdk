@@ -35,6 +35,8 @@ public class VoiceManager extends BaseManager {
 
     @Override
     public void disconnect() {
+        mVoiceInterface = null;
+        mIVoiceCallback = null;
         super.disconnect();
     }
 

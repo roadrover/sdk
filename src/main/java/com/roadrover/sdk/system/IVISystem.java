@@ -218,6 +218,16 @@ public class IVISystem {
         }
     }
 
+    /**
+     * Tbox开关发生变化
+     */
+    public static class EventTboxOpen {
+        public boolean mIsOpen;
+        public EventTboxOpen(boolean isOpen) {
+            mIsOpen = isOpen;
+        }
+    }
+
     /**升级状态*/
     public static class UpgradeStatus {
         /** 升级成功，正在准备重启 */
@@ -302,6 +312,8 @@ public class IVISystem {
     public static final String PACKAGE_ANDROID_AUTO = "com.google.android.projection.sink";
     /** 360全景包名 */
     public static final String PACKAGE_AVM = "com.roadrover.avm";
+	/** DAB应用包名 */
+    public static final String PACKAGE_DAB = "com.roadrover.dab";
 	/**外挂360全景设备包名*/
     public static final String PACKAGE_AVM_EXTRA = "com.roadrover.carcameras";
     /** 音频设置包名 */
@@ -413,6 +425,8 @@ public class IVISystem {
     public static final String ACTIVITY_SETTINGS_DATETIME = PACKAGE_SETTINGS + ".ui.activity.DateTimeSettingActivity";
     /** 高级设置页面Activity名 */
     public static final String ACTIVITY_ADVANCED_SETTING = PACKAGE_SETTINGS + ".ui.activity.AdvancedActivity";
+    /** DAB页面Activity名 */
+    public static final String ACTIVITY_DAB = PACKAGE_DAB + ".ui.activity.MainActivity";
     /** 空调主Activity名 */
     public static final String ACTIVITY_AIRCONDITION = PACKAGE_AIRCONDITION + ".activity.MainActivity";
     /** roadrover日历主Activity名 */
@@ -550,6 +564,9 @@ public class IVISystem {
     /** 下载广播带的参数 */
     public static final String PARAM_DOWNLOAD_ID = "id";
 
+    /** 设置系统时间 */
+    public static final String ACTION_SET_TIME = "roadrover.intent.action.SET_TIME";
+
     // 美行地图定义的广播 start
     /***导航过程中向控发送引导类型和引导属性/导航转向信息协议****/
     public static final String ACTION_TO_CTRL_TURNING_INFO = "com.mxnavi.mxnavi.TO_CTRL_TURNING_INFO";
@@ -598,6 +615,11 @@ public class IVISystem {
     /***自车行政区区****/
     public static final String PARAM_MX_COUNTY = "County";
     // 美行地图定义的广播 end
+
+    // 讯飞告诉其他应用录音开始
+    public static final String ACTION_IFLYTEK_RECORD_EXIT_BY_CALL = "action_iflytek_record_exit_by_call"; // 通知应用蓝牙来去电，需要退出录音
+    /***是否是蓝牙通知关闭****/
+    public static final String PARAM_BYCALL = "byCall";
 
     /**
      * gps 数据变化

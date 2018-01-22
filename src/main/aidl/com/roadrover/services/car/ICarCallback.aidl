@@ -164,4 +164,14 @@ interface ICarCallback {
      * @param dotType     温度小数点标志 见{@link com.roadrover.sdk.car.TirePressure}
      */
     void onTirePressureChanged(int id, int rawValue, int extraValue, int dotType);
+
+    /**
+     * @param status    写入硬件版本号返回状态 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param hardware  硬件版本号 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param supplier  PCB版本 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param ecn       ECN/DCN编码 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param date      日期 见{@link com.roadrover.sdk.car.HardwareVersion}
+     */
+    void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date);
+
 }

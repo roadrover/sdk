@@ -54,6 +54,42 @@ public class BluetoothManager extends BaseManager {
      */
     @Override
     public void disconnect() {
+        mIBluetooth = null;
+        if (mBtCommandTimerUtil != null) {
+            mBtCommandTimerUtil.stop();
+            mBtCommandTimerUtil = null;
+        }
+        mLinkDeviceCallback = null;
+        mAppIbluetoothCallback = null;
+        mIBluetoothCallback = null;
+        mUserOpenBluetoothModuleCallback = null;
+        mOpenBluetoothModuleCallback = null;
+        mUserModuleNameCallback = null;
+        mUserModulePINCallback = null;
+        mModuleNameCallback = null;
+        mModulePINCallback = null;
+        mUserUnlinkDeviceCallback = null;
+        mDeleteDeviceCallback = null;
+        mBluetoothLinkDeviceCallback = null;
+        mUnlinkDeviceCallback = null;
+        mUserBluetoothStateCallback = null;
+        mBluetoothDeleteDeviceCallback = null;
+        mBluetoothStateCallback = null;
+        mVCardListeners = null;
+        if (mGetVCardTimerUtil != null) {
+            mGetVCardTimerUtil.stop();
+            mGetVCardTimerUtil = null;
+        }
+        mISearchDeviceCallback = null;
+        mIDeviceCallback = null;
+        mBluetoothNameCallback = null;
+        mBluetoothPinCallback = null;
+        mAppVCardCallback = null;
+        mIBluetoothVCardCallback = null;
+        mAppSearchDeviceCallback = null;
+        mUserDeviceCallback = null;
+        mUserBluetoothNameCallback = null;
+        mUserBluetoothPinCallback = null;
         super.disconnect();
     }
 
@@ -141,19 +177,71 @@ public class BluetoothManager extends BaseManager {
      * @param callback 结果通过回调获取 onSuccess 代表打开成功
      */
     public void openBluetoothModule(IBluetoothExecCallback.Stub callback) {
+        mUserOpenBluetoothModuleCallback = callback;
+
         if (null == mIBluetooth) {
-            CmdExecResultUtil.execError(callback, IVIBluetooth.BluetoothExecErrorMsg.ERROR_INITING);
+            CmdExecResultUtil.execError(mOpenBluetoothModuleCallback, IVIBluetooth.BluetoothExecErrorMsg.ERROR_INITING);
             return;
         }
 
         try {
-            if (callback != null) {
-                mIBluetooth.openBluetoothModule(callback);
-            }
+            mIBluetooth.openBluetoothModule(mOpenBluetoothModuleCallback);
             mIBluetooth.requestBluetoothListener(mIBluetoothCallback);
             mModuleOpened = true;
         } catch (RemoteException e) {
             e.printStackTrace();
+        }
+    }
+
+    private IBluetoothExecCallback.Stub mOpenBluetoothModuleCallback = new IBluetoothExecCallback.Stub() {
+        @Override
+        public void onSuccess(String msg) throws RemoteException {
+            post(new EventOpenBluetoothModuleCallback(msg));
+        }
+
+        @Override
+        public void onFailure(int errorCode) throws RemoteException {
+            post(new EventOpenBluetoothModuleCallback(errorCode));
+        }
+    };
+
+    private IBluetoothExecCallback.Stub mUserOpenBluetoothModuleCallback;
+
+    private static class EventOpenBluetoothModuleCallback {
+        public String mMsg;
+        public int mErrorCode;
+        public int mType;
+
+        public static final int ON_SUCCESS = 0;
+        public static final int ON_FAILURE = 1;
+
+        public EventOpenBluetoothModuleCallback(String msg) {
+            mMsg = msg;
+            mType = ON_SUCCESS;
+        }
+
+        public EventOpenBluetoothModuleCallback(int errorCode) {
+            mErrorCode = errorCode;
+            mType = ON_FAILURE;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventOpenBluetoothModuleCallback(EventOpenBluetoothModuleCallback event) {
+        if (event != null && mUserOpenBluetoothModuleCallback != null) {
+            try {
+                switch (event.mType) {
+                    case EventOpenBluetoothModuleCallback.ON_SUCCESS:
+                        mUserOpenBluetoothModuleCallback.onSuccess(event.mMsg);
+                        break;
+
+                    case EventOpenBluetoothModuleCallback.ON_FAILURE:
+                        mUserOpenBluetoothModuleCallback.onFailure(event.mErrorCode);
+                        break;
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -783,7 +871,7 @@ public class BluetoothManager extends BaseManager {
 
     private IBluetoothLinkDeviceCallback.Stub mUserBluetoothStateCallback;
 
-    private static class EventBluetoothStateCallback {
+    public static class EventBluetoothStateCallback {
         public int mStatus;
         public String mAddr;
         public String mName;
@@ -972,9 +1060,11 @@ public class BluetoothManager extends BaseManager {
     public void getPhoneContacts(IBluetoothVCardCallback.Stub callback) {
         if (isSendToService(callback)) {
             putVCardCallback(GET_PHONE_CONTACTS, callback); // push 到命令列表
-            Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
-            if (mVCardListeners.size() == 1) {
-                execVCardCmd(getVCardCallback());
+            if (mVCardListeners != null) {
+                Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
+                if (mVCardListeners.size() == 1) {
+                    execVCardCmd(getVCardCallback());
+                }
             }
         }
     }
@@ -986,8 +1076,10 @@ public class BluetoothManager extends BaseManager {
     public void getReceivedCallRecord(IBluetoothVCardCallback.Stub callback) {
         if (isSendToService(callback)) {
             putVCardCallback(GET_RECEIVED_PHONE_BOOK, callback); // push 到命令列表
-            if (mVCardListeners.size() == 1) {
-                execVCardCmd(getVCardCallback());
+            if (mVCardListeners != null) {
+                if (mVCardListeners.size() == 1) {
+                    execVCardCmd(getVCardCallback());
+                }
             }
         }
     }
@@ -999,8 +1091,10 @@ public class BluetoothManager extends BaseManager {
     public void getDialedCallRecord(IBluetoothVCardCallback.Stub callback) {
         if (isSendToService(callback)) {
             putVCardCallback(GET_DIALED_PHONE_BOOK, callback); // push 到命令列表
-            if (mVCardListeners.size() == 1) {
-                execVCardCmd(getVCardCallback());
+            if (mVCardListeners != null) {
+                if (mVCardListeners.size() == 1) {
+                    execVCardCmd(getVCardCallback());
+                }
             }
         }
     }
@@ -1012,8 +1106,10 @@ public class BluetoothManager extends BaseManager {
     public void getMissedCallRecord(IBluetoothVCardCallback.Stub callback) {
         if (isSendToService(callback)) {
             putVCardCallback(GET_MISSED_PHONE_BOOK, callback); // push 到命令列表
-            if (mVCardListeners.size() == 1) {
-                execVCardCmd(getVCardCallback());
+            if (mVCardListeners != null) {
+                if (mVCardListeners.size() == 1) {
+                    execVCardCmd(getVCardCallback());
+                }
             }
         }
     }
@@ -1025,8 +1121,10 @@ public class BluetoothManager extends BaseManager {
     public void getAllCallRecord(IBluetoothVCardCallback.Stub callback) {
         if (isSendToService(callback)) {
             putVCardCallback(GET_ALL_HISTORY_PHONE_BOOK, callback); // push 到命令列表
-            if (mVCardListeners.size() == 1) {
-                execVCardCmd(getVCardCallback());
+            if (mVCardListeners != null) {
+                if (mVCardListeners.size() == 1) {
+                    execVCardCmd(getVCardCallback());
+                }
             }
         }
     }
@@ -1040,12 +1138,16 @@ public class BluetoothManager extends BaseManager {
         VCardListener vCardListener = new VCardListener();
         vCardListener.callback = callback;
         vCardListener.type = type;
-        mVCardListeners.add(vCardListener);
+        if (mVCardListeners != null) {
+            mVCardListeners.add(vCardListener);
+        }
     }
 
     private VCardListener getVCardCallback() {
-        if (!ListUtils.isEmpty(mVCardListeners)) {
-            return mVCardListeners.get(0);
+        if (mVCardListeners != null) {
+            if (!ListUtils.isEmpty(mVCardListeners)) {
+                return mVCardListeners.get(0);
+            }
         }
         return null;
     }
@@ -1638,7 +1740,9 @@ public class BluetoothManager extends BaseManager {
             switch (event.status) {
                 case IVIBluetooth.BluetoothConnectStatus.CONNECTFAIL: // 连接失败，或者连接成功，都停止定时器
                 case IVIBluetooth.BluetoothConnectStatus.DISCONNECTED:
-                    mVCardListeners.clear(); // 断开了，清空获取电话本，通话记录列表
+                    if (mVCardListeners != null) {
+                        mVCardListeners.clear(); // 断开了，清空获取电话本，通话记录列表
+                    }
                     // 继续往下执行
                 case IVIBluetooth.BluetoothConnectStatus.CONNECTED:
                     stopLinkDeviceTimer();
@@ -1752,15 +1856,17 @@ public class BluetoothManager extends BaseManager {
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                    if (mVCardListeners.size() != 0) {
-                        mVCardListeners.remove(0); // 执行完一条命令，从列表删除一个
-                    }
+                    if (mVCardListeners != null) {
+                        if (mVCardListeners.size() != 0) {
+                            mVCardListeners.remove(0); // 执行完一条命令，从列表删除一个
+                        }
 
-                    Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
+                        Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
 
-                    // 执行下一条指令
-                    if (mVCardListeners.size() != 0) {
-                        execVCardCmd(getVCardCallback());
+                        // 执行下一条指令
+                        if (mVCardListeners.size() != 0) {
+                            execVCardCmd(getVCardCallback());
+                        }
                     }
                     break;
                 case IVIBluetooth.EventVCard.ON_SUCCESS:
@@ -1769,16 +1875,21 @@ public class BluetoothManager extends BaseManager {
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                    if (mVCardListeners.size() != 0) {
-                        mVCardListeners.remove(0); // 执行完一条命令，从列表删除一个
-                    }
+                    if (mVCardListeners != null) {
+                        if (mVCardListeners.size() != 0) {
+                            mVCardListeners.remove(0); // 执行完一条命令，从列表删除一个
+                        }
 
-                    Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
+                        Logcat.d("mVCardListeners.size:" + mVCardListeners.size());
 
-                    // 执行下一条指令
-                    if (mVCardListeners.size() != 0) {
-                        execVCardCmd(getVCardCallback());
+                        // 执行下一条指令
+                        if (mVCardListeners.size() != 0) {
+                            execVCardCmd(getVCardCallback());
+                        }
                     }
+                    break;
+
+                default:
                     break;
             }
         }

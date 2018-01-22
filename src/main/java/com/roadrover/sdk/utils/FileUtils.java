@@ -90,6 +90,11 @@ public class FileUtils {
                     os.flush();
                     os.close();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
                 if (in != null) {
                     in.close();
                 }
@@ -158,26 +163,6 @@ public class FileUtils {
             }
         }
 
-        //SystemUtil.execSystemCmd("cp " + srcPath + " " + destPath);  // 如果文件名中有空格会拷贝不成功
-//		try {
-//			new ProcessBuilder().command("cp", srcPath, destPath).start();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//		int existsCount = 0;
-//		File file = new File(destPath);
-//		while (!file.exists() && existsCount++ < 3) { // 命令拷贝太快，容易出现文件还不存在，外面判断异常的问题
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		Logcat.d("destPath exists:" + new File(destPath).exists() + " existsCount:" + existsCount);
-//		Logcat.d("srcPath:" + srcPath + " destPath:" + destPath);
-//		return true;
-
         long total = srcFile.length();
         long pro = 0;
 
@@ -205,6 +190,10 @@ public class FileUtils {
             try {
                 if (out != null)
                     out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
                 if (in != null)
                     in.close();
             } catch (IOException e) {
@@ -231,7 +220,11 @@ public class FileUtils {
         return false;
     }
 
-    //判断文件是否存在
+    /**
+     * 判断文件是否存在
+     * @param strFile
+     * @return
+     */
     public static boolean fileIsExists(String strFile) {
         try {
             File f = new File(strFile);
@@ -243,5 +236,73 @@ public class FileUtils {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * 从文件里面读取 readSize 大小的字符
+     * @param fileName 文件名
+     * @param readSize 读取大小
+     * @return 返回读取内容
+     */
+    public static String readFile(String fileName, int readSize) {
+        if (TextUtils.isEmpty(fileName) || readSize < 0) {
+            Logcat.w("fileName:" + fileName + " readSize:" + readSize);
+            return "";
+        }
+        File file = new File(fileName);
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            byte[] buffer = new byte[readSize];
+            in.read(buffer);
+
+            String str = new String(buffer);
+            // Logcat.d(fileName + ": " + str);
+            return str;
+        } catch (Exception e){
+            Logcat.e("exception at read file " + fileName);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * 往文件里面写一个字符
+     * @param filePath 指定路径
+     * @param value 写的字符
+     */
+    public static void writeFile(String filePath, String value) {
+        if (TextUtils.isEmpty(filePath) || value == null) {
+            Logcat.w("filePath:" + filePath + " value:" + value);
+            return ;
+        }
+
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(filePath);
+            byte[] bytes = value.getBytes();
+            out.write(bytes);
+        } catch (IOException e) {
+            Logcat.e("exception at write register file");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

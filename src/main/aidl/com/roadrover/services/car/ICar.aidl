@@ -242,14 +242,14 @@ interface ICar {
      */
     void setTouch(in int x, in int y, in int type);
 
-     /**
-      * 发送暂停心跳命令给下位机
-      */
-     void pauseHeartbeat();
+    /**
+     * 发送暂停心跳命令给下位机
+     */
+    void pauseHeartbeat();
 
-     /**
-      * 请求发送所有service端缓存的CMD_TPMS参数，通过ICarCallback回调获取
-      */
-     void requestCmdTpmsEvent();
+    /**
+     * 请求发送所有service端缓存的CMD_TPMS参数，通过ICarCallback回调获取
+     */
+    void requestCmdTpmsEvent();
 
 }

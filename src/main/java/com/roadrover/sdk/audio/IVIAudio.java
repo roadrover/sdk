@@ -8,6 +8,9 @@ import java.util.ArrayList;
  * 音频相关定义
  */
 public class IVIAudio {
+    /**倒车压低媒体声音*/
+    public static final int VOLUME_CCD_DUCK_PERCENT = 40;
+
     /**
      * 该定义必须和services-jni里面的AudioDevice.h里面的一致
      */
@@ -20,7 +23,10 @@ public class IVIAudio {
          * BD37534，其值为 {@value}
          */
         public static final int BD37534 = 2;
-
+        /**
+         * AK7601，但是复位脚的逻辑和正常的相反，其值为 {@value}
+         */
+        public static final int AK7601_RESET_N = 3;
         /**
          * 获取音效芯片名称
          * @param id 见{@link ChipId}

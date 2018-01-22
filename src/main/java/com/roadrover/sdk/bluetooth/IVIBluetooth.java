@@ -19,6 +19,8 @@ public class IVIBluetooth {
         public static final int LR181 = 0; // 文强的LR181蓝牙模块
         public static final int BC5 = 1; // BC5蓝牙模块
         public static final int BA450 = 2; // 文强的BA450蓝牙模块
+        public static final int MTK6630 = 3; // AC8的MTK6630
+        public static final int BC6 = 4;     // BC6蓝牙模块
     }
 
     /**

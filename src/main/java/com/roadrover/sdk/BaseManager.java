@@ -81,6 +81,11 @@ public abstract class BaseManager {
 		public static final String VOICE_ACTION     = "com.roadrover.services.action.voice";
 
 		/**
+		 * 数字音频广播服务的action
+		 */
+		public static final String DAB_ACTION       = "com.roadrover.services.action.dab";
+
+		/**
 		 * 汽车仪表通信的服务的action
 		 */
 		public static final String CLUSTER_ACTION   = "com.roadrover.services.action.cluster";
@@ -175,14 +180,16 @@ public abstract class BaseManager {
 				service.setAction(getServiceActionName());
 				service.setPackage(bluetoothService ? IVISystem.PACKAGE_BT_SERVICE : IVISystem.PACKAGE_IVI_SERVICES);
 
-				boolean isSuccess = mContext.bindService(service, mServiceConnection, Context.BIND_AUTO_CREATE);
-				Logcat.d(getServiceActionName() + ", result: " + isSuccess);
+                if (mServiceConnection != null) {
+                    boolean isSuccess = mContext.bindService(service, mServiceConnection, Context.BIND_AUTO_CREATE);
+                    Logcat.d(getServiceActionName() + ", result: " + isSuccess);
+                }
 
 				/*
 				 * 	注册广播监听MainService是否启动完成，完成后自动连接，
 				 * 	防止Roadrover IVI Service崩溃重新启动后，连接没有继续
 				 */
-				if (!mIsRegisterReceiver) {
+				if (!mIsRegisterReceiver && mListener != null) {
 					mIsRegisterReceiver = true;
 					IntentFilter f = new IntentFilter();
 					f.addAction(bluetoothService ? ROADROVER_BT_SERVICE_READY : ROADROVER_IVI_SERVICE_READY);
@@ -215,19 +222,23 @@ public abstract class BaseManager {
 	 */
 	public void disconnect() {
 		// 用户在销毁这个类的时候，将销毁所有的回调
-		List<IInterface> callbacks = new ArrayList<>(mICallbackS); // 转换成一个列表进行删除，防止在unRegisterCallback里面直接操作遍历列表
-		if (callbacks != null) {
-			for (int i = 0; i < callbacks.size(); ++i) {
-				if (callbacks.get(i) != null) {
-					unRegisterCallback(callbacks.get(i));
-				}
-			}
-		}
-		mICallbackS.clear();
+        if (mICallbackS != null) {
+            List<IInterface> callbacks = new ArrayList<>(mICallbackS); // 转换成一个列表进行删除，防止在unRegisterCallback里面直接操作遍历列表
+            if (callbacks != null) {
+                for (int i = 0; i < callbacks.size(); ++i) {
+                    if (callbacks.get(i) != null) {
+                        unRegisterCallback(callbacks.get(i));
+                    }
+                }
+            }
+            mICallbackS.clear();
+            mICallbackS = null;
+        }
 
 		if (mIsConnected) {
 			if (null != mContext) {
 				mContext.unbindService(mServiceConnection);
+                mServiceConnection = null;
 			}
 			mIsConnected = false;
 		}
@@ -236,6 +247,7 @@ public abstract class BaseManager {
 			mIsRegisterReceiver = false;
 			if (null != mContext) {
 				mContext.unregisterReceiver(mListener);
+                mListener = null;
 			}
 		}
 
@@ -277,7 +289,9 @@ public abstract class BaseManager {
      */
 	protected void registerCallback(IInterface callback) {
 		if (callback != null) {
-			mICallbackS.add(callback);
+            if (mICallbackS != null) {
+                mICallbackS.add(callback);
+            }
 		}
 	}
 
@@ -288,7 +302,9 @@ public abstract class BaseManager {
      */
 	protected void unRegisterCallback(IInterface callback) {
 		if (callback != null) {
-			mICallbackS.remove(callback);
+            if (mICallbackS != null) {
+                mICallbackS.remove(callback);
+            }
 		}
 	}
 

@@ -38,6 +38,7 @@ public class SystemManager extends BaseManager {
         mISettingCallback = null;
         mGpsCallback = null;
         mUserGpsCallback = null;
+        mSystemInterface = null;
 
         super.disconnect();
     }
@@ -275,6 +276,11 @@ public class SystemManager extends BaseManager {
         @Override
         public void onFloatBarVisibility(int visibility) {
             post(new IVISystem.EventFloatBarVisibility(visibility));
+        }
+
+        @Override
+        public void onTboxChange(boolean isOpen) throws RemoteException {
+            post(new IVISystem.EventTboxOpen(isOpen));
         }
     };
 
@@ -589,6 +595,34 @@ public class SystemManager extends BaseManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 打开还是关闭操作
+     * @param isOpen {@link com.roadrover.sdk.system.IVISystem.EventTboxOpen}
+     */
+    public void setTboxOpen(boolean isOpen) {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.setTboxOpen(isOpen);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 获取T-box开关状态值
+     */
+    public boolean isTboxOpen() {
+        if (mSystemInterface != null) {
+            try {
+                return mSystemInterface.isTboxOpen();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     /**

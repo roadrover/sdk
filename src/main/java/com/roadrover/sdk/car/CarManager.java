@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roadrover.sdk.BaseManager;
+import com.roadrover.sdk.system.IVIKey;
 import com.roadrover.services.car.ICar;
 import com.roadrover.services.car.ICarCallback;
 import com.roadrover.services.car.IMcuUpgradeCallback;
@@ -33,7 +34,6 @@ public class CarManager extends BaseManager {
     private int mDoorStatusMask, mDoorOldStatusMask;
     private int mLightStatusMask;
     private ClimateGroup mClimates = new ClimateGroup();
-    private SparseArray<Float> mRealTimeInfoGroup = new SparseArray<>();
     private IVICar.Radar mRadar = null;
     public interface CarListener {
         void onMcuVersion(String version);
@@ -107,6 +107,7 @@ public class CarManager extends BaseManager {
 
         // 快速倒车
         void onFastReverseChanged(boolean on);
+
     }
 
     public CarManager(Context context, ConnectListener connectListener, CarListener carListener) {
@@ -116,6 +117,13 @@ public class CarManager extends BaseManager {
 
     @Override
     public void disconnect() {
+        mCarInterface = null;
+        mCarListener = null;
+        mFilters = null;
+        mClimates = null;
+        mRadar = null;
+        mCarCallback = null;
+        mIMcuUpgradeCallback = null;
         super.disconnect();
     }
 
@@ -129,11 +137,13 @@ public class CarManager extends BaseManager {
         Logcat.d();
         mCarInterface = ICar.Stub.asInterface(service);
         registerCallback(mCarCallback);
-        for (Integer id : mFilters) {
-            try {
-                mCarInterface.registerRealTimeInfo(id, mCarCallback);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+        if (mFilters != null) {
+            for (Integer id : mFilters) {
+                try {
+                    mCarInterface.registerRealTimeInfo(id, mCarCallback);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -167,7 +177,9 @@ public class CarManager extends BaseManager {
      * @param id IVICar.RealTimeInfoId
      */
     public void registerRealTimeInfoId(int id) {
-        mFilters.add(id);
+        if (mFilters != null) {
+            mFilters.add(id);
+        }
         if (mCarInterface != null) {
             try {
                 mCarInterface.registerRealTimeInfo(id, mCarCallback);
@@ -183,7 +195,9 @@ public class CarManager extends BaseManager {
      * @param id IVICar.RealTimeInfoId
      */
     public void unRegisterRealTimeInfoId(int id) {
-        mFilters.remove(id);
+        if (mFilters != null) {
+            mFilters.remove(id);
+        }
         if (mCarInterface != null) {
             try {
                 mCarInterface.unRegisterRealTimeInfo(id, mCarCallback);
@@ -264,7 +278,7 @@ public class CarManager extends BaseManager {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onKeyPushed(IVICar.Key key) {
+    public void onKeyPushed(IVIKey.Key key) {
         if (mCarListener != null) {
             mCarListener.onKeyPushed(key.mId, key.mType);
         }
@@ -430,7 +444,9 @@ public class CarManager extends BaseManager {
 
         @Override
         public void onClimateChanged(int id, int rawValue) {
-            mClimates.set(id, rawValue);
+            if (mClimates != null) {
+                mClimates.set(id, rawValue);
+            }
             if (id == Climate.Id.INSIDE_TEMP) {
                 post(new IVICar.InsideTemp(rawValue));
             } else {
@@ -449,8 +465,13 @@ public class CarManager extends BaseManager {
         }
 
         @Override
+        public void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date) throws RemoteException {
+            post(new HardwareVersion(status, hardware, supplier, ecn, date));
+        }
+
+        @Override
         public void onKeyPushed(int id, int type) {
-            post(new IVICar.Key(id, type));
+            post(new IVIKey.Key(id, type));
         }
 
         @Override
@@ -654,7 +675,10 @@ public class CarManager extends BaseManager {
             return Climate.getUnknown();
         }
 
-        return mClimates.get(id);
+        if (mClimates != null) {
+            return mClimates.get(id);
+        }
+        return Climate.getUnknown();
     }
 
     /**
@@ -664,7 +688,9 @@ public class CarManager extends BaseManager {
      * @param value 参数值
      */
     public void setClimate(int id, int value) {
-        mClimates.set(id, value);
+        if (mClimates != null) {
+            mClimates.set(id, value);
+        }
         if (mCarInterface != null) {
             try {
                 mCarInterface.setClimate(id, value);
@@ -1319,17 +1345,20 @@ public class CarManager extends BaseManager {
      * @return 服务没有收到该空调ID
      */
     private boolean updateClimateCache(int id) {
-        if (!mClimates.contains(id)) {
-            int rawValue = getClimateRawValue(id);
-            if (rawValue != Climate.CLIMATE_VALUE_UNKNOWN) {
-                mClimates.set(id, rawValue);
-                return true;
+        if (mClimates != null) {
+            if (!mClimates.contains(id)) {
+                int rawValue = getClimateRawValue(id);
+                if (rawValue != Climate.CLIMATE_VALUE_UNKNOWN) {
+                    mClimates.set(id, rawValue);
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                return true;
             }
-        } else {
-            return true;
         }
+        return false;
     }
 
     private int getClimateRawValue(int id) {
@@ -1385,6 +1414,5 @@ public class CarManager extends BaseManager {
             }
         }
     }
-
 
 }

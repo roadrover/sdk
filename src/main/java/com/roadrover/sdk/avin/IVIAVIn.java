@@ -71,6 +71,11 @@ public class IVIAVIn {
         public static final int WEB = 35;
 
         /**
+         * 行车记录仪, 其值 {@value}
+         */
+        public static final int DRIVIND_RECORD = 36;
+
+        /**
          * 大巴行李箱处摄像头, 其值 {@value}
          */
         public static final int BUS_LUGGAGE = 40;

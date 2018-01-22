@@ -453,324 +453,6 @@ public class IVICar {
     };
 
     /**
-     * 按键消息
-     */
-    public static class Key {
-        public static class Id {
-            public static final int NONE = 0;
-            public static final int VOLUME_UP = 1;
-            public static final int VOLUME_DOWN = 2;
-            public static final int MODE = 6;
-            public static final int ANSWER = 7; // 接听按键
-            public static final int HOME = 8;
-            public static final int ODD = 9;
-            public static final int RADIO = 10;
-            public static final int PLAY_PAUSE = 11;
-            public static final int MP3 = 13;
-            public static final int NAVI = 14;
-            public static final int DVD = 15;
-            public static final int EJECT = 16;
-            public static final int CCD = 17;
-            public static final int MP4 = 18;
-            public static final int TV = 19;
-            public static final int OSD = 20;
-            public static final int DISP = 22;
-            public static final int IPOD = 23;
-            public static final int CAMERA = 24;
-            public static final int OK = 25;
-            public static final int AUX = 28;
-            public static final int CLIMATE = 29;
-            public static final int FM = 30;
-            public static final int AM = 31;
-            public static final int NEXT = 32;
-            public static final int PREV = 33;
-            public static final int HANG_UP = 34; // 挂断
-            public static final int SCAN_UP = 42;
-            public static final int SCAN_DOWN = 43;
-            public static final int ALL_SCAN = 47;
-            public static final int SPIN_UP = 48;
-            public static final int SPIN_DOWN = 49;
-            public static final int CLOSE_MEDIA = 50;
-            public static final int UP = 58;
-            public static final int DOWN = 59;
-            public static final int LEFT = 60;
-            public static final int RIGHT = 61;
-            public static final int ROTATE_CW = 62;
-            public static final int ROTATE_CCW = 63;
-            public static final int FF = 64;
-            public static final int FB = 65;
-            public static final int BACK = 66;
-            public static final int SELECT = 67;
-            public static final int MEDIA_REPEAT = 70;
-            public static final int MEDIA_SHUFFLE = 71;
-            public static final int CAR_SET = 81;
-            public static final int FUEL_INFO = 83;
-            public static final int STANDBY_CLOCK = 84;
-            public static final int STANDBY_BK_OFF = 85;
-            public static final int STANDBY = 86;
-            public static final int PAUSE = 87;
-            public static final int SET = 88;
-
-            public static final int BT = 89;
-            public static final int KEY_0 = 90;
-            public static final int KEY_1 = 91;
-            public static final int KEY_2 = 92;
-            public static final int KEY_3 = 93;
-            public static final int KEY_4 = 94;
-            public static final int KEY_5 = 95;
-            public static final int KEY_6 = 96;
-            public static final int KEY_7 = 97;
-            public static final int KEY_8 = 98;
-            public static final int KEY_9 = 99;
-            public static final int MUTE = 105;
-            public static final int VOICE = 106;
-            public static final int MULTI_FUNC = 159;   // 多功能键
-            public static final int TUNEIN_RADIO = 160;
-            public static final int DRIVE_MODE = 161;
-            public static final int APP_LIST = 162;
-            public static final int POWER = 72;
-            public static final int AM_FM = 171; // FM和AM之间切换
-            public static final int ALL_APP = 172; // 跳转所有应用页面
-            public static final int START_APP = 173; // 启动应用
-            public static final int MENU = 176; // 菜单
-            public static final int REAR_UP = 178;           // 后排：上
-            public static final int REAR_DOWN = 179;         // 后排：下
-            public static final int REAR_LEFT = 180;         // 后排：左
-            public static final int REAR_RIGHT = 181;        // 后排：右
-            public static final int REAR_OK = 182;           // 后排：确定
-            public static final int REAR_VOLUME_UP = 183;    // 后排：音量+
-            public static final int REAR_VOLUME_DOWN = 184;  // 后排：音量-
-            public static final int REAR_MENU = 185;         // 后排：MENU
-            public static final int REAR_PLAY_PAUSE = 186;   // 后排：Play/Pause
-            public static final int REAR_MUTE = 187;         // 后排：静音
-            public static final int REAR_FF = 188;           // 后排：快进
-            public static final int REAR_FB = 189;           // 后排：快退
-            public static final int REAR_NEXT = 190;         // 后排：下一曲
-            public static final int REAR_PREV = 191;         // 后排：上一曲
-            public static final int VOLUME_SEL = 192;        // 选择调节哪个区的音量：前后排
-            public static final int DUAL_ROTATE_CW = 193;    // 双区车型的旋钮，顺时针，由应用处理
-            public static final int DUAL_ROTATE_CCW = 194;   // 双区车型的旋钮，逆时针，由应用处理
-            public static final int ALL_MUTE = 195;          // 下旋钮短按双区静音，前后台同时MUTE,主要应用在双区媒体的按键控制上
-            public static final int REAR_BACK = 198;         // 后排：返回
-            public static final int PM_TWO_POINT_FIVE = 199; // PM2.5打开
-            public static final int REBOOT = 1000;      // 重启
-            public static final int PREV_ANSWER = 1001; // 正常状态是上一曲，来电状态是接听
-            public static final int NEXT_HANGUP = 1002; // 正常状态是下一曲，来电或者通话状态是挂断
-            public static final int EQ = 1003;          // EQ均衡器
-            public static final int ANDROID_KEY = 1999; // 系统按键
-        }
-
-        public static class Name {
-            public static final String NONE        = "none";       //无作用
-            public static final String NEXT        = "next";       // 下一曲
-            public static final String PREV        = "prev";       // 上一曲
-            public static final String UP          = "up";         // 上
-            public static final String DOWN        = "down";       // 下
-            public static final String LEFT        = "left";       // 左
-            public static final String RIGHT       = "right";      // 右
-            public static final String ENTER       = "enter";      // 确定
-            public static final String SCAN        = "scan";       // 收音机搜台
-            public static final String SCAN_UP     = "scan_up";    // 收音机搜台
-            public static final String SCAN_DOWN   = "scan_down";  // 收音机搜台
-            public static final String AM_FM       = "am_fm";      // am 和 fm 切换
-            public static final String AM          = "am";         // am
-            public static final String FM          = "fm";         // fm
-            public static final String MODE        = "mode";       // 模式切换
-            public static final String SHUT_DOWN   = "shutdown";   // 关屏
-            public static final String ADD_VOLUME  = "add_volume"; // 增加音量
-            public static final String DEL_VOLUME  = "del_volume"; // 减少音量
-            public static final String HOME        = "home";       // 主页
-            public static final String BACK        = "back";       // 返回
-            public static final String ALL_APP     = "all_app";    // 跳到 allApp页面
-            public static final String NAVIGATION  = "navigation"; // 导航
-            public static final String MUTE        = "mute";       // 禁音
-            public static final String ANSWER      = "answer";     // 接听电话
-            public static final String HANG_UP     = "hang_up";    // 挂断
-            public static final String VOICE       = "voice";      // 语音
-            public static final String PLAY_PAUSE  = "play_pause"; // 播放暂停
-            public static final String MULTI_FUNC  = "multi_func";  //多功能按键
-            public static final String POWER       = "power";      // power 按键
-            public static final String MENU        = "menu";       // 菜单按键
-            public static final String PREV_ANSWER = "prev_answer"; // 上一曲，来电状态是接听
-            public static final String NEXT_HANGUP = "next_hangup"; // 下一曲，通话状态是挂断
-            public static final String ROTATE_CW   = "rotate_cw";   // 旋钮顺时针转动
-            public static final String ROTATE_CCW  = "rotate_ccw";   // 旋钮逆时针转动
-            public static final String REAR_UP     = "rear_up";           // 后排：上
-            public static final String REAR_DOWN   = "rear_down";         // 后排：下
-            public static final String REAR_LEFT   = "rear_left";         // 后排：左
-            public static final String REAR_RIGHT  = "rear_right";        // 后排：右
-            public static final String REAR_OK     = "rear_ok";           // 后排：确定
-            public static final String REAR_VOLUME_UP = "rear_volume_up";  // 后排：音量+
-            public static final String REAR_VOLUME_DOWN = "rear_volume_down";  // 后排：音量-
-            public static final String REAR_MENU   = "rear_menu";         // 后排：MENU
-            public static final String REAR_PLAY_PAUSE = "rear_pause";    // 后排：Play/Pause
-            public static final String REAR_MUTE   = "rear_mute";         // 后排：静音
-            public static final String REAR_FF     = "rear_ff";           // 后排：快进
-            public static final String REAR_FB     = "rear_fb";           // 后排：快退
-            public static final String REAR_NEXT   = "rear_next";         // 后排：下一曲
-            public static final String REAR_PREV   = "rear_prev";         // 后排：上一曲
-            public static final String VOLUME_SEL  = "select_volume";     // 选择调节哪个区的音量：前后排
-            public static final String DUAL_ROTATE_CW = "dual_rotate_cw"; // 双区车型的旋钮，顺时针，由应用处理
-            public static final String DUAL_ROTATE_CCW = "dual_rotate_ccw";// 双区车型的旋钮，逆时针，由应用处理
-            public static final String ALL_MUTE = "all_mute";              // 下旋钮短按双区静音，前后台同时MUTE,主要应用在双区媒体的按键控制上
-            public static final String REAR_BACK   = "rear_back";         // 后排：返回
-            public static final String EQ = "eq";                          // EQ均衡器
-            public static final String ANDROID_KEY = "android_key";        // 系统按键
-            public static final String BT = "bt";                           // 接听电话
-        }
-
-        public static class Type {
-            public static final int DOWN = 1;   //按键下压
-            public static final int UP = 0;     //按键抬起
-            public static final int ONCE = 2;   //不分下压和抬起，只处理一次
-        }
-
-        public int mId;
-        public int mType;
-        public String mParams; // 有些按键需要带参数走，比如遥控器配置打开哪个应用，配置了包名，需要将包名带过去
-
-        private static Map<String, Integer> mNameToIdMap;
-
-        static {
-            // 初始化Name的字符串到ID的映射
-            mNameToIdMap = new HashMap<>();
-            mNameToIdMap.put(Name.NEXT,         Id.NEXT);
-            mNameToIdMap.put(Name.PREV,         Id.PREV);
-            mNameToIdMap.put(Name.UP,           Id.UP);
-            mNameToIdMap.put(Name.DOWN,         Id.DOWN);
-            mNameToIdMap.put(Name.LEFT,         Id.LEFT);
-            mNameToIdMap.put(Name.RIGHT,        Id.RIGHT);
-            mNameToIdMap.put(Name.ENTER,        Id.OK);
-            mNameToIdMap.put(Name.SCAN,         Id.ALL_SCAN);
-            mNameToIdMap.put(Name.SCAN_UP,      Id.SCAN_UP);
-            mNameToIdMap.put(Name.SCAN_DOWN,    Id.SCAN_DOWN);
-            mNameToIdMap.put(Name.AM_FM,        Id.AM_FM);
-            mNameToIdMap.put(Name.AM,           Id.AM);
-            mNameToIdMap.put(Name.FM,           Id.FM);
-            mNameToIdMap.put(Name.MODE,         Id.MODE);
-            mNameToIdMap.put(Name.SHUT_DOWN,    Id.POWER);
-            mNameToIdMap.put(Name.ADD_VOLUME,   Id.VOLUME_UP);
-            mNameToIdMap.put(Name.DEL_VOLUME,   Id.VOLUME_DOWN);
-            mNameToIdMap.put(Name.HOME,         Id.HOME);
-            mNameToIdMap.put(Name.ALL_APP,      Id.ALL_APP);
-            mNameToIdMap.put(Name.NAVIGATION,   Id.NAVI);
-            mNameToIdMap.put(Name.BACK,         Id.BACK);
-            mNameToIdMap.put(Name.MUTE,         Id.MUTE);
-            mNameToIdMap.put(Name.DEL_VOLUME,   Id.VOLUME_DOWN);
-            mNameToIdMap.put(Name.ANSWER,       Id.ANSWER);
-            mNameToIdMap.put(Name.HANG_UP,      Id.HANG_UP);
-            mNameToIdMap.put(Name.VOICE,        Id.VOICE);
-            mNameToIdMap.put(Name.PLAY_PAUSE,   Id.PLAY_PAUSE);
-            mNameToIdMap.put(Name.MULTI_FUNC,   Id.MULTI_FUNC);
-            mNameToIdMap.put(Name.POWER,        Id.POWER);
-            mNameToIdMap.put(Name.MENU,         Id.MENU);
-            mNameToIdMap.put(Name.PREV_ANSWER,  Id.PREV_ANSWER);
-            mNameToIdMap.put(Name.NEXT_HANGUP,  Id.NEXT_HANGUP);
-            mNameToIdMap.put(Name.ROTATE_CW,    Id.ROTATE_CW);
-            mNameToIdMap.put(Name.ROTATE_CCW,   Id.ROTATE_CCW);
-
-            mNameToIdMap.put(Name.REAR_UP,      Id.REAR_UP);
-            mNameToIdMap.put(Name.REAR_DOWN,    Id.REAR_DOWN);
-            mNameToIdMap.put(Name.REAR_LEFT,    Id.REAR_LEFT);
-            mNameToIdMap.put(Name.REAR_RIGHT,   Id.REAR_RIGHT);
-            mNameToIdMap.put(Name.REAR_OK,      Id.REAR_OK);
-            mNameToIdMap.put(Name.REAR_VOLUME_UP,    Id.REAR_VOLUME_UP);
-            mNameToIdMap.put(Name.REAR_VOLUME_DOWN,  Id.REAR_VOLUME_DOWN);
-            mNameToIdMap.put(Name.REAR_MENU,         Id.REAR_MENU);
-            mNameToIdMap.put(Name.REAR_PLAY_PAUSE,   Id.REAR_PLAY_PAUSE);
-            mNameToIdMap.put(Name.REAR_MUTE,    Id.REAR_MUTE);
-            mNameToIdMap.put(Name.REAR_FF,      Id.REAR_FF);
-            mNameToIdMap.put(Name.REAR_FB,      Id.REAR_FB);
-            mNameToIdMap.put(Name.REAR_NEXT,    Id.REAR_NEXT);
-            mNameToIdMap.put(Name.REAR_PREV,    Id.REAR_PREV);
-            mNameToIdMap.put(Name.VOLUME_SEL,   Id.VOLUME_SEL);
-            mNameToIdMap.put(Name.DUAL_ROTATE_CW,    Id.DUAL_ROTATE_CW);
-            mNameToIdMap.put(Name.DUAL_ROTATE_CCW,   Id.DUAL_ROTATE_CCW);
-            mNameToIdMap.put(Name.ALL_MUTE,   Id.ALL_MUTE);
-            mNameToIdMap.put(Name.REAR_BACK,    Id.REAR_BACK);
-            mNameToIdMap.put(Name.EQ,         Id.EQ);
-            mNameToIdMap.put(Name.ANDROID_KEY, Id.ANDROID_KEY);
-            mNameToIdMap.put(Name.BT, Id.BT);
-        }
-
-        public Key(int id, int type) {
-            mId = id;
-            mType = type;
-        }
-
-        public Key(int id, boolean down) {
-            mId = id;
-            mType = down ? Type.DOWN : Type.UP;
-        }
-
-        public static String getName(int id) {
-            String ret = "Key " + id;
-            for (Map.Entry<String, Integer> entry : mNameToIdMap.entrySet()) {
-                if (id == entry.getValue()) {
-                    ret = entry.getKey();
-                    break;
-                }
-            }
-            return ret;
-        }
-
-        public static String getType(int type) {
-            switch (type) {
-                case Type.DOWN:
-                    return "DOWN";
-                case Type.UP:
-                    return "UP";
-                case Type.ONCE:
-                    return "ONCE";
-                default:
-                    return "Type: " + type;
-            }
-        }
-
-        public static int getId(String name) {
-            Integer id = mNameToIdMap.get(name);
-            if (id == null) {
-                return Id.NONE;
-            } else {
-                return id;
-            }
-        }
-
-        /**
-         * 获取所有按键名称
-         * @return 返回按键名字列表
-         */
-        public static List<String> getNames() {
-            List<String> ret = new ArrayList<>();
-            for (Map.Entry<String, Integer> entry : mNameToIdMap.entrySet()) {
-                ret.add(entry.getKey());
-            }
-            return ret;
-        }
-
-        /**
-         * 获取所有按键的id值
-         * @return 按键表
-         */
-        public static List<Integer> getIds() {
-            List<Integer> ret = new ArrayList<>();
-            for (Map.Entry<String, Integer> entry : mNameToIdMap.entrySet()) {
-                ret.add(entry.getValue());
-            }
-            return ret;
-        }
-
-        public String getName() {
-            return getName(mId);
-        }
-
-        public Key(int id, int type, String params) {
-            this(id, type);
-            mParams = params;
-        }
-    }
-
-    /**
      * 车辆故障和警告信息
      */
     public static class AlertMessage {
@@ -1306,4 +988,49 @@ public class IVICar {
         public static final int DOWN = 0;  //按下
     }
 
+    /**
+     * 硬件版本号数据
+     */
+    public static class EventHardwareMessage {
+        public byte[] mDatas;
+        public EventHardwareMessage(byte[] datas) {
+            mDatas = datas;
+        }
+    }
+
+    /**
+     * 硬件版本号升级状态
+     */
+    public static class HardwareVersionStatus {
+        public static final int SUCCESS = 0x05;  //表示MCU写入成功;
+        public static final int FAILURE = 0x04;  //表示MCU写入失败（可能EEPROM故障等）
+    }
+
+    /**
+     * 日期时间
+     */
+    public static class EventDateTime {
+        public int mYear;
+        public int mMonth;
+        public int mDay;
+        public int mHour;
+        public int mMinute;
+        public int mSecond;
+        public int mWeek;
+
+        public EventDateTime(int year, int month, int day, int hour, int minute, int second, int week) {
+            mYear = year;
+            mMonth = month;
+            mDay = day;
+            mHour = hour;
+            mMinute = minute;
+            mSecond = second;
+            mWeek = week;
+        }
+
+        @Override
+        public String toString() {
+            return mYear + "/" + mMonth + "/" + mDay + " " + mHour + ":" + mMinute + " " + mSecond;
+        }
+    }
 }

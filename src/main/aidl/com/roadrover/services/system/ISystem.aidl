@@ -135,4 +135,15 @@ interface ISystem {
      */
     void setTPTouch(boolean enable);
 
+    /**
+     * 打开还是关闭操作
+     * @param isOpen {@link com.roadrover.sdk.system.IVISystem.EventTboxOpen}
+     */
+    void setTboxOpen(boolean isOpen);
+
+    /**
+     * 获取T-box开关状态值
+     */
+    boolean isTboxOpen();
+
 }

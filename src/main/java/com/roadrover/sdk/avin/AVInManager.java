@@ -87,6 +87,10 @@ public class AVInManager extends BaseManager {
             Logcat.d("Service not connected");
         }
 
+        mAVInInterface = null;
+        mAvInListener = null;
+        mAVInCallback = null;
+
         super.disconnect();
     }
 

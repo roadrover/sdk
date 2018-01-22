@@ -18,6 +18,17 @@ public class Param {
     /**
      * 普通参数
      */
+    public Param(int id, int min, int max, int def, int value) {
+        mId = id;
+        mMin = min;
+        mMax = max;
+        mDefault = def;
+        mValue = value;
+    }
+
+    /**
+     * 普通参数
+     */
     public Param(int id, int min, int max, int defaultValue) {
         mId = id;
         mMin = min;

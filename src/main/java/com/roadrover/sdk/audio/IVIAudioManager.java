@@ -73,6 +73,11 @@ public class IVIAudioManager extends BaseManager {
 
     @Override
     public void disconnect() {
+        mAudioCallback = null;
+        mAudioInterface = null;
+        mAudioListener = null;
+        mVolumeBarListener = null;
+        mValueCaches = null;
         super.disconnect();
     }
 
@@ -84,7 +89,9 @@ public class IVIAudioManager extends BaseManager {
     @Override
     protected void onServiceConnected(IBinder service) {
         mAudioInterface = IAudio.Stub.asInterface(service);
-        registerCallback(mAudioCallback);
+        if (mAudioCallback != null) {
+            registerCallback(mAudioCallback);
+        }
     }
 
     @Override
@@ -1117,6 +1124,9 @@ public class IVIAudioManager extends BaseManager {
      * @return
      */
     protected boolean updateCache(int id, int value) {
+        if (mValueCaches == null) {
+            return false;
+        }
         if (mValueCaches.indexOfKey(id) < 0 || value != mValueCaches.get(id)) {
             mValueCaches.put(id, value);
             return true;

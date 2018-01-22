@@ -81,6 +81,11 @@ public class IVIMedia {
         public static final int GALLERY     = 10;
 
         /**
+         * 数字音频广播类型，其值为 {@value}
+         */
+        public static final int DAB         = 11;
+
+        /**
          * 第三方媒体类型，其值为 {@value}
          */
         public static final int THIRD_PARTY = 20;

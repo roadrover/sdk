@@ -402,14 +402,16 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onScanStart(EventScanStart event) {
         if (event != null) {
-            for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
-                if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
-                    try {
-                        if (isSendScannerInfoToApp(event.mScanType, event.mSqlType, mediaScannerCallback)) {
-                            mediaScannerCallback.mCallback.onScanStart(event.mScanType, event.mSqlType);
+            if (mMediaScannerListeners != null) {
+                for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
+                    if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
+                        try {
+                            if (isSendScannerInfoToApp(event.mScanType, event.mSqlType, mediaScannerCallback)) {
+                                mediaScannerCallback.mCallback.onScanStart(event.mScanType, event.mSqlType);
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
                         }
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -423,14 +425,16 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onScanFinished(EventScanFinished event) {
         if (event != null) {
-            for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
-                if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
-                    try {
-                        if (isSendScannerInfoToApp(event.mScanType, event.mSqlType, mediaScannerCallback)) {
-                            mediaScannerCallback.mCallback.onScanFinish(event.mScanType, event.mSqlType, event.mPath, event.mOldPath);
+            if (mMediaScannerListeners != null) {
+                for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
+                    if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
+                        try {
+                            if (isSendScannerInfoToApp(event.mScanType, event.mSqlType, mediaScannerCallback)) {
+                                mediaScannerCallback.mCallback.onScanFinish(event.mScanType, event.mSqlType, event.mPath, event.mOldPath);
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
                         }
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -444,12 +448,14 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEject(EventEject event) {
         if (event != null) {
-            for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
-                if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
-                    try {
-                        mediaScannerCallback.mCallback.onEject(event.mPath, event.mIsDiskPowerDown);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+            if (mMediaScannerListeners != null) {
+                for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
+                    if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
+                        try {
+                            mediaScannerCallback.mCallback.onEject(event.mPath, event.mIsDiskPowerDown);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -463,12 +469,14 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMount(EventMount event) {
         if (event != null) {
-            for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
-                if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
-                    try {
-                        mediaScannerCallback.mCallback.onMount(event.mPath);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+            if (mMediaScannerListeners != null) {
+                for (MediaScannerCallback mediaScannerCallback : mMediaScannerListeners) {
+                    if (mediaScannerCallback != null && mediaScannerCallback.mCallback != null) {
+                        try {
+                            mediaScannerCallback.mCallback.onMount(event.mPath);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -585,6 +593,12 @@ public class MediaManager extends BaseManager {
      */
     @Override
     public void disconnect() {
+        mMediaInterface = null;
+        mMediaInfoListeners = null;
+        mAppGetAllMediaListCallbackMaps = null;
+        mAppGetAppointPathMediaListCallbackMaps = null;
+        mIGetMediaListCallback = null;
+        mGetAppointPathMediaInfoCallback = null;
         super.disconnect();
         unRegisterScannerCallback();
         unregisterMediaInfoCallback();
@@ -611,9 +625,11 @@ public class MediaManager extends BaseManager {
         mMediaInterface = IMedia.Stub.asInterface(service);
         registerScannerCallback();
 
-        if (mMediaInfoListeners.size() > 0) {
-            registerMediaInfoCallback();
-            requestMediaInfoAndStateEvent();
+        if (mMediaInfoListeners != null) {
+            if (mMediaInfoListeners.size() > 0) {
+                registerMediaInfoCallback();
+                requestMediaInfoAndStateEvent();
+            }
         }
 
         // 重新打开 media
@@ -737,7 +753,9 @@ public class MediaManager extends BaseManager {
      * @param types 可以同时监听几个类型文件 {@link com.roadrover.sdk.media.IVIMedia.MediaSqlDataType}
      */
     public void registerScannerListener(IMediaScannerCallback.Stub callback, int[] types) {
-        mMediaScannerListeners.add(new MediaScannerCallback(types, callback));
+        if (mMediaScannerListeners != null) {
+            mMediaScannerListeners.add(new MediaScannerCallback(types, callback));
+        }
     }
 
     /**
@@ -745,7 +763,9 @@ public class MediaManager extends BaseManager {
      * @param callback 注册扫描回调的监听对象
      */
     public void unRegisterScannerListener(IMediaScannerCallback.Stub callback) {
-        mMediaScannerListeners.remove(new MediaScannerCallback(null, callback));
+        if (mMediaScannerListeners != null) {
+            mMediaScannerListeners.remove(new MediaScannerCallback(null, callback));
+        }
     }
 
     /**
@@ -760,7 +780,9 @@ public class MediaManager extends BaseManager {
             if (TextUtils.isEmpty(startWithPath)) {
                 mAppGetAllMediaListCallback = callback;
             } else {
-                mAppGetAllMediaListCallbackMaps.put(startWithPath, callback);
+                if (mAppGetAllMediaListCallbackMaps != null) {
+                    mAppGetAllMediaListCallbackMaps.put(startWithPath, callback);
+                }
             }
             try {
                 if (type < MediaSqlManager.MENU_TYPES.length && type >= 0) {
@@ -800,7 +822,9 @@ public class MediaManager extends BaseManager {
             if (TextUtils.isEmpty(path)) {
                 mIGetMediaListCallback = callback;
             } else {
-                mAppGetAppointPathMediaListCallbackMaps.put(path, callback);
+                if (mAppGetAppointPathMediaListCallbackMaps != null) {
+                    mAppGetAppointPathMediaListCallbackMaps.put(path, callback);
+                }
             }
             try {
                 if (type < MediaSqlManager.MENU_TYPES.length && type >= 0) {
@@ -891,7 +915,9 @@ public class MediaManager extends BaseManager {
                         if (TextUtils.isEmpty(event.mPath)) {
                             callback = mIGetMediaListCallback;
                         } else {
-                            callback = mAppGetAppointPathMediaListCallbackMaps.get(event.mPath);
+                            if (mAppGetAppointPathMediaListCallbackMaps != null) {
+                                callback = mAppGetAppointPathMediaListCallbackMaps.get(event.mPath);
+                            }
                         }
                         break;
 
@@ -899,7 +925,9 @@ public class MediaManager extends BaseManager {
                         if (TextUtils.isEmpty(event.mPath)) {
                             callback = mAppGetAllMediaListCallback;
                         } else {
-                            callback = mAppGetAllMediaListCallbackMaps.get(event.mPath);
+                            if (mAppGetAllMediaListCallbackMaps != null) {
+                                callback = mAppGetAllMediaListCallbackMaps.get(event.mPath);
+                            }
                         }
                         break;
                 }
@@ -916,11 +944,15 @@ public class MediaManager extends BaseManager {
                         }
 
                         if (!TextUtils.isEmpty(event.mPath)) { // 完成之后，剔除
-                            if (mAppGetAppointPathMediaListCallbackMaps.containsValue(callback)) {
-                                mAppGetAppointPathMediaListCallbackMaps.remove(event.mPath);
+                            if (mAppGetAppointPathMediaListCallbackMaps != null) {
+                                if (mAppGetAppointPathMediaListCallbackMaps.containsValue(callback)) {
+                                    mAppGetAppointPathMediaListCallbackMaps.remove(event.mPath);
+                                }
                             }
-                            if (mAppGetAllMediaListCallbackMaps.containsValue(callback)) {
-                                mAppGetAllMediaListCallbackMaps.remove(event.mPath);
+                            if (mAppGetAllMediaListCallbackMaps != null) {
+                                if (mAppGetAllMediaListCallbackMaps.containsValue(callback)) {
+                                    mAppGetAllMediaListCallbackMaps.remove(event.mPath);
+                                }
                             }
                         }
                         break;
@@ -1009,7 +1041,9 @@ public class MediaManager extends BaseManager {
      */
     public void registerMediaInfoListener(IMediaInfoCallback.Stub callback) {
         if (callback != null) {
-            mMediaInfoListeners.add(callback);
+            if (mMediaInfoListeners != null) {
+                mMediaInfoListeners.add(callback);
+            }
             registerMediaInfoCallback();
         }
     }
@@ -1020,9 +1054,11 @@ public class MediaManager extends BaseManager {
      */
     public void unregisterMediaInfoListener(IMediaInfoCallback.Stub callback) {
         if (callback != null) {
-            mMediaInfoListeners.remove(callback);
-            if (mMediaInfoListeners.size() == 0) {
-                unregisterMediaInfoCallback();
+            if (mMediaInfoListeners != null) {
+                mMediaInfoListeners.remove(callback);
+                if (mMediaInfoListeners.size() == 0) {
+                    unregisterMediaInfoCallback();
+                }
             }
         }
     }
@@ -1479,19 +1515,21 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaInfoChanged(IVIMedia.MediaInfo event) {
         if (event != null && event.mArtImage != null) {
-            for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
-                try {
-                    callback.onMediaChange(event.mMediaType,
-                            event.mName,
-                            event.mInfo,
-                            event.mArtImage.mWidth,
-                            event.mArtImage.mHeight,
-                            event.mArtImage.mPixels,
-                            event.mIndex,
-                            event.mTotalCount,
-                            event.mPopup);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            if (mMediaInfoListeners != null) {
+                for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
+                    try {
+                        callback.onMediaChange(event.mMediaType,
+                                event.mName,
+                                event.mInfo,
+                                event.mArtImage.mWidth,
+                                event.mArtImage.mHeight,
+                                event.mArtImage.mPixels,
+                                event.mIndex,
+                                event.mTotalCount,
+                                event.mPopup);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1504,14 +1542,16 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaStateChanged(IVIMedia.MediaState event) {
         if (event != null) {
-            for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
-                try {
-                    callback.onPlayStateChange(event.mMediaType,
-                            event.mState,
-                            event.mPosition,
-                            event.mDuration);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            if (mMediaInfoListeners != null) {
+                for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
+                    try {
+                        callback.onPlayStateChange(event.mMediaType,
+                                event.mState,
+                                event.mPosition,
+                                event.mDuration);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1524,12 +1564,14 @@ public class MediaManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaZoneChanged(IVIMedia.MediaZone event) {
         if (event != null) {
-            for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
-                try {
-                    callback.onMediaZoneChanged(event.mMediaType,
-                            event.mZone);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            if (mMediaInfoListeners != null) {
+                for (IMediaInfoCallback.Stub callback : mMediaInfoListeners) {
+                    try {
+                        callback.onMediaZoneChanged(event.mMediaType,
+                                event.mZone);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1572,5 +1614,20 @@ public class MediaManager extends BaseManager {
      */
     public int getMediaType() {
         return mMediaType;
+    }
+
+    /**
+     * 获取当前整个系统的媒体类型，该方法和getMediaType()方法区别在于，getMediaType()是内部标记用的，该方法是获取整个系统的当前有效媒体
+     * @return {@link com.roadrover.sdk.media.IVIMedia.Type}
+     */
+    public int getActiveMedia() {
+        if (mMediaInterface != null) {
+            try {
+                return mMediaInterface.getActiveMedia();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return IVIMedia.Type.NONE;
     }
 }

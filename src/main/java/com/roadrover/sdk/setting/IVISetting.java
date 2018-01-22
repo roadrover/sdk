@@ -90,11 +90,85 @@ public class IVISetting {
     }
 
     /**
+     * 声音设置数据导出
+     */
+    public static class Audio {
+        /**名字或标签名-声音设置, 其值 {@value}*/
+        public static final String NAME = "Audio";
+
+        /**主音量, 其值 {@value}*/
+        public static final String MasterVolume = "MasterVolume";
+        /**导航音量, 其值 {@value}*/
+        public static final String NaviVolume = "NaviVolume";
+        /**蓝牙音量, 其值 {@value}*/
+        public static final String BluetoothVolume = "BluetoothVolume";
+        /**蓝牙铃声音量, 其值 {@value}*/
+        public static final String BluetoothRingVolume = "BluetoothRingVolume";
+        /**媒体音量, 其值 {@value}*/
+        public static final String MediaVolume = "MediaVolume";
+        /**倒车时媒体音量, 其值 {@value}*/
+        public static final String MediaCCDVolume = "MediaCCDVolume";
+
+        /**声音其他设置, 其值 {@value}*/
+        public static final String AudioOtherSetting = "AudioOtherSetting";
+    }
+
+    /**
+     * 个性化设置数据导出
+     */
+    public static class Personal {
+        /**名字或标签名-个性化设置, 其值 {@value}*/
+        public static final String NAME = "Personal";
+
+        /**主题设置, 其值 {@value}*/
+        public static final String ThemeSetting = "ThemeSetting";
+
+        /**视频亮度, 其值 {@value}*/
+        public static final String AVInBrightness = "AVInBrightness";
+        /**视频色度, 其值 {@value}*/
+        public static final String AVInHue = "AVInHue";
+        /**视频对比度, 其值 {@value}*/
+        public static final String AVInContrast = "AVInContrast";
+
+        /**个性化其他设置, 其值 {@value}*/
+        public static final String PersonalOtherSetting = "PersonalOtherSetting";
+    }
+
+    /**
+     * 车辆设置数据导出
+     */
+    public static class Car {
+        /**名字或标签名-车辆设置, 其值 {@value}*/
+        public static final String NAME = "Car";
+
+        /**座椅设置, 其值 {@value}*/
+        public static final String SeatSetting = "SeatSetting";
+    }
+
+    /**
+     * 连接设置数据导出
+     */
+    public static class Link {
+        /**名字或标签名-连接设置, 其值 {@value}*/
+        public static final String NAME = "Link";
+
+        /**T-Box设置, 其值 {@value}*/
+        public static final String TBoxSetting = "TBoxSetting";
+    }
+
+    /**
      * 系统设置数据导出
      */
     public static class System {
         /**名字或标签名-系统设置, 其值 {@value}*/
         public static final String NAME = "System";
+
+        /**输入法选择, 其值 {@value}*/
+        public static final String InputMethod = "InputMethod";
+        /**应用管理, 其值 {@value}*/
+        public static final String AppManager = "AppManager";
+        /**温度单位, 其值 {@value}*/
+        public static final String Temperature = "Temperature";
     }
 
     /**
@@ -205,6 +279,20 @@ public class IVISetting {
         public static final String SuperPassword = "SuperPassword";
         /**普工模式密码*/
         public static final String OrdinaryPassword = "OrdinaryPassword";
+        /**真的导航的包名*/
+        public static final String RealNaviPackages = "RealNaviPackages";
+        /**假的导航的包名*/
+        public static final String FakeNaviPackages = "FakeNaviPackages";
+        /**假的导航的类名*/
+        public static final String FakeNaviActivitys = "FakeNaviActivitys";
+        /**智能ACC OFF处理数组*/
+        public static final String SmartSleepSettings = "SmartSleepSettings";
+        /**疲劳预警的超时时间数组*/
+        public static final String FatigueDrivingCounts = "FatigueDrivingCounts";
+        /**皮肤处理数组*/
+        public static final String SkinSettings = "SkinSettings";
+        /**原车字符编码处理数组*/
+        public static final String CarCharsetSettings = "CarCharsetSettings";
     }
 
     /**
@@ -889,6 +977,142 @@ public class IVISetting {
      */
     public static boolean getMobileNetworkEnable() {
         return getEnable(Network.NAME, Network.MobileNetwork);
+    }
+
+    /**
+     * 获取主音量的可见性
+     * @return
+     */
+    public static boolean getMasterVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.MasterVolume);
+    }
+
+    /**
+     * 获取导航音量的可见性
+     * @return
+     */
+    public static boolean getNaviVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.NaviVolume);
+    }
+
+    /**
+     * 获取蓝牙音量的可见性
+     * @return
+     */
+    public static boolean getBluetoothVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.BluetoothVolume);
+    }
+
+    /**
+     * 获取蓝牙铃声音量的可见性
+     * @return
+     */
+    public static boolean getBluetoothRingVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.BluetoothRingVolume);
+    }
+
+    /**
+     * 获取媒体音量的可见性
+     * @return
+     */
+    public static boolean getMediaVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.MediaVolume);
+    }
+
+    /**
+     * 获取倒车时媒体音量的可见性
+     * @return
+     */
+    public static boolean getMediaCCDVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.MediaCCDVolume);
+    }
+
+    /**
+     * 获取声音其他设置项的可见性
+     * @return
+     */
+    public static boolean getAudioOtherSettingVisible() {
+        return getVisible(Audio.NAME, Audio.AudioOtherSetting);
+    }
+
+    /**
+     * 获取主题设置项的可见性
+     * @return
+     */
+    public static boolean getThemeSettingVisible() {
+        return getVisible(Personal.NAME, Personal.ThemeSetting);
+    }
+
+    /**
+     * 获取视频亮度设置可见性
+     * @return
+     */
+    public static boolean getAVInBrightnessVisible() {
+        return getVisible(Personal.NAME, Personal.AVInBrightness);
+    }
+
+    /**
+     * 获取视频色度设置可见性
+     * @return
+     */
+    public static boolean getAVInHueVisible() {
+        return getVisible(Personal.NAME, Personal.AVInHue);
+    }
+
+    /**
+     * 获取视频对比度设置可见性
+     * @return
+     */
+    public static boolean getAVInContrastVisible() {
+        return getVisible(Personal.NAME, Personal.AVInContrast);
+    }
+
+    /**
+     * 获取个性化其他设置项的可见性
+     * @return
+     */
+    public static boolean getPersonalOtherSettingVisible() {
+        return getVisible(Personal.NAME, Personal.PersonalOtherSetting);
+    }
+
+    /**
+     * 获取座椅设置项的可见性
+     * @return
+     */
+    public static boolean getSeatSettingVisible() {
+        return getVisible(Car.NAME, Car.SeatSetting);
+    }
+
+    /**
+     * 获取T-Box设置项的可见性
+     * @return
+     */
+    public static boolean getTBoxSettingVisible() {
+        return getVisible(Link.NAME, Link.TBoxSetting);
+    }
+
+    /**
+     * 获取输入法选择的可见性
+     * @return
+     */
+    public static boolean getInputMethodVisible() {
+        return getVisible(System.NAME, System.InputMethod);
+    }
+
+    /**
+     * 获取应用管理的可见性
+     * @return
+     */
+    public static boolean getAppManagerVisible() {
+        return getVisible(System.NAME, System.AppManager);
+    }
+
+    /**
+     * 获取温度单位的可见性
+     * @return
+     */
+    public static boolean getTemperatureVisible() {
+        return getVisible(System.NAME, System.Temperature);
     }
 
     /**

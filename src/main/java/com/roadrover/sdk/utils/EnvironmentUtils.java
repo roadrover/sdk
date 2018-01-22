@@ -244,19 +244,29 @@ public class EnvironmentUtils {
             }
         } else {
             Logcat.w("mStorageDevices is null, get storage devices from StorageManager#getVolumePaths.");
-            if (null != mStorageManager) {
-                String paths[] = null;
-                try {
-                    paths = (String[]) mStorageManager.getClass()
-                            .getMethod("getVolumePaths")
-                            .invoke(mStorageManager);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            ret = getStoragePathsByReflection(ret);
+        }
+        return ret;
+    }
 
-                if (null != paths) {
-                    ret = Arrays.asList(paths);
-                }
+    /**
+     * 通过反射获取所有存储设备列表
+     * @param ret
+     * @return 返回所有存储设备列表
+     */
+    private List<String> getStoragePathsByReflection(List<String> ret) {
+        if (null != mStorageManager) {
+            String paths[] = null;
+            try {
+                paths = (String[]) mStorageManager.getClass()
+                        .getMethod("getVolumePaths")
+                        .invoke(mStorageManager);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (null != paths) {
+                ret = Arrays.asList(paths);
             }
         }
         return ret;
@@ -308,6 +318,26 @@ public class EnvironmentUtils {
         List<String> ret = new ArrayList<>();
 
         List<String> paths = getStoragePaths();
+        if (null != paths) {
+            for (int i = 0; i < paths.size(); i++) {
+                final String path = paths.get(i);
+                if (isStorageMounted(path)) {
+                    ret.add(path);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 通过反射获取全部挂载上的存储设备列表
+     * 主要用于系统升级和下位机升级，解决没有在ini文件中配置某SD卡路径的情况下，依然可以通过这个SD卡路径进行升级
+     * @return 返回全部挂载上的存储设备列表
+     */
+    public List<String> getMountStoragePathsByReflection() {
+        List<String> ret = new ArrayList<>();
+        List<String> paths = null;
+        paths = getStoragePathsByReflection(paths);
         if (null != paths) {
             for (int i = 0; i < paths.size(); i++) {
                 final String path = paths.get(i);
