@@ -28,6 +28,10 @@ public class IVIAudio {
          */
         public static final int AK7601_RESET_N = 3;
         /**
+         * 6638 模块，其值为 {@value}
+         */
+        public static final int TEF6638 = 4;
+        /**
          * 获取音效芯片名称
          * @param id 见{@link ChipId}
          * @return

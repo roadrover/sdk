@@ -146,6 +146,8 @@ public class IVIVoice {
         /** 打开语音app，值为{@value} */
         public static final int OPEN_VOICE_APP = 0;
 
+        public static final int CLOSE_VOICE_APP = 1;
+
         /** 定义的类型 */
         public int mType;
 

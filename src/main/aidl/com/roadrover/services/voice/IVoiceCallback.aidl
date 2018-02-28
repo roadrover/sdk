@@ -6,4 +6,6 @@ package com.roadrover.services.voice;
 interface IVoiceCallback {
 
     void openVoiceApp();
+
+    void closeVoiceApp();
 }

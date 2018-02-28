@@ -310,6 +310,19 @@ public class VoiceManager extends BaseManager {
     }
 
     /**
+     * 关闭语音应用
+     */
+    public void closeVoiceApp() {
+        try {
+            if (mVoiceInterface != null) {
+                mVoiceInterface.closeVoiceApp();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 暂停其他媒体
      */
     public void startVoice() {
@@ -356,6 +369,11 @@ public class VoiceManager extends BaseManager {
         public void openVoiceApp() throws RemoteException {
             post(new IVIVoice.EventVoiceCallback(IVIVoice.EventVoiceCallback.OPEN_VOICE_APP));
         }
+
+        @Override
+        public void closeVoiceApp() throws RemoteException {
+            post(new IVIVoice.EventVoiceCallback(IVIVoice.EventVoiceCallback.CLOSE_VOICE_APP));
+        }
     };
 
     @Subscribe
@@ -375,6 +393,22 @@ public class VoiceManager extends BaseManager {
                             }
                         }
                     }
+                    break;
+                case IVIVoice.EventVoiceCallback.CLOSE_VOICE_APP:
+                    for (IInterface iInterface : mICallbackS) {
+                        if (iInterface instanceof IVoiceCallback.Stub) {
+                            IVoiceCallback.Stub callback = (IVoiceCallback.Stub) iInterface;
+                            if (callback != null) {
+                                try {
+                                    callback.closeVoiceApp();
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
                     break;
             }
         }

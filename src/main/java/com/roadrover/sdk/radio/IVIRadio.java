@@ -269,6 +269,9 @@ public class IVIRadio {
             public static final int PAUSE = 10;
             public static final int PLAY = 11;
             public static final int PLAY_PAUSE = 12;
+            public static final int SCAN_UP = 13;
+            public static final int SCAN_DOWN = 14;
+            public static final int SCAN_ALL = 15;
         }
         public int mAction;
         public int mValue;

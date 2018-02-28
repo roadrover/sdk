@@ -261,14 +261,36 @@ public class IVICar {
         }
     }
 
+	/**
+     * 车型英文名称
+     */
+    public static class CarEnName {
+        /** 高尔夫7代 */
+        public static final String GOLF_7  = "Golf 7";
+    }
+
+	/**
+     * 车型中文名称
+     */
+    public static class CarCnName {
+        /** 高尔夫7代 */
+        public static final String GOLF_7  = "高尔夫7代";
+    }
+
     /**
      * ACC 状态
      */
     public static class Acc {
         public boolean mOn;
+        public boolean mIsAcc = false;
 
         public Acc(boolean on) {
             mOn = on;
+        }
+
+        public Acc(boolean on, boolean isAcc) {
+            mOn = on;
+            mIsAcc = isAcc;
         }
     }
 

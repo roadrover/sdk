@@ -111,18 +111,25 @@ public class CarManager extends BaseManager {
     }
 
     public CarManager(Context context, ConnectListener connectListener, CarListener carListener) {
-        super(context, connectListener, true);
+        this(context, connectListener, carListener, true);
+    }
+
+    public CarManager(Context context, ConnectListener connectListener, CarListener carListener, boolean useDefaultEventBus) {
+        super(context, connectListener, useDefaultEventBus);
         mCarListener = carListener;
     }
 
     @Override
     public void disconnect() {
+        if (mCarCallback != null) {
+            unRegisterCallback(mCarCallback);
+            mCarCallback = null;
+        }
         mCarInterface = null;
         mCarListener = null;
         mFilters = null;
         mClimates = null;
         mRadar = null;
-        mCarCallback = null;
         mIMcuUpgradeCallback = null;
         super.disconnect();
     }

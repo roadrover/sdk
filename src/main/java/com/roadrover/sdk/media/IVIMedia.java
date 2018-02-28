@@ -691,8 +691,9 @@ public class IVIMedia {
 
         /**
          * 退出当前应用
+         * @param quitSource {@link QuitMediaSource}
          */
-        void quitApp();
+        void quitApp(int quitSource);
 
         /**
          * 视频是否被允许显示，比如手刹控制
@@ -735,5 +736,25 @@ public class IVIMedia {
          * @param path 挂载目录
          */
         void onMount(String path);
+    }
+
+    /**
+     * 退出媒体时的控制来源
+     */
+    public static class QuitMediaSource {
+        /**
+         * 未知来源
+         */
+        public static final int UNKNOWN = 0;
+
+        /**
+         * SystemUI滑掉
+         */
+        public static final int SYSTEM_UI = 1;
+
+        /**
+         * 声控控制退出
+         */
+        public static final int VOICE = 2;
     }
 }

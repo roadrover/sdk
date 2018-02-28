@@ -228,6 +228,16 @@ public class IVISystem {
         }
     }
 
+    /**
+     * 屏幕保护通知
+     */
+    public static class EventScreenProtection {
+        public boolean mIsEnterScreenProtection;
+        public EventScreenProtection(boolean isEnterScreenProtection) {
+            mIsEnterScreenProtection = isEnterScreenProtection;
+        }
+    }
+
     /**升级状态*/
     public static class UpgradeStatus {
         /** 升级成功，正在准备重启 */
@@ -462,6 +472,10 @@ public class IVISystem {
     public static final String ACTIVITY_GOOGLE_SEARCH = "com.google.android.googlequicksearchbox.SearchActivity";
     /** 谷歌地图 Activity名 */
     public static final String ACTIVITY_GOOGLE_MAPS = "com.google.android.maps.MapsActivity";
+    /** 谷歌地图 Places Activity名 */
+    public static final String ACTIVITY_GOOGLE_MAPS_PLACES = "com.google.android.maps.PlacesActivity";
+    /** 谷歌地图 Destination Activity名 */
+    public static final String ACTIVITY_GOOGLE_MAPS_DESTINATION = "com.google.android.maps.driveabout.app.DestinationActivity";
     /** 应用管理 Activity名 */
     public static final String ACTIVITY_MANAGE_APPLICATION = PACKAGE_ANDROID_SETTINGS + ".ManageApplications";
     /** Google服务设置 Activity名 */
@@ -616,10 +630,17 @@ public class IVISystem {
     public static final String PARAM_MX_COUNTY = "County";
     // 美行地图定义的广播 end
 
-    // 讯飞告诉其他应用录音开始
-    public static final String ACTION_IFLYTEK_RECORD_EXIT_BY_CALL = "action_iflytek_record_exit_by_call"; // 通知应用蓝牙来去电，需要退出录音
+    /***讯飞告诉其他应用录音开始,通知应用蓝牙来去电，需要退出录音***/
+    public static final String ACTION_IFLYTEK_RECORD_EXIT_BY_CALL = "action_iflytek_record_exit_by_call";
     /***是否是蓝牙通知关闭****/
     public static final String PARAM_BYCALL = "byCall";
+
+    /***ipod录音开始，讯飞语音停止录音***/
+    public static final String ACTION_IFLYTEK_RECORD_EXIT_BY_IPOD = "action_iflytek_record_exit_by_call";
+    /***是否是ipod打开****/
+    public static final String IS_OPEN_IPOD = "isOpenIpod";
+
+    public static final String ACTION_IFLYTEK_START_RECORD = "action_iflytek_start_record";
 
     /**
      * gps 数据变化

@@ -5,6 +5,7 @@ import com.roadrover.services.media.IGetMediaListCallback;
 import com.roadrover.services.media.IMediaControlCallback;
 import com.roadrover.services.media.IMediaInfoCallback;
 import com.roadrover.services.media.IMediaScannerCallback;
+import com.roadrover.services.media.IMusicControlCallback;
 
 interface IMedia {
 
@@ -199,4 +200,15 @@ interface IMedia {
      * @param path 文件路径
      */
     void sendWriteFinishedEvent(String path);
+
+    /**
+     * 注册语音控制音乐的回调接口 </br>
+     * 与 IMediaCtonrlCallback 区别在于，该接口注册后，及时当前不在音频焦点状态，也可以获取到回调信息 </br>
+     */
+    void registerMusicControlCallback(IMusicControlCallback callback);
+
+    /**
+     * 注销语音控制音乐的回调接口
+     */
+    void unregisterMusicControlCallback(IMusicControlCallback callback);
 }

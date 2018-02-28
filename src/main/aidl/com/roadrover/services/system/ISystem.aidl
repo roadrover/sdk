@@ -146,4 +146,21 @@ interface ISystem {
      */
     boolean isTboxOpen();
 
+    /**
+     * 设置屏幕保护间隔时间
+     * @param time 时间 <= 0 取消定时
+     */
+    void setScreenProtectionTime(int time);
+
+    /**
+     * 获取设置屏幕保护的间隔时间
+     * @return
+     */
+    int getScreenProtectionTime();
+
+    /**
+     * 设置当前屏幕保护状态，当取消屏保时候需要调用该接口通知services
+     * @param isEnterScreenProtection 是否是屏幕状态
+     */
+    void setScreenProtectionStatus(boolean isEnterScreenProtection);
 }

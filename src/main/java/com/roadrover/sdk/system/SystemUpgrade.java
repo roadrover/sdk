@@ -156,7 +156,14 @@ public class SystemUpgrade implements BaseManager.ConnectListener {
 
         mHandler = new SafeHandler(this);
 
-        mCarManager = new CarManager(mContext,null,null);
+        mCarManager = new CarManager(mContext, null, null, false);
+    }
+
+    public void release() {
+        if (mCarManager != null) {
+            mCarManager.disconnect();
+            mCarManager = null;
+        }
     }
 
     @Override

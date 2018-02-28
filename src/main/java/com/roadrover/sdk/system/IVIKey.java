@@ -191,6 +191,7 @@ public class IVIKey {
             public static final int EQ = 1003;          // EQ均衡器
             public static final int LAUNCHER_APP = 1004; // 启动当前播放的媒体的app，没有播放没作用
             public static final int ANSWER_HANGUP = 1005; // 接听并挂断
+            public static final int WAZE_VOICE = 1006; // waze语音
             public static final int ANDROID_KEY = 1999; // 系统按键
         }
 
@@ -253,6 +254,7 @@ public class IVIKey {
             public static final String EQ               = "eq";              // EQ均衡器
             public static final String LAUNCHER_APP     = "launcher_app";    // 启动当前打开的媒体app
             public static final String ANDROID_KEY      = "android_key";     // 系统按键
+            public static final String WAZE_VOICE       = "waze_voice";      // waze语音
         }
 
         public static class Type {
@@ -329,6 +331,7 @@ public class IVIKey {
             sNameToIdMap.put(Name.EQ,         Id.EQ);
             sNameToIdMap.put(Name.ANDROID_KEY, Id.ANDROID_KEY);
             sNameToIdMap.put(Name.LAUNCHER_APP, Id.LAUNCHER_APP);
+            sNameToIdMap.put(Name.WAZE_VOICE, Id.WAZE_VOICE);
         }
 
         public Key(int id, int type) {

@@ -286,7 +286,8 @@ public class IVIAudioManager extends BaseManager {
 
     /**
      * 设置指定id的参数，例：设置主音量 setParam(AudioParam.Id.VOLUME_MASTER, 10);
-     * @param id {@link com.roadrover.sdk.audio.AudioParam.Id}
+     * @param id 音量id {@link com.roadrover.sdk.audio.AudioParam.Id}
+     * @param value 音量值
      */
     public void setParam(int id, int value) {
         if (!updateCache(id, value)) {
@@ -327,7 +328,7 @@ public class IVIAudioManager extends BaseManager {
     }
 
     /**
-     * 获取一个声音参数
+     * 获取一个声音参数setBalanceFade
      * @param id {@link com.roadrover.sdk.audio.AudioParam.Id}
      * @return 整个音频的参数，例：主音量，{@link AudioParam}
      */

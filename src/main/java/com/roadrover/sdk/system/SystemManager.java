@@ -34,7 +34,10 @@ public class SystemManager extends BaseManager {
 
     @Override
     public void disconnect() {
-        mSystemUpgrade = null;
+        if (mSystemUpgrade != null) {
+            mSystemUpgrade.release();
+            mSystemUpgrade = null;
+        }
         mISettingCallback = null;
         mGpsCallback = null;
         mUserGpsCallback = null;
@@ -281,6 +284,11 @@ public class SystemManager extends BaseManager {
         @Override
         public void onTboxChange(boolean isOpen) throws RemoteException {
             post(new IVISystem.EventTboxOpen(isOpen));
+        }
+
+        @Override
+        public void onScreenProtection(boolean isEnterScreenProtection) throws RemoteException {
+            post(new IVISystem.EventScreenProtection(isEnterScreenProtection));
         }
     };
 
@@ -711,4 +719,61 @@ public class SystemManager extends BaseManager {
         }
     }
 
+    /**
+     * 设置屏幕保护间隔时间
+     * @param time 时间 <= 0 取消定时
+     */
+    public void setScreenProtectionTime(int time) {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.setScreenProtectionTime(time);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 获取设置屏幕保护的间隔时间
+     * @return
+     */
+    public int getScreenProtectionTime() {
+        if (mSystemInterface != null) {
+            try {
+                return mSystemInterface.getScreenProtectionTime();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 设置当前屏幕保护状态，当取消屏保时候需要调用该接口通知services
+     * @param isEnterScreenProtection 是否是屏幕状态
+     */
+    public void setScreenProtectionStatus(boolean isEnterScreenProtection) {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.setScreenProtectionStatus(isEnterScreenProtection);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventScreenProtection(IVISystem.EventScreenProtection event) {
+        if (event != null) {
+            for (IInterface callback : mICallbackS) {
+                if (callback instanceof ISystemCallback.Stub) { // 回调应用通知
+                    try {
+                        ((ISystemCallback.Stub) callback).onScreenProtection(event.mIsEnterScreenProtection);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 }

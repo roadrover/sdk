@@ -10,6 +10,10 @@ public class EventBusUtil {
 
     private EventBus mEventBus; // 封装的EventBus对象
 
+    public EventBusUtil(boolean useDefaultEventBus) {
+        this(null, useDefaultEventBus);
+    }
+
     /**
      * Eventbus封装类构造
      * @param useDefaultEventBus 是否使用默认的EventBus，如果需要不使用默认的EventBus，可以使用false
@@ -20,7 +24,9 @@ public class EventBusUtil {
         } else {
             mEventBus = new EventBus();
         }
-        register(object);
+        if (object != null) {
+            register(object);
+        }
     }
 
     /**

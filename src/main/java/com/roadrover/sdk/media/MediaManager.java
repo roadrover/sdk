@@ -13,6 +13,7 @@ import com.roadrover.services.media.IMedia;
 import com.roadrover.services.media.IMediaControlCallback;
 import com.roadrover.services.media.IMediaInfoCallback;
 import com.roadrover.services.media.IMediaScannerCallback;
+import com.roadrover.services.media.IMusicControlCallback;
 import com.roadrover.services.media.StMusic;
 import com.roadrover.sdk.utils.Logcat;
 
@@ -544,7 +545,7 @@ public class MediaManager extends BaseManager {
                     break;
 
                 case EventMediaControl.QUIT_APP:
-                    mMediaControlListener.quitApp();
+                    mMediaControlListener.quitApp(event.mValue);
                     break;
 
                 case EventMediaControl.FILTER:
@@ -603,9 +604,11 @@ public class MediaManager extends BaseManager {
         unRegisterScannerCallback();
         unregisterMediaInfoCallback();
         unregisterMediaControlCallback();
+        unregisterMusicControlCallback();
         mMediaScannerCallback = null;
         mMediaInfoCallback = null;
         mMediaControlCallback = null;
+        mMusicControlCallback = null;
         if (null != mMediaScannerListeners) {
             mMediaScannerListeners.clear();
             mMediaScannerListeners = null;
@@ -641,6 +644,10 @@ public class MediaManager extends BaseManager {
             }
         }
 
+        if (mMusicControlCallback != null) {
+            registerMusicControlCallback();
+        }
+
         // 主动请求一次能否播放视频的消息
         requestVideoPermitEvent();
     }
@@ -662,8 +669,8 @@ public class MediaManager extends BaseManager {
         }
 
         @Override
-        public void quitApp() throws RemoteException {
-            post(new EventMediaControl(EventMediaControl.QUIT_APP));
+        public void quitApp(int quitSource) throws RemoteException {
+            post(new EventMediaControl(EventMediaControl.QUIT_APP, quitSource));
         }
 
         @Override
@@ -1629,5 +1636,59 @@ public class MediaManager extends BaseManager {
             }
         }
         return IVIMedia.Type.NONE;
+    }
+
+    /**
+     * 监听语音控制的回调对象
+     */
+    private IMusicControlCallback.Stub mMusicControlCallback = null;
+
+    /**
+     * 注册监听音乐的语音控制回调 </br>
+     * 与 registerMediaControlCallback 区别在于，该接口注册后，及时当前不在音频焦点状态，也可以获取到回调信息 </br>
+     */
+    public void registerMusicControlCallback() {
+        if (mMusicControlCallback == null) {
+            mMusicControlCallback = new IMusicControlCallback.Stub() {
+                @Override
+                public void setPlayMode(int mode) throws RemoteException {
+                    post(new EventMediaControl(EventMediaControl.SET_PLAY_MODE, mode));
+                }
+
+                @Override
+                public void playRandom() throws RemoteException {
+                    post(new EventMediaControl(EventMediaControl.PLAY_RANDOM));
+                }
+
+                @Override
+                public void filter(String title, String singer) throws RemoteException {
+                    post(EventMediaControl.filter(title, singer));
+                }
+            };
+        }
+
+        super.registerCallback(mMusicControlCallback);
+        if (mMediaInterface != null) {
+            try {
+                mMediaInterface.registerMusicControlCallback(mMusicControlCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 注销监听音乐的语音控制回调接口
+     */
+    public void unregisterMusicControlCallback() {
+        super.unRegisterCallback(mMusicControlCallback);
+        if (mMediaInterface != null) {
+            try {
+                mMediaInterface.unregisterMusicControlCallback(mMusicControlCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        mMusicControlCallback = null;
     }
 }

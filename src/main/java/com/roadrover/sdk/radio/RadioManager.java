@@ -45,6 +45,9 @@ public class RadioManager extends BaseManager {
 		void onRdsPsChanged(int pi, int freq, String ps);
 		void onRdsRtChanged(int pi, int freq, String rt);
 		void onRdsMaskChanged(int pi, int freq, int pty, int tp, int ta);
+		void scanUp();
+		void scanDown();
+		void scanAll();
 	}
 
 	public interface RadioScanAbortListener {
@@ -183,6 +186,18 @@ public class RadioManager extends BaseManager {
 
 				case IVIRadio.EventControl.Action.PREV:
 					mRadioListener.prev();
+					break;
+
+				case IVIRadio.EventControl.Action.SCAN_UP:
+					mRadioListener.scanUp();
+					break;
+
+				case IVIRadio.EventControl.Action.SCAN_DOWN:
+					mRadioListener.scanDown();
+					break;
+
+				case IVIRadio.EventControl.Action.SCAN_ALL:
+					mRadioListener.scanAll();
 					break;
 
 				default:
@@ -334,6 +349,24 @@ public class RadioManager extends BaseManager {
 		public void onTuneRotate(boolean add) {
 			post(new IVIRadio.EventControl(
 					IVIRadio.EventControl.Action.TUNE_ROTATE, add ? 1 : 0));
+		}
+
+		@Override
+		public void scanUp() throws RemoteException {
+			post(new IVIRadio.EventControl(
+					IVIRadio.EventControl.Action.SCAN_UP));
+		}
+
+		@Override
+		public void scanDown() throws RemoteException {
+			post(new IVIRadio.EventControl(
+					IVIRadio.EventControl.Action.SCAN_DOWN));
+		}
+
+		@Override
+		public void scanAll() throws RemoteException {
+			post(new IVIRadio.EventControl(
+					IVIRadio.EventControl.Action.SCAN_ALL));
 		}
 	};
 
@@ -723,4 +756,78 @@ public class RadioManager extends BaseManager {
         }
         return ret;
     }
+
+	/**
+	 * 设置FM搜台条件，开发者工具使用，协助硬件、销售支持、业务等部门现场调解搜台参数
+	 * @param usn UltraSonic Noise，超声波噪声，范围 0-100.0f
+	 * @param wam Wideband AM ，范围 0-100.0f
+	 * @param offset level-offset 电平偏移可用于校正天线增益，范围 0-100.0f
+	 * @param bw IF bandwidth 中频带宽，范围0-100.0f
+	 * @param autoLevel 自动搜台门限 范围 0-255.0f
+	 * @param manualLevel 手动搜台门限 范围 0-255.0f
+	 */
+	public void setFMScanCondition(float usn, float wam, float offset, float bw, float autoLevel, float manualLevel) {
+		if (mRadioInterface != null) {
+			try {
+				mRadioInterface.setFMScanCondition(usn, wam, offset, bw, autoLevel, manualLevel);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 获取FM搜台条件
+	 * @return float[0]:usn
+	 *         float[1]:wam
+	 *         float[2]:offset
+	 *         float[3]:bw
+	 *         float[4]:autoLevel
+	 *         float[5]:manualLevel
+	 */
+	public float[] getFMScanConditions() {
+		if (mRadioInterface != null) {
+			try {
+				return mRadioInterface.getFMScanConditions();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		return new float[0];
+	}
+
+	/**
+	 * 设置AM搜台条件，开发者工具使用，协助硬件、销售支持、业务等部门现场调解搜台参数
+	 * @param offset level-offset 电平偏移可用于校正天线增益，范围 0-100.0f
+	 * @param bw IF bandwidth 中频带宽，范围0-100.0f
+	 * @param autoLevel 自动搜台门限 范围 0-255.0f
+	 * @param manualLevel 手动搜台门限 范围 0-255.0f
+	 */
+	public void setAMScanCondition(float offset, float bw, float autoLevel, float manualLevel) {
+		if (mRadioInterface != null) {
+			try {
+				mRadioInterface.setAMScanCondition(offset, bw, autoLevel, manualLevel);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 获取AM搜台条件
+	 * @return float[0]:offset
+	 *         float[1]:bw
+	 *         float[2]:autoLevel
+	 *         float[3]:manualLevel
+	 */
+	public float[] getAMScanConditions() {
+		if (mRadioInterface != null) {
+			try {
+				return mRadioInterface.getAMScanConditions();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		return new float[0];
+	}
 }

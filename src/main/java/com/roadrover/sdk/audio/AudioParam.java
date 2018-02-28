@@ -112,6 +112,11 @@ public class AudioParam extends Param {
         public static final int LOUDNESS                = 27;
 
         /**
+         * 倒车时的蓝牙铃声音量，百分比0-100%，其值为 {@value}
+         */
+        public static final int VOLUME_BLUETOOTH_RING_CCD = 28;
+
+        /**
          * EQ数量，AK7601为十段EQ，其值为 {@value}
          */
         public static final int EQ_COUNT                = 31;

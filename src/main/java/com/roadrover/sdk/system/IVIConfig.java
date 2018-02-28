@@ -11,6 +11,7 @@ import com.roadrover.sdk.avin.IVIAVIn;
 import com.roadrover.sdk.avin.IVITV;
 import com.roadrover.sdk.avin.VideoParam;
 import com.roadrover.sdk.bluetooth.IVIBluetooth;
+import com.roadrover.sdk.car.IVICar;
 import com.roadrover.sdk.dab.IVIDAB;
 import com.roadrover.sdk.cluster.IVICluster;
 import com.roadrover.sdk.radio.IVIRadio;
@@ -94,6 +95,11 @@ public class IVIConfig {
     /** 声控是否可见 */
     private static final String VISIBLE = "Visible";
 
+    /** 发送系统时间 */
+    private static final String SECTION_SET_SYSTEM_TIME = "SetSystemTime";
+    /** 每秒发一次系统时间 */
+    private static final String SEND_TIME_EVERY_SECOND = "SendTimeEverySecond";
+
     // 音量配置 start
     /** 音量配置 */
     private static final String SECTION_VOLUME = "Volume";
@@ -111,6 +117,10 @@ public class IVIConfig {
     private static final String SECTION_MEMORY = "Memory";
     /** 记忆的包名 */
     private static final String MEMORY_PACKAGE_NAME = "PackageName";
+    /** 关屏acc on */
+    private static final String SECTION_ACC_OPEN_SCREEN = "AccOpenScreen";
+    /** 关屏状态下acc on 是否支持开屏 */
+    private static final String IS_ACC_OPEN_SCREEN = "IsAccOpenScreenOnLockScreen";
 
     // power 按键定义 start
     /** power按键定义组名 */
@@ -185,6 +195,10 @@ public class IVIConfig {
     private static final String MODE_COUNT = "COUNT";
     /** mode 按键配置的app，例:APP0=com.roadrover.radio_v2 */
     private static final String MODE_APP = "APP";
+    /** 长按次数 */
+    private static final String MODE_LONG_MAX_COUNT = "LONG_MAX_COUNT";
+    /** 长按动作 */
+    private static final String MODE_LONG_ACTION = "LONG_ACTION";
     // mode 键配置 end
 
     // Home 按键定义 start
@@ -328,6 +342,8 @@ public class IVIConfig {
     private static final String AK7601_VOLUME_CURVE = "AK7601VolumeCurve";
     /** BD37534音量曲线 */
     private static final String BD37534_VOLUME_CURVE = "BD37534VolumeCurve";
+    /** TEF6638音量曲线 */
+    private static final String TEF6638_VOLUME_CURVE = "TEF6638VolumeCurve";
 
     // AC8音频参数 start
     /** AC8声道扩展类型 */
@@ -401,7 +417,7 @@ public class IVIConfig {
     private static final String SECTION_CCD_VOLUME = "CcdVolume";
     /** 倒车默认音量 */
     private static final String CCD_VOLUME_PERCENT_DEFAULT = "CcdVolumePercentDefault";
-
+    /** 倒车是蓝牙铃声音量 */
     private static final String CCD_VOLUME_PERCENT_BLUETOOTHRING = "CcdVolumePercentBluetoothRing";
 
     /** 硬件版本 */
@@ -409,11 +425,69 @@ public class IVIConfig {
     /** 硬件版本号 */
     private static final String HARDWARE_VERSION = "HardwareVersion";
 
-    // 日期时间
+    /** 日期时间 */
     private static final String SECTION_DATETIME = "DateTime";
     private static final String DATETIME_SYNC_MCU = "SyncMcu";
 
     private static IniFileUtil mIniFileUtil = null; // INI文件工具类对象
+    // 动态轨迹线 start
+    /** 动态轨迹线 */
+    private static final String CAR_CCD_LINE                     = "car_ccd_line";
+    /** 车型英文名 */
+    private static final String CAR_EN_NAME                      = "car_en_name";
+    /** 车型中文名 */
+    private static final String CAR_CN_NAME                      = "car_cn_name";
+    /** 摄像头变形量 */
+    private static final String CAMERA_R                         = "camera_r";
+    /** 轨迹长度 */
+    private static final String TRACK_MAX_LEN                    = "track_max_len";
+    /** 获取红线和车尾距离 */
+    private static final String TRACK_MIN_LEN                    = "track_min_len";
+    /** 车宽 */
+    private static final String CAR_WIDTH                        = "car_width";
+    /** 车轴长 */
+    private static final String CAR_WHEELBASE                    = "car_wheelbase";
+    /** 前轮距 */
+    private static final String CAR_FORNT_TRACK_WIDTH            = "car_front_track_width";
+    /** 后轮距 */
+    private static final String CAR_REAR_TRACK_WIDTH             = "car_rear_track_width";
+    /** 后轮长 */
+    private static final String CAR_REAR_LEN                     = "car_rear_len";
+    /** 后轮宽 */
+    private static final String CAR_REAR_TYRE_WIDTH              = "car_rear_tyre_width";
+    /** 方向盘角度最大值 */
+    private static final String CAR_STEERING_WHEEL_ANGLE_MAX     = "car_steering_wheel_angle_max";
+    /** 获取前轮转向内轮的最大角度 */
+    private static final String CAR_WHEEL_ANGEL_MAX              = "car_wheel_angel_max";
+    /** 显示样式 */
+    private static final String DISP_STYLE                       = "disp_style";
+    /** I点X值 */
+    private static final String PTS00                            = "pts00";
+    /** I点Y值 */
+    private static final String PTS01                            = "pts01";
+    /** J点X值 */
+    private static final String PTS10                            = "pts10";
+    /** J点Y值 */
+    private static final String PTS11                            = "pts11";
+    /** K点X值 */
+    private static final String PTS20                            = "pts20";
+    /** K点J值 */
+    private static final String PTS21                            = "pts21";
+    /** H点X值 */
+    private static final String PTS30                            = "pts30";
+    /** H点J值 */
+    private static final String PTS31                            = "pts31";
+    // 动态轨迹线 end
+
+    // 屏保 start
+    private static final String SECTION_SCREEN_PROTECTION = "ScreenProtection";
+    /** 屏幕点击节点路径 */
+    private static final String SCREEN_PROTECTION_PATH = "path";
+    /** 屏幕点击节点名字 */
+    private static final String SCREEN_PROTECTION_NAME = "name";
+    /** 屏保默认时间 */
+    private static final String SCREEN_PROTECTION_TIME = "time";
+    // 屏保 end
 
     /**
      * 区域变化
@@ -560,6 +634,153 @@ public class IVIConfig {
 
             return null;
         }
+    }
+
+	/**
+     * 获取车辆英文名
+     * @return
+     */
+    public static String getCarEnName() {
+        return getString(CAR_CCD_LINE, CAR_EN_NAME, IVICar.CarEnName.GOLF_7);
+    }
+
+	/**
+     * 获取车辆中文名
+     * @return
+     */
+    public static String getCarCnName() {
+        return getString(CAR_CCD_LINE, CAR_CN_NAME, IVICar.CarCnName.GOLF_7);
+    }
+
+	/**
+     * 获取变形度
+     * @return
+     */
+    public static int getCamera_R() {
+        return getInteger(CAR_CCD_LINE, CAMERA_R, 96);
+    }
+
+	/**
+     * 获取轨迹长度
+     * @return
+     */
+    public static int getTrack_Max_Len() {
+        return getInteger(CAR_CCD_LINE, TRACK_MAX_LEN, 4);
+    }
+
+	/**
+     * 获取红线和车尾距离
+     * @return
+     */
+    public static int getTrack_Min_Len() {
+        return getInteger(CAR_CCD_LINE, TRACK_MIN_LEN, 40);
+    }
+
+	/**
+     * 获取车宽
+     * @return
+     */
+    public static int getCar_Width() {
+        return getInteger(CAR_CCD_LINE, CAR_WIDTH, 1799);
+    }
+
+	/**
+     * 获取车长
+     * @return
+     */
+    public static int getCar_WheelBase() {
+        return getInteger(CAR_CCD_LINE, CAR_WHEELBASE, 2637);
+    }
+
+	/**
+     * 获取前轮距
+     * @return
+     */
+    public static int getCar_Front_Track_Width() {
+        return getInteger(CAR_CCD_LINE, CAR_FORNT_TRACK_WIDTH, 1549);
+    }
+
+	/**
+     * 获取后轮距
+     * @return
+     */
+    public static int getCar_Rear_Track_Width() {
+        return getInteger(CAR_CCD_LINE, CAR_REAR_TRACK_WIDTH, 1520);
+    }
+
+	/**
+     * 获取后轮轮胎长度
+     * @return
+     */
+    public static int getCar_Rear_Len() {
+        return getInteger(CAR_CCD_LINE, CAR_REAR_LEN, 763);
+    }
+
+	/**
+     * 获取后轮轮胎宽度
+     * @return
+     */
+    public static int getCar_Rear_Tyre_Width() {
+        return getInteger(CAR_CCD_LINE, CAR_REAR_TYRE_WIDTH, 195);
+    }
+
+	/**
+     * 获取方向盘角度最大值
+     * @return
+     */
+    public static int getCar_Steering_Wheel_Angle_Max() {
+        return getInteger(CAR_CCD_LINE, CAR_STEERING_WHEEL_ANGLE_MAX, 200);
+    }
+
+	/**
+     * 获取前轮转向内轮的最大角度
+     * @return
+     */
+    public static int getCar_Wheel_Angel_Max() {
+        return getInteger(CAR_CCD_LINE, CAR_WHEEL_ANGEL_MAX, 385);
+    }
+
+	/**
+     * 获取辅助线显示样式
+     * @return
+     */
+    public static int getDisp_Style() {
+        return getInteger(CAR_CCD_LINE, DISP_STYLE, 1);
+    }
+
+	/**
+     * 获取四个标定点的x y值
+     * @param x
+     * @param y
+     * @return
+     */
+    public static float getPts(int x, int y) {
+        if (x == 0 ) {
+            if (y == 0) {
+                return getFloat(CAR_CCD_LINE, PTS00, (float) -139.4);
+            } else {
+                return getFloat(CAR_CCD_LINE, PTS01, (float) -36.5);
+            }
+        } else if (x == 1) {
+            if (y == 0) {
+                return getFloat(CAR_CCD_LINE, PTS10, (float) 145.9);
+            } else {
+                return getFloat(CAR_CCD_LINE, PTS11, (float) -36.5);
+            }
+        } else  if (x == 2) {
+            if (y == 0) {
+                return getFloat(CAR_CCD_LINE, PTS20, (float) 228.1);
+            } else {
+                return getFloat(CAR_CCD_LINE, PTS21, (float) 34.4);
+            }
+        } else if (x == 3) {
+            if (y == 0) {
+                return getFloat(CAR_CCD_LINE, PTS30, (float) -225.7);
+            } else {
+                return getFloat(CAR_CCD_LINE, PTS31, (float) 34.4);
+            }
+        }
+        return getFloat(CAR_CCD_LINE, PTS00, (float) -139.4);
     }
 
     /**
@@ -733,7 +954,6 @@ public class IVIConfig {
     public static int getAVInVideoSaturation() {
         return getInteger(SECTION_AVIN_VIDEO_ADJUST, AVIN_DEFAULT_SATURATION, 0x80);
     }
-
     /**
      * 获取AVIN检测变化次数，500ms一次
      * @param def
@@ -1260,6 +1480,14 @@ public class IVIConfig {
     }
 
     /**
+     * 获取TEF6638音量曲线
+     * @return
+     */
+    public static float[] getTEF6638VolumeCurve() {
+        return getVolumeCurve(TEF6638_VOLUME_CURVE);
+    }
+
+    /**
      * 获取BD37534音量曲线
      * @return
      */
@@ -1476,6 +1704,22 @@ public class IVIConfig {
             }
         }
         return apps;
+    }
+
+    /**
+     * mode 按键长按次数
+     * @return
+     */
+    public static int getModeKeyLongCount() {
+        return getInteger(SECTION_MODE_CONTROL, MODE_LONG_MAX_COUNT, 0);
+    }
+
+    /**
+     * 获取mode按键长按的动作
+     * @return
+     */
+    public static String getModeKeyLongAction() {
+        return getString(SECTION_MODE_CONTROL, MODE_LONG_ACTION);
     }
 
     /**
@@ -2081,5 +2325,45 @@ public class IVIConfig {
      */
     public static boolean isMidDoorCameraSupplyPower() {
         return getBoolean(SECTION_AVIN, MID_DOOR_CAMERA_SUPPLY_POWER, false);
+    }
+
+    /**
+     * 锁屏状态下acc on 是否支持开屏
+     * @return 是返回true，默认返回false
+     */
+    public static boolean isAccOpenScreenOnLockScreen() {
+        return getBoolean(SECTION_ACC_OPEN_SCREEN, IS_ACC_OPEN_SCREEN, false);
+    }
+
+    /**
+     * 每秒钟发送一次系统时间给下位机
+     * @return 是返回true，默认返回false
+     */
+    public static boolean isSendSystemTimeEverySecond() {
+        return getBoolean(SECTION_SET_SYSTEM_TIME, SEND_TIME_EVERY_SECOND, false);
+    }
+
+    /**
+     * 获取屏幕保护驱动节点路径
+     * @return
+     */
+    public static String getScreenProtectionPath() {
+        return getString(SECTION_SCREEN_PROTECTION, SCREEN_PROTECTION_PATH, "");
+    }
+
+    /**
+     * 获取屏幕保护驱动节点名字
+     * @return
+     */
+    public static String getScreenProtectionName() {
+        return getString(SECTION_SCREEN_PROTECTION, SCREEN_PROTECTION_NAME, "");
+    }
+
+    /**
+     * 获取屏幕保护时间
+     * @return
+     */
+    public static int getScreenProtectionTime() {
+        return getInteger(SECTION_SCREEN_PROTECTION, SCREEN_PROTECTION_TIME, 0);
     }
 }

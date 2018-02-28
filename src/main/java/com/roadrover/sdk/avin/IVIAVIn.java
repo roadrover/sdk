@@ -96,6 +96,11 @@ public class IVIAVIn {
         public static final int BUS_DISPATCH = 43;
 
         /**
+         * 有的Radio声音是走AVIN通道, 其值 {@value}
+         */
+        public static final int RADIO = 44;
+
+        /**
          * 获取ID对应的名字
          * @param id 传入的ID，见{@link IVIAVIn.Id}
          * @return

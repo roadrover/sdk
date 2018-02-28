@@ -52,8 +52,9 @@ interface IVoice {
     void openScreen();
     void closeScreen();
 
-    // 打开语音app
+    // 打开/关闭语音app
     void openVoiceApp();
+    void closeVoiceApp();
 
     // 以下两个接口，在语音播放声音的时候调用 startVoice，在语音停止播报的时候调用 endVoice
     void startVoice();

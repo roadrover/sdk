@@ -69,4 +69,10 @@ interface ISystemCallback {
      * @param isOpen {@link com.roadrover.sdk.system.IVISystem.EventTboxOpen}
      */
     void onTboxChange(boolean isOpen);
+
+    /**
+     * 屏幕保护状态改变
+     * @param isEnterScreenProtection 是否是进入屏保
+     */
+    void onScreenProtection(boolean isEnterScreenProtection);
 }

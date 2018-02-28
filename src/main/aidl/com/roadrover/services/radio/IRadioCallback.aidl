@@ -110,4 +110,19 @@ interface IRadioCallback {
      * @param add 顺时针，一般为增加频率
      */
     void onTuneRotate(boolean add);
+
+    /**
+     * 向上搜台
+     */
+    void scanUp();
+
+    /**
+     * 向下搜台
+     */
+    void scanDown();
+
+    /**
+     * 全部搜索
+     */
+    void scanAll();
 }
