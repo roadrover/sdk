@@ -80,6 +80,8 @@ public class IVIConfig {
     private static final String LUGGAGE_DOOR_LONG_SUPPLY_POWER = "LuggageDoorLongSupplyPower";
     /** 中门摄像头是否长供电 */
     private static final String MID_DOOR_CAMERA_SUPPLY_POWER = "MidDoorCameraSupplyPower";
+    /** 是否支持AVOut功能*/
+    private static final String ENABLE_AVOUT = "EnableAvOut";
     // AV功能配置 end
 
     /** Section Video Channel Config */
@@ -100,6 +102,16 @@ public class IVIConfig {
     /** 每秒发一次系统时间 */
     private static final String SEND_TIME_EVERY_SECOND = "SendTimeEverySecond";
 
+    /** 文件夹监听 */
+    private static final String SECTION_FILE_OBSERVER = "MultiFileObserver";
+    /** 是否需要监听文件目录变化 */
+    private static final String NEED_OBSERVER = "NeedObserver";
+
+    /** 倒车雷达配置*/
+    private static final String SECTION_CCD_RADAR = "ccdRadar";
+    /** 是否支持倒车雷达声音*/
+    private static final String ENABLE_CCD_RADAR = "EnableCcdRadar";
+
     // 音量配置 start
     /** 音量配置 */
     private static final String SECTION_VOLUME = "Volume";
@@ -111,6 +123,12 @@ public class IVIConfig {
     private static final String VOLUME_WAKE_UP_AREA_CHANGE = "WakeUpAreaChange";
     /** 屏幕开机音频参数区域变化配置 */
     private static final String VOLUME_SCREEN_ON_AREA_CHANGE = "ScreenOnAreaChange";
+    /**恢复默认设置时的主音量配置*/
+    private static final String DEFAULT_VOLUME_MASTER = "DefaultVolumeMaster";
+    /**恢复默认设置时的蓝牙通话音量配置*/
+    private static final String DEFAULT_VOLUME_BLUETOOTH = "DefaultVolumeBluetooth";
+    /**恢复默认设置时的蓝牙铃声配置*/
+    private static final String DEFAULT_VOLUME_BLUETOOTH_RING = "DefaultVolumeBluetoothRing";
     // 音量配置 end
 
     /** 记忆应用 */
@@ -249,7 +267,42 @@ public class IVIConfig {
     private static final String BLUETOOTH_MUTE_MIC = "BT_MUTE_MIC";
     /** 蓝牙电话本排序方式，特殊字符排前还是排后 */
     private static final String BLUETOOTH_CONTACT_SORT = "BT_CONTACT_SPECIAL_FIRST";
+    /** 本机蓝牙名称限制长度 */
+    private static final String BLUETOOTH_NAME_LIMIT_LENGTH = "BLUETOOTH_NAME_LIMIT_LENGTH";
     // 蓝牙配置 end
+
+    // 面板按键灯状态配置 start
+    /** 面板按键 定义组名 */
+    private static final String PANEL_LIGHT_POWER = "PanelLightPower";
+    /** 面板按键灯的配置 */
+    private static final String PANEL_LIGHT_POWER_STATUS = "PanelLightPowerStatus"; // 默认为0，0的时候正常亮灭，1常亮，2常灭
+
+    public static class PanelLightPowerStatus {
+        /** 大灯正常切换 */
+        public static final int PANEL_LIGHT_NORMAL      = 0;
+        /** 大灯保持常亮 */
+        public static final int PANEL_LIGHT_KEEP_ON     = 1;
+        /** 大灯保持常灭 */
+        public static final int PANEL_LIGHT_KEEP_OFF    = 2;
+
+    }
+    // 面板按键灯状态配置 end
+
+    // launchApp方法过滤 不后台启动的APP begin
+    /** ignore 过滤应用定义组名 */
+    private static final String SECTION_IGNORE_APP = "IgnoreLaunchApp";
+    /** ignore 配置的应用个数 */
+    private static final String IGNORE_COUNT = "COUNT";
+    /** ignore 配置的app，例:APP0=net.easyconn */
+    private static final String IGNORE_APP = "APP";
+    // launchApp方法过滤 不后台启动的APP end
+
+    // 系统配置 定义 start
+    /** 系统配置组名 */
+    private static final String SECTION_SYSTEM = "System";
+    /** 固件版本号 */
+    private static final String FIRMWARE_VERSION = "FIRMWARE_VERSION";
+    // 系统配置 定义 end
 
     /**
      * 跳转蓝牙页
@@ -321,6 +374,8 @@ public class IVIConfig {
     private static final String SECTION_AUDIO = "Audio";
     /** PC、MP3、Video内置前置音量 */
     private static final String PC_PRE_VOLUME = "PC_PreVolume";
+    /** PC_MUSIC内置前置音量 */
+    private static final String PC_MUSIC_PRE_VOLUME = "PC_MUSIC_PreVolume";
     /** 混音通道前置音量 */
     private static final String MONO_PRE_VOLUME = "Mono_PreVolume";
     /** 收音机内置前置音量 */
@@ -337,6 +392,8 @@ public class IVIConfig {
     private static final String AUX_PRE_VOLUME = "AUX_PreVolume";
     /** A2DP内置前置音量 */
     private static final String A2DP_PRE_VOLUME = "A2DP_PreVolume";
+    /** BLUETOOTH_TEL内置前置音量 */
+    private static final String BLUETOOTH_TEL_PRE_VOLUME = "BLUETOOTH_TEL_PreVolume";
 
     /** AK7601音量曲线 */
     private static final String AK7601_VOLUME_CURVE = "AK7601VolumeCurve";
@@ -384,6 +441,15 @@ public class IVIConfig {
     private static final int    CARCCD_TRACKOFFSET_DEFAULT = 0;
     // 倒车后视 end
 
+    /** AC8 ATCCamera矩形剪裁设置 */
+    private static final String SECTION_CAMERA_RECT = "CameraRect";
+    /** Rect Left */
+    private static final String CAMERA_RECT_LEFT = "RECT_LEFT";
+    /** Rect Top */
+    private static final String CAMERA_RECT_TOP = "RECT_TOP";
+    /** 默认偏移量 */
+    private static final int    CAMERA_RECT_DEFAULT = 0;
+
     // DAB
     private static final String SECTION_DAB = "DAB";
     private static final String DAB_CHIP = "DABChip"; // DAB芯片
@@ -411,7 +477,9 @@ public class IVIConfig {
     /** mcu串口波特率 */
     private static final String MCU_SERIAL_BAUD_RATE = "MCU_SERIAL_BAUD_RATE";
     /** 仪表通信的方式 */
-    private static final String CLUSTER_ID = "cluster";
+    private static final String CLUSTER_ID = "Cluster";
+    /**日志文件的时间显示，取值为整型，单位为小时*/
+    private static final String LogcatTimeLimit = "LogcatTimeLimit";
 
     /** 倒车音量 */
     private static final String SECTION_CCD_VOLUME = "CcdVolume";
@@ -1331,6 +1399,15 @@ public class IVIConfig {
     public static boolean isBluetoothContactSpecialFirst() {
         return getBoolean(SECTION_BLUETOOTH, BLUETOOTH_CONTACT_SORT, false);
     }
+
+    /**
+     * 获取本机蓝牙名称限制长度
+     * @return
+     */
+    public static int getBluetoothNameLimitLength() {
+        return getInteger(SECTION_BLUETOOTH, BLUETOOTH_NAME_LIMIT_LENGTH, 16);
+    }
+
     /**
      * 获取声控可见性
      * @return
@@ -1402,6 +1479,22 @@ public class IVIConfig {
     }
 
     /**
+     * 获取摄像头Left偏移
+     * @return
+     */
+    public static int getCameraRectLeft(){
+        return getInteger(SECTION_CAMERA_RECT, CAMERA_RECT_LEFT, CAMERA_RECT_DEFAULT);
+    }
+
+    /**
+     * 获取摄像头Top偏移
+     * @return
+     */
+    public static int getCameraRectTop(){
+        return getInteger(SECTION_CAMERA_RECT, CAMERA_RECT_TOP, CAMERA_RECT_DEFAULT);
+    }
+
+    /**
      * 获取TV模块
      * @return
      */
@@ -1440,6 +1533,9 @@ public class IVIConfig {
             case IVIAudio.Channel.PC:
                 return getFloat(SECTION_AUDIO, PC_PRE_VOLUME, defaultValue);
 
+            case IVIAudio.Channel.PC_MUSIC:
+                return getFloat(SECTION_AUDIO, PC_MUSIC_PRE_VOLUME, defaultValue);
+
             case IVIAudio.Channel.MONO:
                 return getFloat(SECTION_AUDIO, MONO_PRE_VOLUME, defaultValue);
 
@@ -1464,6 +1560,9 @@ public class IVIConfig {
 
             case IVIAudio.Channel.BLUETOOTH_A2DP:
                 return getFloat(SECTION_AUDIO, A2DP_PRE_VOLUME, defaultValue);
+
+            case IVIAudio.Channel.BLUETOOTH_TEL:
+                return getFloat(SECTION_AUDIO, BLUETOOTH_TEL_PRE_VOLUME, defaultValue);
 
             default:
                 Logcat.w("Not realization channel: " + IVIAudio.Channel.getName(channel));
@@ -1697,6 +1796,27 @@ public class IVIConfig {
             if (count != null) {
                 for (int i = 0; i < count; ++i) {
                     String app = getString(SECTION_MODE_CONTROL, MODE_APP + i);
+                    if (!TextUtils.isEmpty(app)) {
+                        apps.add(app);
+                    }
+                }
+            }
+        }
+        return apps;
+    }
+
+    /**
+     * 获取Launcher需要忽略的APP包名列表
+     * @return
+     */
+    public static List<String> getIgnoreLaunchApps() {
+        List<String> apps = new ArrayList<>();
+        if (checkRead() && mIniFileUtil != null) {
+            Integer count = getInteger(SECTION_IGNORE_APP, IGNORE_COUNT);
+            Logcat.d("count:" + count);
+            if (count != null) {
+                for (int i = 0; i < count; ++i) {
+                    String app = getString(SECTION_IGNORE_APP, IGNORE_APP + i);
                     if (!TextUtils.isEmpty(app)) {
                         apps.add(app);
                     }
@@ -2202,6 +2322,11 @@ public class IVIConfig {
         return getInteger(SECTION_PLATFORM, CLUSTER_ID, IVICluster.ID.UNKNOWN);
     }
 
+    /**获取日志文件保持期限,单位为小时*/
+    public static int getLogcatTimeLimit() {
+        return getInteger(SECTION_PLATFORM, LogcatTimeLimit, 0);
+    }
+
     /**
      * 获取倒车时降低音量默认值
      * @return
@@ -2365,5 +2490,71 @@ public class IVIConfig {
      */
     public static int getScreenProtectionTime() {
         return getInteger(SECTION_SCREEN_PROTECTION, SCREEN_PROTECTION_TIME, 0);
+    }
+
+    /**
+     * 是否需要监听所有文件夹变化
+     * @return
+     */
+    public static boolean isNeedFileObserver() {
+        return getBoolean(SECTION_FILE_OBSERVER, NEED_OBSERVER, true);
+    }
+	
+	
+    /**
+     * 获取默认设置的主音量值
+     */
+    public static int getDefaultVolumeMaster(int defaultValue) {
+        return getInteger(SECTION_VOLUME, DEFAULT_VOLUME_MASTER, defaultValue);
+    }
+
+    /**
+     * 获取默认设置的蓝牙通话音量值
+     */
+    public static int getDefaultVolumeBluetooth(int defaultValue) {
+        return getInteger(SECTION_VOLUME, DEFAULT_VOLUME_BLUETOOTH, defaultValue);
+    }
+
+    /**
+     * 获取默认设置的蓝牙铃声音量值
+     */
+    public static int getDefaultVolumeBluetoothRing(int defaultValue) {
+        return getInteger(SECTION_VOLUME, DEFAULT_VOLUME_BLUETOOTH_RING, defaultValue);
+    }
+
+    /**
+     * 配置AC8的Av输出功能
+     * @return 是返回true， 默认返回true
+     */
+    public static boolean isEnableAVOut() {
+        return getBoolean(SECTION_AVIN, ENABLE_AVOUT, true);
+    }
+
+    /**
+     * 倒车雷达声音
+     * @return 是返回true， 默认返回false
+     */
+    public static boolean getCcdRadar() {
+        return getBoolean(SECTION_CCD_RADAR, ENABLE_CCD_RADAR, false);
+    }
+
+     /* 获取面板按键灯默认状态
+     * @return
+     */
+    public static int getPanelLightPowerStatus() {
+        int status = PanelLightPowerStatus.PANEL_LIGHT_NORMAL;
+        if (checkRead() && mIniFileUtil != null) {
+            status = getInteger(PANEL_LIGHT_POWER, PANEL_LIGHT_POWER_STATUS, PanelLightPowerStatus.PANEL_LIGHT_NORMAL);
+            Logcat.d("status:" + status);
+        }
+        return status;
+    }
+
+    /**
+     * 获取固件版本号
+     * @return
+     */
+    public static String getFirmwareVersion() {
+        return getString(SECTION_SYSTEM, FIRMWARE_VERSION, "");
     }
 }

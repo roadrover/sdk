@@ -36,6 +36,10 @@ public class TirePressureGroup {
         return mItems.containsKey(id);
     }
 
+    public Map<Integer, TirePressure> getTtems() {
+        return mItems;
+    }
+
     public int size() {
         return mItems.size();
     }

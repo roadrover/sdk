@@ -101,6 +101,11 @@ public class IVIMedia {
         public static final int VIDEO_DAC2  = 22;
 
         /**
+         * TBOX ，其值为 {@value}
+         */
+        public static final int TBOX = 23;
+
+        /**
          * 通过类型获取当前的通道
          * @param type {@link Type}
          * @return 通道 {@link com.roadrover.sdk.audio.IVIAudio.Channel}
@@ -121,6 +126,7 @@ public class IVIMedia {
                 case GALLERY:           return IVIAudio.Channel.PC;
                 case MUSIC_DAC2:        return IVIAudio.Channel.PC_SECONDARY;
                 case VIDEO_DAC2:        return IVIAudio.Channel.PC_SECONDARY;
+                case TBOX:              return IVIAudio.Channel.TBOX;
                 default:                return IVIAudio.Channel.PC;
             }
         }

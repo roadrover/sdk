@@ -174,4 +174,9 @@ interface ICarCallback {
      */
     void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date);
 
+    /**
+     * 保养提示
+     */
+    void onMaintainWarning(boolean show);
+
 }

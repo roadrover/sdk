@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.roadrover.sdk.BaseManager;
 import com.roadrover.btservice.bluetooth.BluetoothDevice;
@@ -186,8 +187,9 @@ public class BluetoothManager extends BaseManager {
 
         try {
             mIBluetooth.openBluetoothModule(mOpenBluetoothModuleCallback);
+			/** 这里mModuleOpenedmModuleOpened置为true必须要放在requestBluetoothListener之前*/
+			mModuleOpened = true;
             mIBluetooth.requestBluetoothListener(mIBluetoothCallback);
-            mModuleOpened = true;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -761,6 +763,35 @@ public class BluetoothManager extends BaseManager {
         if (isSendToService(callback)) {
             try {
                 mIBluetooth.waitCall(type, callback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 取消搜索蓝牙新设备
+     * @param type
+     * @param callback
+     */
+    public void stopSearchNewDevice(int type, IBluetoothExecCallback.Stub callback) {
+        if (isSendToService(callback)) {
+            try {
+                mIBluetooth.stopSearchNewDevice(type, callback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 取消下载
+     * @param callback
+     */
+    public void stopContactOrHistoryLoad(IBluetoothExecCallback.Stub callback) {
+        if (isSendToService(callback)) {
+            try {
+                mIBluetooth.stopContactOrHistoryLoad(callback);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -2143,5 +2174,23 @@ public class BluetoothManager extends BaseManager {
         } else {
             Logcat.w("mIBluetooth == null ");
         }
+    }
+
+    /**
+     * BC05进入蓝牙升级模式
+     * @param update:true,进入升级模式  false,退出升级模式
+     * @return true:进入升级模式  false:进入升级失败
+     */
+    public boolean enterBtUpdateMode(boolean update) {
+        if (mIBluetooth != null) {
+            try {
+                return mIBluetooth.enterBtUpdateMode(update);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Logcat.w("mIBluetooth == null ");
+        }
+        return false;
     }
 }

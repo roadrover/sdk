@@ -189,6 +189,19 @@ public class SystemManager extends BaseManager {
     }
 
     /**
+     * ACC OFF 状态下开屏
+     */
+    public void openBackLightUnitOn() {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.openBackLightUnitOn();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * 亮屏
      */
     public void openBackLight() {
@@ -229,11 +242,25 @@ public class SystemManager extends BaseManager {
         return true;
     }
 
+    /**
+     * 申请屏幕操作状态
+     * @param from
+     */
+    public void requestScreenOperate(int from) {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.requestScreenOperate(from);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // 设置回调
     private ISystemCallback.Stub mISettingCallback = new ISystemCallback.Stub() {
         @Override
-        public void onOpenScreen() throws RemoteException {
-            post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.OPEN_TYPE));
+        public void onOpenScreen(int from) throws RemoteException {
+            post(new IVISystem.EventScreenOperate(IVISystem.EventScreenOperate.OPEN_TYPE, from));
         }
 
         @Override
@@ -295,11 +322,12 @@ public class SystemManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onScreenOperate(IVISystem.EventScreenOperate event) {
         if (event != null) {
+            Logcat.d("onScreenOperate");
             for (IInterface callback : mICallbackS) {
                 if (callback instanceof ISystemCallback.Stub) { // 回调应用通知
                     try {
                         if (event.mType == IVISystem.EventScreenOperate.OPEN_TYPE) {
-                            ((ISystemCallback.Stub) callback).onOpenScreen();
+                            ((ISystemCallback.Stub) callback).onOpenScreen(event.mFrom);
                         } else {
                             ((ISystemCallback.Stub) callback).onCloseScreen(event.mFrom);
                         }

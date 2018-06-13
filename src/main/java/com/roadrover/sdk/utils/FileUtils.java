@@ -251,6 +251,10 @@ public class FileUtils {
             return "";
         }
         File file = new File(fileName);
+        if (!file.exists() || !file.canRead()) {
+//            Logcat.w("file:" + fileName + " not exists or not canRead!");
+            return "";
+        }
         InputStream in = null;
         try {
             in = new FileInputStream(file);

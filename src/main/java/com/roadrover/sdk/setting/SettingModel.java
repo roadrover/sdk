@@ -14,6 +14,8 @@ import com.roadrover.sdk.utils.Logcat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 设置model类，和{@link SystemManager}分开处理</br></br>
@@ -41,7 +43,13 @@ import java.util.List;
 public class SettingModel {
 
     /**model集合*/
-    private static List<Bean> mModels = new ArrayList<>();
+    private static List<Bean> sModels = new ArrayList<>();
+
+    /**单列线程池*/
+    private static ExecutorService sSignalExecutorService = Executors.newSingleThreadExecutor();
+
+    /**最后将数据返回到主线程handler对象*/
+    private static Handler sHandler = null;
 
     /**model监听器*/
     public interface ModelListener {
@@ -194,40 +202,57 @@ public class SettingModel {
      * @param item 哪一项，比如获取热点名称{@link com.roadrover.sdk.setting.IVISetting.Network#HotspotName}
      * @param listener model监听器对象
      */
-    public static void registerModelListener(Context context, @NonNull String name, @NonNull String item, ModelListener listener) {
+    public static void registerModelListener(Context context, @NonNull final String name, @NonNull final String item, ModelListener listener) {
         if (null != context && null != listener) {
             final Bean bean = new Bean();
             bean.context = context;
             bean.name = IVISetting.getName(name, item);
             bean.modelListener = listener;
-            bean.value = getContent(context, name, item);
+            sSignalExecutorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    bean.value = getContent(bean.context, name, item);
+                }
+            });
+            if (sHandler == null) {
+                sHandler = new Handler();
+            }
             bean.contentObserver = new ContentObserver(new Handler()) {
                 @Override
                 public void onChange(boolean selfChange) {
                     if (!selfChange) {
                         // 数据只允许被设置本身改变
-                        if (null != mModels) {
-                            for (Bean loop : mModels) {
+                        if (null != sModels) {
+                            for (Bean loop : sModels) {
                                 if (null != loop) {
                                     if (this == loop.contentObserver) {
-                                        ModelListener modelListener = bean.modelListener;
-                                        if (null != modelListener) {
-                                            String oldVal = bean.value;
-                                            String newVal = getContent(bean.context, bean.name);
-                                            boolean change = false;
-                                            if (null == oldVal && null != newVal) {
-                                                change = true;
-                                            } else if (null != oldVal && null == newVal) {
-                                                change = true;
-                                            } else if (null != oldVal && null != newVal) {
-                                                if (!oldVal.equals(newVal)) {
-                                                    change = true;
+                                        if (null != bean.modelListener) {
+                                            sSignalExecutorService.execute(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    String oldVal = bean.value;
+                                                    final String newVal = getContent(bean.context, bean.name);
+                                                    boolean change = false;
+                                                    if (null == oldVal && null != newVal) {
+                                                        change = true;
+                                                    } else if (null != oldVal && null == newVal) {
+                                                        change = true;
+                                                    } else if (null != oldVal && null != newVal) {
+                                                        if (!oldVal.equals(newVal)) {
+                                                            change = true;
+                                                        }
+                                                    }
+                                                    if (change) {
+                                                        sHandler.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                bean.modelListener.onChange(bean.value, newVal);
+                                                                bean.value = newVal;
+                                                            }
+                                                        });
+                                                    }
                                                 }
-                                            }
-                                            if (change) {
-                                                modelListener.onChange(bean.value, newVal);
-                                                bean.value = newVal;
-                                            }
+                                            });
                                         }
                                         break;
                                     }
@@ -237,7 +262,7 @@ public class SettingModel {
                     }
                 }
             };
-            mModels.add(bean);
+            sModels.add(bean);
             context.getContentResolver().registerContentObserver(Provider.NameValueColumns.CONTENT_URI,
                     false, bean.contentObserver);
         } else {
@@ -251,7 +276,7 @@ public class SettingModel {
      */
     public static void unregisterModelListener(Context context) {
         if (context != null) {
-            Iterator<Bean> iterator = mModels.iterator();
+            Iterator<Bean> iterator = sModels.iterator();
             while (iterator.hasNext()) {
                 Bean bean = iterator.next();
                 if (bean != null && bean.context == context) {
@@ -269,12 +294,12 @@ public class SettingModel {
      */
     public static void unregisterModelListener(Context context, ModelListener listener) {
         if (null != context && null != listener) {
-            if (null != mModels) {
-                for (Bean bean : mModels) {
+            if (null != sModels) {
+                for (Bean bean : sModels) {
                     if (null != bean) {
                         if (listener == bean.modelListener) {
                             context.getContentResolver().unregisterContentObserver(bean.contentObserver);
-                            mModels.remove(bean);
+                            sModels.remove(bean);
                             break;
                         }
                     }

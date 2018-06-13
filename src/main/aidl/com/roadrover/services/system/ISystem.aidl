@@ -69,6 +69,11 @@ interface ISystem {
     void openBackLight();
 
     /**
+     * ACC off 情况下 双击点亮屏幕
+     */
+    void openBackLightUnitOn();
+
+    /**
      * 屏幕是否是关闭
      */
     boolean isOpenBackLight();
@@ -163,4 +168,10 @@ interface ISystem {
      * @param isEnterScreenProtection 是否是屏幕状态
      */
     void setScreenProtectionStatus(boolean isEnterScreenProtection);
+
+    /**
+     * 申请屏幕操作状态
+     * @param from
+     */
+    void requestScreenOperate(int from);
 }

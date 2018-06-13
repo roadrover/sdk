@@ -8,7 +8,7 @@ interface ISystemCallback {
     /**
      * 打开屏幕
      */
-    void onOpenScreen();
+    void onOpenScreen(int from);
 
     /**
      * 关闭屏幕

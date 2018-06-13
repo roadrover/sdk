@@ -7,9 +7,9 @@ import android.os.RemoteException;
 
 import com.roadrover.sdk.BaseManager;
 import com.roadrover.sdk.system.IVIConfig;
+import com.roadrover.sdk.utils.Logcat;
 import com.roadrover.services.avin.IAVIn;
 import com.roadrover.services.avin.IAVInCallback;
-import com.roadrover.sdk.utils.Logcat;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -30,6 +30,9 @@ public class AVInManager extends BaseManager {
     private int mAvId = IVIAVIn.Id.NONE;
     /**媒体是否打开*/
     private boolean mMediaIsOpen = false;
+
+    /** 记录打开的摄像头 */
+    private CameraUtil mCameraUtil;
 
     /**请求视频信号EventBus事件类*/
     private static class EventRequestVideoSignal {
@@ -172,13 +175,15 @@ public class AVInManager extends BaseManager {
      * 打开AVIN
      * @param avId AVIN ID，见{@link com.roadrover.sdk.avin.IVIAVIn.Id}
      */
-    public void open(int avId) {
+    public boolean open(int avId) {
+        boolean isRet = false;
         mAvId = avId;
         Logcat.d(IVIAVIn.Id.getName(avId));
         mMediaIsOpen = IVIAVIn.Id.isMedia(avId);
         if (mAVInInterface != null) {
             try {
                 mAVInInterface.open(avId, mAVInCallback, mContext.getPackageName());
+                isRet = true;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -187,6 +192,7 @@ public class AVInManager extends BaseManager {
         }
 
         super.registerCallback(mAVInCallback);
+        return isRet;
     }
 
     /**
@@ -380,16 +386,20 @@ public class AVInManager extends BaseManager {
     }
 
     /**
-     * 设置视频参数
+     * 设置视频参数，必须在Camear.open之后才能使用
      * @param id    视频ID，通过{@link VideoParam#makeId(int, int)}获得
      * @param value 参数值
      */
     public void setParam(int id, int value) {
         if (mAVInInterface != null) {
-            try {
+            try { // 参数数据保存在服务
                 mAVInInterface.setParam(id, value);
             } catch (RemoteException e) {
                 e.printStackTrace();
+            }
+
+            if (mCameraUtil != null && mCameraUtil.isATCCamera()) { // atc 摄像头，在应用内设置参数
+                mCameraUtil.setATCCameraParam(id, value);
             }
         } else {
             Logcat.d("Service not connected");
@@ -484,14 +494,18 @@ public class AVInManager extends BaseManager {
      * @return {@link com.roadrover.sdk.avin.IVIAVIn.Signal}
      */
     public int getVideoSignal(int avId) {
-        if (mAVInInterface != null) {
-            try {
-                return mAVInInterface.getVideoSignal(avId);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        if (mCameraUtil != null && mCameraUtil.isATCCamera()) {
+            return mCameraUtil.getVideoSignal();
         } else {
-            Logcat.d("Service not connected");
+            if (mAVInInterface != null) {
+                try {
+                    return mAVInInterface.getVideoSignal(avId);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Logcat.d("Service not connected");
+            }
         }
 
         return IVIAVIn.Signal.UNSTABLE_SIGNAL;
@@ -526,6 +540,48 @@ public class AVInManager extends BaseManager {
     }
 
     /**
+     * 初始化Camera参数
+     * @param cameraParams
+     * @param avId
+     * @return
+     */
+    private Camera.Parameters getCameraParam(Camera.Parameters cameraParams, int avId) {
+        if (cameraParams != null) {
+            List<Camera.Size> supportedSizes = cameraParams.getSupportedPreviewSizes();
+            final int cvbsType = getCvbsType(avId);
+            int width = VideoParam.CvbsType.getVideoWidth(cvbsType);
+            int height = VideoParam.CvbsType.getVideoHeight(cvbsType);
+
+            boolean found = false;
+            for (Camera.Size size : supportedSizes) {
+                final int _width = size.width;
+                final int _height = size.height;
+                Logcat.d(IVIAVIn.Id.getName(avId) + " camera available size (" + _width + "x" + _height + ")");
+                if (width == _width && height == _height) {
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                Logcat.d(IVIAVIn.Id.getName(avId) + " CVBS type size not support, select the first available size.");
+                final int size = supportedSizes.size();
+                if (size > 0) {
+                    Camera.Size cameraSize = supportedSizes.get(0);
+                    if (cameraSize != null) {
+                        width = cameraSize.width;
+                        height = cameraSize.height;
+                    }
+                }
+            }
+
+            Logcat.d(IVIAVIn.Id.getName(avId) + " set CVBS type to " + VideoParam.CvbsType.getName(cvbsType) +
+                    ", size (" + width + ", " + height + ").");
+            cameraParams.setPreviewSize(width, height);
+        }
+        return cameraParams;
+    }
+
+    /**
      * <b>打开指定AVIN的安卓摄像头（前提：在INDEX相同的安卓摄像头关闭的情况下）</br>
      * <b>step1.设置AVIN视频通道（如果有）</br>
      * <b>step2.打开摄像头</br>
@@ -539,7 +595,7 @@ public class AVInManager extends BaseManager {
      * @param avId AVIN ID，见{@link com.roadrover.sdk.avin.IVIAVIn.Id}
      * @return 打开成功，返回Camera对象，否则返回 null
      */
-    public Camera openAndroidCamera(int avId) {
+    public Camera openCamera(int avId) {
         int index = getAndroidCameraIndex(avId);
         Logcat.d("open camera " + IVIAVIn.Id.getName(avId) + ", camera index = " + index);
 
@@ -552,37 +608,9 @@ public class AVInManager extends BaseManager {
                 // 设置预览视频尺寸
                 try {
                     Camera.Parameters cameraParams = camera.getParameters();
-                    List<Camera.Size> supportedSizes = cameraParams.getSupportedPreviewSizes();
-                    final int cvbsType = getCvbsType(avId);
-                    int width = VideoParam.CvbsType.getVideoWidth(cvbsType);
-                    int height = VideoParam.CvbsType.getVideoHeight(cvbsType);
-
-                    boolean found = false;
-                    for (Camera.Size size : supportedSizes) {
-                        final int _width = size.width;
-                        final int _height = size.height;
-                        Logcat.d(IVIAVIn.Id.getName(avId) + " camera available size (" + _width + "x" + _height + ")");
-                        if (width == _width && height == _height) {
-                            found = true;
-                        }
+                    if (cameraParams != null) {
+                        camera.setParameters(getCameraParam(cameraParams, avId));
                     }
-
-                    if (!found) {
-                        Logcat.d(IVIAVIn.Id.getName(avId) + " CVBS type size not support, select the first available size.");
-                        final int size = supportedSizes.size();
-                        if (size > 0) {
-                            Camera.Size cameraSize = supportedSizes.get(0);
-                            if (cameraSize != null) {
-                                width = cameraSize.width;
-                                height = cameraSize.height;
-                            }
-                        }
-                    }
-
-                    Logcat.d(IVIAVIn.Id.getName(avId) + " set CVBS type to " + VideoParam.CvbsType.getName(cvbsType) +
-                            ", size (" + width + ", " + height + ").");
-                    cameraParams.setPreviewSize(width, height);
-                    camera.setParameters(cameraParams);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -607,6 +635,66 @@ public class AVInManager extends BaseManager {
     }
 
     /**
+     * <b>打开指定AVIN的安卓摄像头（前提：在INDEX相同的安卓摄像头关闭的情况下）</br>
+     * <b>step1.设置AVIN视频通道（如果有）</br>
+     * <b>step2.打开摄像头</br>
+     * <b>step3.视频参数同步、开关切换</br>
+     *
+     * <b>开始安卓摄像头预览（在AVIN视频有信号的前提下）</br>
+     * <b>step1.获取视频制式，NTSC或PAL</br>
+     * <b>step2.根据视频制式，获取支持的分辨率，设置视频预览尺寸</br>
+     * <b>step3.打开预览图像</br>
+     *
+     * <b>有些平台不能通过Camera方式打开，使用该接口</b>
+     *
+     * @param avId AVIN ID，见{@link com.roadrover.sdk.avin.IVIAVIn.Id}
+     * @return 打开成功，返回Camera对象，否则返回 null
+     */
+    public CameraUtil openAndroidCamera(int avId) {
+        int index = getAndroidCameraIndex(avId);
+        Logcat.d("open camera " + IVIAVIn.Id.getName(avId) + ", camera index = " + index);
+
+        setAndroidCameraOpenPrepared(avId);
+
+        try {
+            mCameraUtil = CameraUtil.open(index, mContext);
+            if (mCameraUtil != null) {
+                // 部分平台需要先刷一遍参数
+                mCameraUtil.initVideoParam(avId,
+                        getParam(VideoParam.makeId(avId, VideoParam.SubId.BRIGHTNESS)),
+                        getParam(VideoParam.makeId(avId, VideoParam.SubId.CONTRAST)),
+                        getParam(VideoParam.makeId(avId, VideoParam.SubId.SATURATION)));
+                mCameraUtil.setAVInCallback(mAvInListener);
+                // 设置预览视频尺寸
+                try {
+                    Camera.Parameters cameraParams = mCameraUtil.getParameters();
+                    if (cameraParams != null) {
+                        mCameraUtil.setParameters(getCameraParam(cameraParams, avId));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // 通知Service Android Camera打开了
+                setAndroidCameraOpen(avId, true);
+
+                // 强制请求信号有无检测
+                requestVideoSignalEvent(avId);
+            } else {
+                Logcat.e("open camera " + index + " failed!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            if (mCameraUtil != null) {
+                mCameraUtil.release();
+            }
+        }
+
+        return mCameraUtil;
+    }
+
+    /**
      * 通知service avId对应的Android Camera已经被关闭，
      * 如果已经调用了AVInManager.close，可以不用调用该函数
      *
@@ -623,6 +711,11 @@ public class AVInManager extends BaseManager {
      * @param isOpen true 打开状态，false 关闭状态
      */
     public void setAndroidCameraOpen(int avId, boolean isOpen) {
+        if (!isOpen) {
+            if (mCameraUtil != null) {
+                mCameraUtil = null;
+            }
+        }
         if (mAVInInterface != null) {
             try {
                 mAVInInterface.setAndroidCameraOpen(avId, isOpen);

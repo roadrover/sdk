@@ -5,17 +5,16 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.roadrover.sdk.BaseManager;
 import com.roadrover.sdk.system.IVIKey;
+import com.roadrover.sdk.utils.Logcat;
 import com.roadrover.services.car.ICar;
 import com.roadrover.services.car.ICarCallback;
 import com.roadrover.services.car.IMcuUpgradeCallback;
-import com.roadrover.sdk.utils.Logcat;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -107,6 +106,9 @@ public class CarManager extends BaseManager {
 
         // 快速倒车
         void onFastReverseChanged(boolean on);
+
+        //硬件版本号更新通知
+        void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date);
 
     }
 
@@ -243,6 +245,13 @@ public class CarManager extends BaseManager {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventHardwareVersion(HardwareVersion hardwareVersion) {
+        if (mCarListener != null) {
+            mCarListener.onEventHardwareVersion(hardwareVersion.status, hardwareVersion.mHardwareVersion, hardwareVersion.mSupplier, hardwareVersion.mEcnCode, hardwareVersion.mDate);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDoorChanged(IVICar.Door door) {
         if (mCarListener != null) {
             mCarListener.onDoorChanged(door.mChangeMask, door.mStatusMask);
@@ -374,7 +383,7 @@ public class CarManager extends BaseManager {
             mCarListener.onFastReverseChanged(reverse.isOn());
         }
     }
-
+   
     @Override
     protected void onServiceDisconnected() {
         mCarInterface = null;
@@ -561,6 +570,11 @@ public class CarManager extends BaseManager {
         public void onClusterMessage(byte[] datas) throws RemoteException {
             post(new IVICar.EventClusterMessage(datas));
         }
+
+        @Override
+        public void onMaintainWarning(boolean show) throws RemoteException {
+            post(new IVICar.MaintainWarning(show));
+        }
     };
 
     /**
@@ -701,6 +715,24 @@ public class CarManager extends BaseManager {
         if (mCarInterface != null) {
             try {
                 mCarInterface.setClimate(id, value);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+     /**
+      * 清空空调缓存值
+      * @param id Climate.Id
+      * @param value 空调值
+      */
+    public void clearClimate(int id, int value) {
+        if (mClimates != null) {
+            mClimates.set(id, value);
+        }
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.clearClimate(id, value);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -905,6 +937,20 @@ public class CarManager extends BaseManager {
         if (mCarInterface != null) {
             try {
                 mCarInterface.requestCmdParamEvent();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 请求ACC状态
+     */
+    public void requestAccEvent() {
+        if (mCarInterface != null) {
+            try {
+                boolean isAccOn = mCarInterface.isAccOn();
+                post(new IVICar.Acc(isAccOn));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -1422,4 +1468,32 @@ public class CarManager extends BaseManager {
         }
     }
 
+
+    /**
+     * 获取硬件版本等信息； 组成规则：由#分开如：{硬件版本号}#{PCB版本}#{ECN/DCN编码}#{日期}
+     */
+    public String getHardwareVersionString() {
+        if (mCarInterface != null) {
+            try {
+                return mCarInterface.getHardwareVersionString();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 发送按键给MCU
+     * @param key {@link IVIKey.Key.Id}
+     */
+    public void sendKeyToMcu(int key) {
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.sendKeyToMcu(key);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

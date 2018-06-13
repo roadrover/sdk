@@ -51,6 +51,8 @@ public class TirePressure {
         public static final int LEFT_REAR_SENSOR = 27;   //左后轮传感器故障
         public static final int RIGHT_REAR_SENSOR = 28;  //右后轮传感器故障
 
+        public static final int SYSTEM_STATUS = 29; //系统状态
+
         /**
          * 获取对应{@link TirePressure.ID}名称
          * @param id 见{@link TirePressure.ID}
@@ -100,6 +102,13 @@ public class TirePressure {
         public static final int INVALID = 0x03;  //传感器失效
     }
 
+    public static class SYSTEM_STATUS {
+        public static final int NORMAL = 0x00;  //系统正常
+        public static final int LOW_VOLTAGE = 0x01;  //系统故障
+        public static final int LOST = 0x02;  //压力异常
+        public static final int INVALID = 0x03;  //胎压学习未完成
+    }
+
     public TirePressure(int id, int rawValue, int extraValue, int dotType) {
         this.mId = id;
         this.rawValue = rawValue;
@@ -131,25 +140,25 @@ public class TirePressure {
             case ID.RIGHT_FRONT_TEMP_ALARM:
             case ID.LEFT_REAR_TEMP_ALARM:
             case ID.RIGHT_REAR_TEMP_ALARM:
-                parseTemperatureAlarm(data);  //解析温度警报 5- 8
+                parseOneByteAlarm(data);  //解析温度警报 5- 8
                 break;
             case ID.LEFT_FRONT_TYRE_ALARM:
             case ID.RIGHT_FRONT_TYRE_ALARM:
             case ID.LEFT_REAR_TYRE_ALARM:
             case ID.RIGHT_REAR_TYRE_ALARM:
-                parsePressureAlarm(data);  //胎压警报9 -  12
+                parseOneByteAlarm(data);    //胎压警报9 -  12
                 break;
             case ID.LEFT_FRONT_ICON_TWINKLE:
             case ID.RIGHT_FRONT_ICON_TWINKLE:
             case ID.LEFT_REAR_ICON_TWINKLE:
             case ID.RIGHT_REAR_ICON_TWINKLE:
-                parseIconTwinkle(data);  // 前、后轮图标闪烁13 - 16
+                parseOneByteAlarm(data);    // 前、后轮图标闪烁13 - 16
                 break;
             case ID.LEFT_FRONT_ICON_COLOR:
             case ID.RIGHT_FRONT_ICON_COLOR:
             case ID.LEFT_REAR_ICON_COLOR:
-            case ID.RIGHT_REAR_ICON_COLOR:  //前、后轮图标颜色  17 - 20
-                parseIconColor(data);
+            case ID.RIGHT_REAR_ICON_COLOR:
+                parseOneByteAlarm(data);    //前、后轮图标颜色  17 - 20
                 break;
             case ID.LEFT_FRONT_TYRE:
             case ID.RIGHT_FRONT_TYRE:
@@ -161,14 +170,16 @@ public class TirePressure {
             case ID.RIGHT_FRONT_SENSOR:
             case ID.LEFT_REAR_SENSOR:
             case ID.RIGHT_REAR_SENSOR:
-                parseSensor(data);  //传感器故障25-28
+                parseTwoByteAlarm(data);  //传感器故障25-28
+                break;
+            case ID.SYSTEM_STATUS:  //系统状态
+                parseOneByteAlarm(data);
                 break;
         }
     }
 
     /**
      * 解析温度
-     *
      * @param data
      */
     private void parseTemperature(byte[] data) {
@@ -196,52 +207,30 @@ public class TirePressure {
     }
 
     /**
-     * 解析温度警报
-     *
+     * 解析带有一个Byte的数据
      * @param data
      */
-    private void parseTemperatureAlarm(byte[] data) {
+    private void parseOneByteAlarm(byte[] data) {
         if (data != null && data.length > 0) {
             rawValue = data[0];
         }
     }
 
     /**
-     * 解析胎压警报
-     *
+     * 解析带有2个Byte的数据
      * @param data
      */
-    private void parsePressureAlarm(byte[] data) {
+    private void parseTwoByteAlarm(byte[] data) {
         if (data != null && data.length > 0) {
             rawValue = data[0];
-        }
-    }
-
-    /**
-     * 解析前、后轮图标闪烁
-     *
-     * @param data
-     */
-    private void parseIconTwinkle(byte[] data) {
-        if (data != null && data.length > 0) {
-            rawValue = data[0];
-        }
-    }
-
-    /**
-     * 解析前、后轮图标颜色
-     *
-     * @param data
-     */
-    private void parseIconColor(byte[] data) {
-        if (data != null && data.length > 0) {
-            rawValue = data[0];
+            if (data.length > 1) {
+                extraValue = data[1]; 
+            }
         }
     }
 
     /**
      * 解析胎压压力值
-     *
      * @param data
      */
     private void parseTirePressure(byte[] data) {
@@ -257,20 +246,6 @@ public class TirePressure {
             }
         } else {
             rawValue = TIRE_PRESSURE_VULUE_UNKNOWN;
-        }
-    }
-
-    /**
-     * 解析传感器故障
-     *
-     * @param data
-     */
-    private void parseSensor(byte[] data) {
-        if (data != null && data.length > 0) {
-            rawValue = data[0];  //传感器个数
-            if (data.length > 1) {
-                extraValue = data[1];   //传感器状态数据
-            }
         }
     }
 

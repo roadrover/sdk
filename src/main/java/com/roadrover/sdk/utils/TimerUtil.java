@@ -1,7 +1,10 @@
 package com.roadrover.sdk.utils;
 
-import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +21,6 @@ import android.os.Message;
  */
 
 public class TimerUtil {
-
     public interface TimerCallback {
         /**
          * 定时器时间到了，进行回调操作
@@ -29,9 +31,11 @@ public class TimerUtil {
     private TimerCallback mTimerCallback = null; // 定时器时间到了的回调
 
     private final static int TIMER_MESSAGE_HANDLE = 0; // 定时器到了，发送消息
-    private Timer mTimer = null;
+    private ScheduledFuture mScheduledFuture = null;
     private TimerTask mTimerTask = null;
     private Handler mHandler = null;
+
+    private ScheduledThreadPoolExecutor mScheduledThreadPoolExecutor ;
 
     private boolean mIsNeedHandler = true; // 是否需要通过handler转换到主线程，如果需要直接UI操作，需要该操作位true
 
@@ -43,6 +47,8 @@ public class TimerUtil {
         mTimerCallback = callback;
 
         mIsNeedHandler = isNeedHandler;
+
+        mScheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(1);
 
         if (isNeedHandler) {
             mHandler = new Handler() {
@@ -98,14 +104,9 @@ public class TimerUtil {
 
         initTimerTask();
 
-        mTimer = new Timer();
-        try {
-            mTimer.schedule(mTimerTask, nMesc, nMesc);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mScheduledFuture = mScheduledThreadPoolExecutor.scheduleAtFixedRate(mTimerTask, nMesc,
+                nMesc, TimeUnit.MILLISECONDS);
+
     }
 
     /**
@@ -113,9 +114,9 @@ public class TimerUtil {
      */
     public void stop() {
         try {
-            if (null != mTimer) {
-                mTimer.cancel();
-                mTimer = null;
+            if (null != mScheduledFuture) {
+                mScheduledFuture.cancel(true);
+                mScheduledFuture = null;
             }
 
             if (null != mTimerTask) {
@@ -132,7 +133,7 @@ public class TimerUtil {
      * @return 激活状态返回true
      */
     public boolean isActive() {
-        return (mTimer != null);
+        return (mScheduledFuture != null);
     }
 
     private void postHandler() {

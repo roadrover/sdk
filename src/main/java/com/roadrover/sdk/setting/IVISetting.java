@@ -96,6 +96,8 @@ public class IVISetting {
         /**名字或标签名-声音设置, 其值 {@value}*/
         public static final String NAME = "Audio";
 
+        /**自动音量, 其值 {@value}*/
+        public static final String AutoVolume = "AutoVolume";
         /**主音量, 其值 {@value}*/
         public static final String MasterVolume = "MasterVolume";
         /**导航音量, 其值 {@value}*/
@@ -111,6 +113,12 @@ public class IVISetting {
 
         /**声音其他设置, 其值 {@value}*/
         public static final String AudioOtherSetting = "AudioOtherSetting";
+        /**导航混音开关, 其值 {@value}*/
+        public static final String NaviVolumeMix = "NaviVolumeMix";
+        /**导航时关闭收音机, 其值 {@value}*/
+        public static final String NaviCloseRadio = "NaviCloseRadio";
+        /**倒车时音频音量, 其值 {@value}*/
+        public static final String BackOffVolume = "BackOffVolume";
     }
 
     /**
@@ -122,6 +130,8 @@ public class IVISetting {
 
         /**主题设置, 其值 {@value}*/
         public static final String ThemeSetting = "ThemeSetting";
+        /**壁纸设置, 其值 {@value}*/
+        public static final String WallpaperSetting = "WallpaperSetting";
 
         /**视频亮度, 其值 {@value}*/
         public static final String AVInBrightness = "AVInBrightness";
@@ -135,14 +145,27 @@ public class IVISetting {
     }
 
     /**
+     * 氛围灯设置数据导出
+     */
+    public static class AmbientLight {
+        /**名字或标签名-氛围灯, 其值 {@value}*/
+        public static final String NAME = "AmbientLight";
+
+        /**氛围灯设置, 其值 {@value}*/
+        public static final String AmbientLightSetting = "AmbientLightSetting";
+    }
+
+    /**
      * 车辆设置数据导出
      */
     public static class Car {
         /**名字或标签名-车辆设置, 其值 {@value}*/
         public static final String NAME = "Car";
 
-        /**座椅设置, 其值 {@value}*/
-        public static final String SeatSetting = "SeatSetting";
+        /**舒适&便捷设置-辅助登车设置, 其值 {@value}*/
+        public static final String EasyEntry = "EasyEntry";
+        /**驾驶辅助设置-盲区监测开关, 其值 {@value}*/
+        public static final String BSMSwitch = "BSMSwitch";
     }
 
     /**
@@ -163,10 +186,30 @@ public class IVISetting {
         /**名字或标签名-系统设置, 其值 {@value}*/
         public static final String NAME = "System";
 
+        /**时区, 其值 {@value}*/
+        public static final String TimeZone = "TimeZone";
         /**输入法选择, 其值 {@value}*/
         public static final String InputMethod = "InputMethod";
+        /**恢复声音设置, 其值 {@value}*/
+        public static final String RestoreAudio = "RestoreAudio";
+        /**恢复收音设置, 其值 {@value}*/
+        public static final String RestoreRadio = "RestoreRadio";
+        /**恢复媒体设置, 其值 {@value}*/
+        public static final String RestoreMedia = "RestoreMedia";
+        /**恢复连接设置, 其值 {@value}*/
+        public static final String RestoreLink = "RestoreLink";
+        /**恢复出厂设置, 其值 {@value}*/
+        public static final String RestoreFactory = "RestoreFactory";
         /**应用管理, 其值 {@value}*/
         public static final String AppManager = "AppManager";
+        /**360全景在应用列表中的可见性，其值 {@value}*/
+        public static final String Avm360App = "Avm360App";
+        /**行车记录仪在应用列表中的可见性，其值 {@value}*/
+        public static final String DVRApp = "DVRApp";
+        /**车联网在应用列表中的可见性，其值 {@value}*/
+        public static final String CarNetApp = "CarNetApp";
+        /**车辆信息在应用列表中的可见性，其值 {@value}*/
+        public static final String CarInfoApp = "CarInfoApp";
         /**温度单位, 其值 {@value}*/
         public static final String Temperature = "Temperature";
     }
@@ -293,6 +336,8 @@ public class IVISetting {
         public static final String SkinSettings = "SkinSettings";
         /**原车字符编码处理数组*/
         public static final String CarCharsetSettings = "CarCharsetSettings";
+        /**是否记忆搜索到的蓝牙设备*/
+        public static final String BluetoothDevicesCache = "BluetoothDevicesCache";
     }
 
     /**
@@ -980,6 +1025,14 @@ public class IVISetting {
     }
 
     /**
+     * 获取自动音量的可见性
+     * @return
+     */
+    public static boolean getAutoVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.AutoVolume);
+    }
+
+    /**
      * 获取主音量的可见性
      * @return
      */
@@ -1036,11 +1089,43 @@ public class IVISetting {
     }
 
     /**
+     * 获取导航混音开关项的可见性
+     * @return
+     */
+    public static boolean getNaviVolumeMixVisible() {
+        return getVisible(Audio.NAME, Audio.NaviVolumeMix);
+    }
+
+    /**
+     * 获取导航时关闭收音机项的可见性
+     * @return
+     */
+    public static boolean getNaviCloseRadioVisible() {
+        return getVisible(Audio.NAME, Audio.NaviCloseRadio);
+    }
+
+    /**
+     * 获取倒车时音频音量的可见性
+     * @return
+     */
+    public static boolean getBackOffVolumeVisible() {
+        return getVisible(Audio.NAME, Audio.BackOffVolume);
+    }
+
+    /**
      * 获取主题设置项的可见性
      * @return
      */
     public static boolean getThemeSettingVisible() {
         return getVisible(Personal.NAME, Personal.ThemeSetting);
+    }
+
+    /**
+     * 获取壁纸设置项的可见性
+     * @return
+     */
+    public static boolean getWallpaperSettingVisible() {
+        return getVisible(Personal.NAME, Personal.WallpaperSetting);
     }
 
     /**
@@ -1076,11 +1161,27 @@ public class IVISetting {
     }
 
     /**
-     * 获取座椅设置项的可见性
+     * 获取氛围灯设置项的可见性
      * @return
      */
-    public static boolean getSeatSettingVisible() {
-        return getVisible(Car.NAME, Car.SeatSetting);
+    public static boolean getAmbientLightSettingVisible() {
+        return getVisible(AmbientLight.NAME, AmbientLight.AmbientLightSetting);
+    }
+
+    /**
+     * 获取辅助登车设置项的可见性
+     * @return
+     */
+    public static boolean getEasyEntryVisible() {
+        return getVisible(Car.NAME, Car.EasyEntry);
+    }
+
+    /**
+     * 获取盲区监测开关项的可见性
+     * @return
+     */
+    public static boolean getBSMSwitchVisible() {
+        return getVisible(Car.NAME, Car.BSMSwitch);
     }
 
     /**
@@ -1092,11 +1193,59 @@ public class IVISetting {
     }
 
     /**
+     * 获取时区的可见性
+     * @return
+     */
+    public static boolean getTimeZoneVisible() {
+        return getVisible(System.NAME, System.TimeZone);
+    }
+
+    /**
      * 获取输入法选择的可见性
      * @return
      */
     public static boolean getInputMethodVisible() {
         return getVisible(System.NAME, System.InputMethod);
+    }
+
+    /**
+     * 获取恢复声音设置的可见性
+     * @return
+     */
+    public static boolean getRestoreAudioVisible() {
+        return getVisible(System.NAME, System.RestoreAudio);
+    }
+
+    /**
+     * 获取恢复收音设置的可见性
+     * @return
+     */
+    public static boolean getRestoreRadioVisible() {
+        return getVisible(System.NAME, System.RestoreRadio);
+    }
+
+    /**
+     * 获取恢复媒体设置的可见性
+     * @return
+     */
+    public static boolean getRestoreMediaVisible() {
+        return getVisible(System.NAME, System.RestoreMedia);
+    }
+
+    /**
+     * 获取恢复连接设置的可见性
+     * @return
+     */
+    public static boolean getRestoreLinkVisible() {
+        return getVisible(System.NAME, System.RestoreLink);
+    }
+
+    /**
+     * 获取恢复出厂设置的可见性
+     * @return
+     */
+    public static boolean getRestoreFactoryVisible() {
+        return getVisible(System.NAME, System.RestoreFactory);
     }
 
     /**
@@ -1108,11 +1257,51 @@ public class IVISetting {
     }
 
     /**
+     * 获取360全景在应用列表中的可见性
+     * @return
+     */
+    public static boolean getAvm360AppVisible() {
+        return getVisible(System.NAME, System.Avm360App);
+    }
+
+    /**
+     * 获取行车记录仪在应用列表中的可见性
+     * @return
+     */
+    public static boolean getDVRAppVisible() {
+        return getVisible(System.NAME, System.DVRApp);
+    }
+
+    /**
+     * 获取车联网在应用列表中的可见性
+     * @return
+     */
+    public static boolean getCarNetAppVisible() {
+        return getVisible(System.NAME, System.CarNetApp);
+    }
+
+    /**
+     * 获取车辆信息在应用列表中的可见性
+     * @return
+     */
+    public static boolean getCarInfoAppVisible() {
+        return getVisible(System.NAME, System.CarInfoApp);
+    }
+
+    /**
      * 获取温度单位的可见性
      * @return
      */
     public static boolean getTemperatureVisible() {
         return getVisible(System.NAME, System.Temperature);
+    }
+
+    /**
+     * 获取高级设置密码
+     * @return
+     */
+    public static String getAdvancedPassword() {
+        return getString(Global.NAME, Global.Password);
     }
 
     /**
@@ -1133,6 +1322,29 @@ public class IVISetting {
      */
     public static boolean getEnable(@NonNull String section, @NonNull String key) {
         return getProperty(section, key, ENABLE);
+    }
+
+    /**
+     * 获取配置字符串
+     *
+     * @param section section名称
+     * @param key     key名称
+     * @return 配置字符串
+     */
+    public static synchronized String getString(String section, String key) {
+        String ret = null;
+        if (mIniFile == null) {
+            mIniFile = new IniFileUtil(new File(FILEPATH));
+        }
+        Object object = mIniFile.get(section, key);
+        if (null != object) {
+            if (object instanceof String) {
+                ret = (String) object;
+            } else {
+                Logcat.w("failed, " + object + " is not instanceof String.");
+            }
+        }
+        return ret;
     }
 
     /**

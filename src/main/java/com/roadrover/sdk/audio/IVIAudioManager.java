@@ -291,6 +291,15 @@ public class IVIAudioManager extends BaseManager {
      */
     public void setParam(int id, int value) {
         if (!updateCache(id, value)) {
+			 Logcat.d("set param failed since the param is same");
+            try {
+                if (mAudioInterface != null && id == mAudioInterface.getActiveVolumeId()) {
+                    mAudioInterface.setParam(AudioParam.Id.MUTE, value == 0 ? 1 : 0);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             return;
         }
 

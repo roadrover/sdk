@@ -87,6 +87,8 @@ public class IVIAudio {
         public static final int PC_VOICE                = 5;
         /**大巴乘客区（第二路PC通道），其值为 {@value}*/
         public static final int PC_SECONDARY            = 6;
+        /** 倒车雷达声音  **/
+        public static final int PC_CCD_RADAR            = 7;
 
         /**收音机，其值为 {@value}*/
         public static final int RADIO                   = 11;
@@ -143,6 +145,8 @@ public class IVIAudio {
         public static final int ANDROID_AUTO_VOICE      = 63;
         /**AndroidAuto电话，其值为 {@value}*/
         public static final int ANDROID_AUTO_TEL        = 64;
+        /**AndroidAuto车联网电话，其值为 {@value}*/
+        public static final int TBOX                    = 65;
 
         /**混音通道，其值为 {@value}*/
         public static final int MONO                    = 70;
@@ -284,4 +288,20 @@ public class IVIAudio {
             mId = AudioParam.Id.NONE;
         }
     }
+
+    /**
+     * 音量步变消息
+     */
+    public static class EventVolumeStepStatus {
+        public static class Status{
+            public static final int START = 1; //步变开始
+            public static final int STOP = 0;  //步变结束
+        }
+        public int mStatus;
+        public EventVolumeStepStatus(int status) {
+            mStatus = status;
+        }
+    }
+
+
 }

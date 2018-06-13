@@ -185,6 +185,8 @@ public class IVIKey {
             public static final int ALL_MUTE = 195;          // 下旋钮短按双区静音，前后台同时MUTE,主要应用在双区媒体的按键控制上
             public static final int REAR_BACK = 198;         // 后排：返回
             public static final int PM_TWO_POINT_FIVE = 199; // PM2.5打开
+            public static final int REAR_CLIMATE_SWITCH = 205; // 后排，空调开关
+            public static final int APP_SWITCH = 206;        // App 切换
             public static final int REBOOT = 1000;      // 重启
             public static final int PREV_ANSWER = 1001; // 正常状态是上一曲，来电状态是接听
             public static final int NEXT_HANGUP = 1002; // 正常状态是下一曲，来电或者通话状态是挂断
@@ -193,6 +195,8 @@ public class IVIKey {
             public static final int ANSWER_HANGUP = 1005; // 接听并挂断
             public static final int WAZE_VOICE = 1006; // waze语音
             public static final int ANDROID_KEY = 1999; // 系统按键
+            public static final int ANSWER_OR_HANGUP = 1007; // 来电(1s内触发一次是接听,二次是挂断)，去电挂断，没有来电，去电点击会进入蓝牙界面
+
         }
 
         public static class Name {
@@ -223,6 +227,7 @@ public class IVIKey {
             public static final String HANG_UP          = "hang_up";         // 挂断
             public static final String BT               = "bt";              // 来电接听，去电挂断，没有来电，去电点击会进入蓝牙界面
             public static final String ANSWER_HANGUP    = "answer_hangup";   // 来电接听，去电挂断和bt的区别就是没有来电，去电，点击会无效果
+            public static final String ANSWER_OR_HANGUP = "answer_or_hangup";// 来电(1s内触发一次接听,二次挂断)，去电挂断，没有来电，去电点击会进入蓝牙界面
             public static final String VOICE            = "voice";           // 语音
             public static final String PLAY_PAUSE       = "play_pause";      // 播放暂停
             public static final String MULTI_FUNC       = "multi_func";      //多功能按键
@@ -332,6 +337,7 @@ public class IVIKey {
             sNameToIdMap.put(Name.ANDROID_KEY, Id.ANDROID_KEY);
             sNameToIdMap.put(Name.LAUNCHER_APP, Id.LAUNCHER_APP);
             sNameToIdMap.put(Name.WAZE_VOICE, Id.WAZE_VOICE);
+            sNameToIdMap.put(Name.ANSWER_OR_HANGUP, Id.ANSWER_OR_HANGUP);
         }
 
         public Key(int id, int type) {

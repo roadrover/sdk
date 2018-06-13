@@ -248,8 +248,33 @@ interface ICar {
     void pauseHeartbeat();
 
     /**
+     * 半小时模式下，发数据给下位机开屏
+     */
+    void setAccOffUintOn();
+
+    /**
      * 请求发送所有service端缓存的CMD_TPMS参数，通过ICarCallback回调获取
      */
     void requestCmdTpmsEvent();
 
+     /**
+      * 获取ACC状态，返回IVICar.Acc
+      */
+    boolean isAccOn();
+
+     /**
+      * 获取硬件版本等信息； 组成规则：由#分开如：{硬件版本号}#{PCB版本}#{ECN/DCN编码}#{日期}
+      */
+    String getHardwareVersionString();
+
+    /**
+     * 给MCU发送按键
+     */
+    void sendKeyToMcu(in int key);
+
+    /**
+     * 清空空调缓存值
+     * @param id Climate.Id
+     */
+    void clearClimate(int id, int value);
 }

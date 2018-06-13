@@ -350,6 +350,8 @@ public class IVISystem {
     public static final String PACKAGE_VOICE_ASSISTANT = "com.roadrover.voiceassistant";
     /** 车联网包名 */
     public static final String PACKAGE_CAR_NET = "com.roadrover.carnetworking";
+    /** TBoxService */
+    public static final String PACKAGE_TBOX_SERVICE = "com.roadrover.tboxservice";
 
     // 三方应用包名定义 start
     /** 美行导航 */
@@ -358,6 +360,12 @@ public class IVISystem {
     public static final String PACKAGE_ELINK = "net.easyconn";
     /** waze导航 */
     public static final String PACKAGE_WAZE = "com.waze";
+    /** 讯飞apk */
+    public static final String PACKAGE_IFLYTEK = "com.iflytek.cutefly.speechclient";
+    /** Adobe Reader */
+    public static final String PACKAGE_ADOBE_READER = "com.adobe.reader";
+    /** 酷我音乐 */
+    public static final String PACKAGE_KUWO = "cn.kuwo.kwmusiccar";
 
     // 三方应用包名定义 end
 
@@ -641,6 +649,11 @@ public class IVISystem {
     public static final String IS_OPEN_IPOD = "isOpenIpod";
 
     public static final String ACTION_IFLYTEK_START_RECORD = "action_iflytek_start_record";
+
+    /** AC8平台，休眠广播 */
+    public static final String ACTION_AUTOCHIPS_POWER_OFF = "autochips.intent.action.QB_POWEROFF";
+    /** AC8平台，唤醒广播 */
+    public static final String ACTION_AUTOCHIPS_POWER_ON  = "autochips.intent.action.QB_POWERON";
 
     /**
      * gps 数据变化

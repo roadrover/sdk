@@ -295,6 +295,22 @@ public class IVICar {
     }
 
     /**
+     * 360全景状态
+     */
+    public static class Avm {
+        public static class Status {
+            public static final int UNKNOWN  = -1;
+            public static final int OFF      = 0;
+            public static final int ON       = 1;
+        }
+        public int mStatus;
+
+        public Avm(int status) {
+            mStatus = status;
+        }
+    }
+
+    /**
      * 倒车状态
      */
     public static class Ccd {
@@ -554,9 +570,11 @@ public class IVICar {
             public static final int AVM360       = 0x01;         // 360全景
             public static final int DRIVING_RECORDER = 0x02;    //行车记录仪
             public static final int PM2_PONIT_5 = 0x04;         //PM2.5
+            public static final int PEPS = 0x07;                 //PEPS
             public static final int AMBIENTLIGHT = 0x08;         // 氛围灯
             public static final int AUTO_PARK  = 0x09;         // 自动泊车
             public static final int CARSET       = 0x0A;        // 原车设置
+            public static final int RADAR_WARING = 0x0B;       // 雷达报警音
         }
 
 
@@ -579,6 +597,19 @@ public class IVICar {
         }
     }
 
+    /**
+     * 雷达报警类型
+     */
+    public static class RadarWaring {
+        public static class Type {
+            public static final int NONE = 0x00;
+            public static final int HZ_1 = 0x01;
+            public static final int HZ_2 = 0x02;
+            public static final int HZ_4 = 0x03;
+            public static final int HZ_8 = 0x04;
+            public static final int WARING_ON = 0x05;
+        }
+    }
     /**
      * 配置参数，对应CIV_V2里面的CMD_PARAM
      */
@@ -629,6 +660,17 @@ public class IVICar {
             mId = id;
             mMileage = mileage;
             mDays = days;
+        }
+    }
+
+    /**
+     * 保养提醒
+     */
+    public static class MaintainWarning {
+        public boolean mShow;
+
+        public MaintainWarning(boolean show) {
+            mShow = show;
         }
     }
 
@@ -1055,4 +1097,34 @@ public class IVICar {
             return mYear + "/" + mMonth + "/" + mDay + " " + mHour + ":" + mMinute + " " + mSecond;
         }
     }
+
+    /**
+     * PEPS提示
+     */
+    public static class PEPS {
+
+        public static class DisplayContent {
+            public static final int START_BUTTON_END_OF_KEY = 0x01;          //钥匙尾端按下启动按钮
+            public static final int START_SWITCH_P_OR_N = 0x02;              //切换至P或者N档启动
+            public static final int START_DEPRESSING_THE_CLUTCH = 0x03;     //踩下离合按下启动按钮
+            public static final int START_BUTTON_BRAKES = 0x04;              //踩刹车按启动按钮
+            public static final int START_SWITCH_P = 0x05;                   //切换到P档按启动按钮
+            public static final int START_BRAKES_SWITCH_N = 0x06;            //踩下刹车按下启动按钮切换到N档启动
+            public static final int START_DEPRESSING_CLUTCH = 0x07;          //踩下离合按下启动按钮启动
+            public static final int START_SWITCH_N = 0x08;                    //切换至N档启动
+            public static final int NO_EEY_DETECTED = 0x09;                  //未检测到钥匙
+            public static final int KEY_BATTERY_LOW = 0x0A;                   //钥匙电池电量低
+        }
+
+        public static class DisplayTimes {
+            public static final int NOW_DISAPPEAR = 0x00;  //立即消失
+            public static final int ALWAYS = 0xff;         //常显
+        }
+
+        public static class NumbeAlarms {
+            public static final int NO = 0x00;               //无报警声
+            public static final int ALWAYS = 0xff;          //常响
+        }
+    }
+
 }

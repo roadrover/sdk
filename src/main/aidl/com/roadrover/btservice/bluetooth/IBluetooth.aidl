@@ -264,6 +264,11 @@ interface IBluetooth {
     void getAllCallRecord(IBluetoothVCardCallback callback);
 
     /**
+     * 中断下载通讯录或历史记录
+     */
+    void stopContactOrHistoryLoad(IBluetoothExecCallback callback);
+
+    /**
      * 获取查找的设备的总数
      * @param moduleid 模块id
      */
@@ -290,6 +295,11 @@ interface IBluetooth {
      * @param callback 通过该接口获取数据
      */
     void searchNewDevice(int devicetype, ISearchDeviceCallback callback);
+
+    /**
+     * 中断蓝牙新设备搜索
+     */
+    void stopSearchNewDevice(int devicetype, IBluetoothExecCallback callback);
 
     /**
      * 获取已经配置的设备列表
@@ -407,5 +417,11 @@ interface IBluetooth {
     * 判断蓝牙开关是否开启
     */
     boolean isPowerOn();
-
+    
+     /**
+       * BC05进入蓝牙升级模式
+       * @param update:true,进入升级模式  false,退出升级模式
+       * @return true:进入升级模式  false:进入升级失败
+       */
+     boolean enterBtUpdateMode(boolean update);
 }
