@@ -12,15 +12,22 @@ public class IVIRadio {
     public static final String PTY = "pty";
     public static final int FM_MIN_KHZ = 80000;
 
-    // 该定义必须和services-jni里面的RadioDevice.h里面的一致
+    /**
+     * 该定义必须和services-jni里面的RadioDevice.h里面的一致
+     */
     public static class Id {
-        public static final int AUTO_DETECT   = 0;  // 自动检测收音机模块
-        public static final int TEF6638       = 1;  //
-        public static final int TEF6686_12MHZ = 2;  // 12MHz，支持RDS
-        public static final int TEF6686_4MHZ  = 3;  // 4MHz，不支持RDS
-        public static final int TEF6692       = 4;  // 配合TEF7092,做双天线方案
-
-        public static final int SAA7706 = 10;
+        /** 自动检测收音机模块 */
+        public static final int AUTO_DETECT   = 0;
+        /** TEF6638模块 */
+        public static final int TEF6638       = 1;
+        /** 12MHz，支持RDS */
+        public static final int TEF6686_12MHZ = 2;
+        /** 4MHz，不支持RDS */
+        public static final int TEF6686_4MHZ  = 3;
+        /** 配合TEF7092,做双天线方案 */
+        public static final int TEF6692       = 4;
+        /** SAA7706 */
+        public static final int SAA7706       = 10;
     }
 
     public static class ScanAction {
@@ -257,21 +264,36 @@ public class IVIRadio {
 
     public static class EventControl {
         public static class Action {
-            public static final int PREV = 1;
-            public static final int NEXT = 2;
-            public static final int SELECT = 3;
-            public static final int SET_FAVOUR = 4;
-            public static final int QUIT_APP = 5;
-            public static final int STOP = 6;
-            public static final int TUNE_ROTATE = 7;    //TUNE旋钮旋转消息，mValue = 1 顺时针
-            public static final int SUSPEND = 8;
-            public static final int RESUME = 9;
-            public static final int PAUSE = 10;
-            public static final int PLAY = 11;
-            public static final int PLAY_PAUSE = 12;
-            public static final int SCAN_UP = 13;
-            public static final int SCAN_DOWN = 14;
-            public static final int SCAN_ALL = 15;
+            /** 上一个电台 */
+            public static final int PREV        = 1;
+            /** 下一个电台 */
+            public static final int NEXT        = 2;
+            /** 外部控制，第几个电台，例：声控 */
+            public static final int SELECT      = 3;
+            /** 外部控制，收藏电台，例：声控 */
+            public static final int SET_FAVOUR  = 4;
+            /** 外部控制，退出应用，例：声控 */
+            public static final int QUIT_APP    = 5;
+            /** 外部控制，停止播放，例：声控 */
+            public static final int STOP        = 6;
+            /** TUNE旋钮旋转消息，mValue = 1 顺时针 */
+            public static final int TUNE_ROTATE = 7;
+            /** 暂停 */
+            public static final int SUSPEND     = 8;
+            /** 恢复播放 */
+            public static final int RESUME      = 9;
+            /** 暂停播放 */
+            public static final int PAUSE       = 10;
+            /** 播放 */
+            public static final int PLAY        = 11;
+            /** 播放&暂停 */
+            public static final int PLAY_PAUSE  = 12;
+            /** 上搜索 */
+            public static final int SCAN_UP     = 13;
+            /** 下搜索 */
+            public static final int SCAN_DOWN   = 14;
+            /** 搜索全部 */
+            public static final int SCAN_ALL    = 15;
         }
         public int mAction;
         public int mValue;
@@ -327,14 +349,22 @@ public class IVIRadio {
     }
 
     public static class RDS {
-        public static final int PI_UNKNOWN = 0;
-        public static final int PTY_ALARM = 31;
+        public static final int PI_UNKNOWN  = 0;
+        /** pty 对话框 */
+        public static final int PTY_ALARM   = 31;
+        /** pty 未定义 */
         public static final int PTY_UNKNOWN = 0xFF;
-        public static final int TA_OFF = 0;
-        public static final int TA_ON = 1;
-        public static final int TA_UNKNOWN = 0xFF;
-        public static final int TP_OFF = 0;
-        public static final int TP_ON = 1;
-        public static final int TP_UNKNOWN = 0xFF;
+        /** TA 关 */
+        public static final int TA_OFF      = 0;
+        /** TA 开 */
+        public static final int TA_ON       = 1;
+        /** TA 未定义 */
+        public static final int TA_UNKNOWN  = 0xFF;
+        /** TP 关 */
+        public static final int TP_OFF      = 0;
+        /** TP 开 */
+        public static final int TP_ON       = 1;
+        /** TP 未定义 */
+        public static final int TP_UNKNOWN  = 0xFF;
     }
 }

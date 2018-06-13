@@ -1,5 +1,7 @@
 package com.roadrover.sdk.devices.carrecord;
 
+import com.roadrover.sdk.utils.LogNameUtil;
+
 /**
  * 功能：行车记录仪常用静态常量和接口
  * 
@@ -7,8 +9,10 @@ package com.roadrover.sdk.devices.carrecord;
 
 public class IVICarRecord {
 
-    /***行车记录仪用户按键操作标记***/
-    public static class interType{
+    /**
+     * 行车记录仪用户按键操作标记
+     */
+    public static class InterType {
 
         /** 菜单 */
         public static final int TYPE_MENU = 1;
@@ -27,10 +31,16 @@ public class IVICarRecord {
 
         /** 紧急录制 */
         public static final int TYPE_EMERGENCY = 6;
+
+        public static String getName(int id) {
+            return LogNameUtil.getName(id, InterType.class);
+        }
     }
 
-    /***行车记录仪用户按键协议***/
-    public static class UserKeyOperation{
+    /**
+     * 行车记录仪用户按键协议
+     */
+    public static class UserKeyOperation {
 
         /** 菜单 */
         public static final byte MENU = 0x01;
@@ -49,11 +59,16 @@ public class IVICarRecord {
 
         /** 紧急录制 */
         public static final byte EMERGENCY = 0x06;
+
+        public static String getName(int id) {
+            return LogNameUtil.getName(id, UserKeyOperation.class);
+        }
     }
 
     /***用户操作状态***/
     public static class OperationType{
-        public static final byte KeyOperation = 0x01; //按键
+        /** 按键 */
+        public static final byte KeyOperation = 0x01;
     }
 
 

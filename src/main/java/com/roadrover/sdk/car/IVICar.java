@@ -13,21 +13,22 @@ import java.util.Map;
 
 public class IVICar {
     public static final int RPM_UNKNOWN = -1;
-    public static final float DISTANCE_UNKNOWN = -1.0f;
-    public static final float SPEED_UNKNOWN = -1.0f;
-    public static final float TIME_UNKNOWN = -1.0f;
-    public static final float FUEL_CONSUMPTION_UNKNOWN = -1.0f;
-    public static final float BATTERY_VOLTAGE_UNKNOWN = -1.0f;
     public static final int OUTSIDE_TEMP_UNKNOWN = 0xFF;
-    public static final int INSIDE_TEMP_UNKNOWN = 0xFF;
-    public static final float FUEL_L_LOW = -2.0f;
-    public static final float FUEL_L_UNKNOWN = -1.0f;
-    public static final float MAX_WHEEL_ANGLE = 38.0f;
+    public static final int INSIDE_TEMP_UNKNOWN  = 0xFF;
+
+    public static final float DISTANCE_UNKNOWN         = -1.0f;
+    public static final float SPEED_UNKNOWN            = -1.0f;
+    public static final float TIME_UNKNOWN             = -1.0f;
+    public static final float FUEL_CONSUMPTION_UNKNOWN = -1.0f;
+    public static final float BATTERY_VOLTAGE_UNKNOWN  = -1.0f;
+    public static final float FUEL_L_LOW               = -2.0f;
+    public static final float FUEL_L_UNKNOWN           = -1.0f;
+    public static final float MAX_WHEEL_ANGLE          = 38.0f;
     public static final float MAX_STEERING_WHEEL_ANGLE = 200.0f;
-    public static final float CLEAN_WATER_OK = 0.0f;
-    public static final float CLEAN_WATER_LOW = 1.0f;
-    public static final float SEAT_BELT_OK = 0.0f;
-    public static final float SEAT_BELT_RELEASE = 1.0f;
+    public static final float CLEAN_WATER_OK           = 0.0f;
+    public static final float CLEAN_WATER_LOW          = 1.0f;
+    public static final float SEAT_BELT_OK             = 0.0f;
+    public static final float SEAT_BELT_RELEASE        = 1.0f;
 
     /**
      * MCU协议卡的版本号
@@ -64,9 +65,12 @@ public class IVICar {
      * 油耗信息
      */
     public static class FuelConsumptionUnit {
-        public static final int LP100KM = 0;      // L/100km
-        public static final int LPH = 1;          // L/H
-        public static final int MPG = 2;          // Mile per Gallon
+        /** L/100km */
+        public static final int LP100KM = 0;
+        /** L/H */
+        public static final int LPH     = 1;
+        /** Mile per Gallon */
+        public static final int MPG     = 2;
     }
 
     /**
@@ -74,13 +78,20 @@ public class IVICar {
      */
     public static class RealTimeInfo {
         public static class Id {
-            public static final int SPEED = 1;                    // 实时速度
-            public static final int FUEL_CONSUMPTION = 2;         // 瞬时油耗
-            public static final int ENGINE_RPM = 3;               // 发动机转速
-            public static final int WHEEL_ANGLE = 4;              // 转向车轮转角
-            public static final int RADAR = 5;                    // 雷达，注意雷达数据通过Radar传送
-            public static final int SPEED_GPS = 6;                // 实时速度，通过GPS来获取的
-            public static final int FUEL_CONSUMPTION_MINUTE = 7;  // 分钟油耗，一分钟发一次
+            /** 实时速度 */
+            public static final int SPEED                   = 1;
+            /** 瞬时油耗 */
+            public static final int FUEL_CONSUMPTION        = 2;
+            /** 发动机转速 */
+            public static final int ENGINE_RPM              = 3;
+            /** 转向车轮转角 */
+            public static final int WHEEL_ANGLE             = 4;
+            /** 雷达，注意雷达数据通过Radar传送 */
+            public static final int RADAR                   = 5;
+            /** 实时速度，通过GPS来获取的 */
+            public static final int SPEED_GPS               = 6;
+            /** 分钟油耗，一分钟发一次 */
+            public static final int FUEL_CONSUMPTION_MINUTE = 7;
         }
 
         public int mId;
@@ -97,12 +108,18 @@ public class IVICar {
      */
     public static class ExtraState {
         public static class Id {
-            public static final int BATTERY_VOLTAGE = 0;        // 电池电压
-            public static final int REMAIN_FUEL = 1;            // 剩余油量L,
-            public static final int REMAIN_FUEL_DISTANCE = 2;   // 剩余油量里程km
-            public static final int GEAR = 3;                   // 档位信息，参考Gear里面的定义
-            public static final int CLEAN_WATER = 4;            // 玻璃水
-            public static final int SEAT_BELT = 5;              // 安全带
+            /** 电池电压 */
+            public static final int BATTERY_VOLTAGE      = 0;
+            /** 剩余油量L */
+            public static final int REMAIN_FUEL          = 1;
+            /** 剩余油量里程km */
+            public static final int REMAIN_FUEL_DISTANCE = 2;
+            /** 档位信息，参考Gear里面的定义 */
+            public static final int GEAR                 = 3;
+            /** 玻璃水 */
+            public static final int CLEAN_WATER          = 4;
+            /** 安全带 */
+            public static final int SEAT_BELT            = 5;
         }
 
         public int mId;
@@ -152,17 +169,28 @@ public class IVICar {
      */
     public static class Door {
         public static class Id {
-            public static final int FRONT_LEFT          = 0;    // 前左
-            public static final int FRONT_RIGHT         = 1;    // 前右
-            public static final int REAR_LEFT           = 2;    // 后左
-            public static final int REAR_RIGHT          = 3;    // 后右
-            public static final int HOOT                = 4;    // 发动机盖
-            public static final int FUEL_CAP            = 5;    // 油箱盖
-            public static final int TRUNK               = 6;    // 后尾箱盖
-            public static final int REAR_WIND_SHIELD    = 7;    // 后风窗
-            public static final int BUS_LUGGAGE         = 9;    // 大巴行李箱门
-            public static final int BUS_MID             = 10;   // 大巴中门
-            public static final int COUNT               = 11;   // 总车门数
+            /** 前左 */
+            public static final int FRONT_LEFT          = 0;
+            /** 前右 */
+            public static final int FRONT_RIGHT         = 1;
+            /** 后左 */
+            public static final int REAR_LEFT           = 2;
+            /** 后右 */
+            public static final int REAR_RIGHT          = 3;
+            /** 发动机盖 */
+            public static final int HOOT                = 4;
+            /** 油箱盖 */
+            public static final int FUEL_CAP            = 5;
+            /** 后尾箱盖 */
+            public static final int TRUNK               = 6;
+            /** 后风窗 */
+            public static final int REAR_WIND_SHIELD    = 7;
+            /** 大巴行李箱门 */
+            public static final int BUS_LUGGAGE         = 9;
+            /** 大巴中门 */
+            public static final int BUS_MID             = 10;
+            /** 总车门数 */
+            public static final int COUNT               = 11;
         }
 
         public int mChangeMask;
@@ -199,19 +227,32 @@ public class IVICar {
      */
     public static class Light {
         public static class Id {
-            public static final int TURN_LEFT = 0;  // 左转向灯
-            public static final int TURN_RIGHT = 1; // 右转向灯
-            public static final int MARKER = 2;     // 示廓灯
-            public static final int EMERGENCY = 3;  // 紧急灯（双闪）
-            public static final int FRONT_FOG = 4;  // 前雾灯
-            public static final int REAR_FOG = 5;   // 后雾灯
-            public static final int HIGH_BEAM = 6;  // 远光灯
-            public static final int LOW_BEAM = 7;   // 近光灯
-            public static final int DAY = 8;        // 日间行车灯
-            public static final int BRAKE = 9;      // 刹车灯
-            public static final int RESERVE = 10;   // 倒车灯
-            public static final int ILL = 11;       // ILL灯线，只代表了车灯亮
-            public static final int COUNT = 12;
+            /** 左转向灯 */
+            public static final int TURN_LEFT  = 0;
+            /** 右转向灯 */
+            public static final int TURN_RIGHT = 1;
+            /** 示廓灯 */
+            public static final int MARKER     = 2;
+            /** 紧急灯（双闪） */
+            public static final int EMERGENCY  = 3;
+            /** 前雾灯 */
+            public static final int FRONT_FOG  = 4;
+            /** 后雾灯 */
+            public static final int REAR_FOG   = 5;
+            /** 远光灯 */
+            public static final int HIGH_BEAM  = 6;
+            /** 近光灯 */
+            public static final int LOW_BEAM   = 7;
+            /** 日间行车灯 */
+            public static final int DAY        = 8;
+            /** 刹车灯 */
+            public static final int BRAKE      = 9;
+            /** 倒车灯 */
+            public static final int RESERVE    = 10;
+            /** ILL灯线，只代表了车灯亮 */
+            public static final int ILL        = 11;
+            /** id总数 */
+            public static final int COUNT      = 12;
         }
 
         public int mChangeMask;
@@ -315,10 +356,13 @@ public class IVICar {
      */
     public static class Ccd {
         public static class Status {
-            public static final int UNKNOWN = -1;
-            public static final int OFF = 0;        // CCD OFF
-            public static final int ON = 1;         // CCD ON
-            public static final int ALREADY_ON = 2; // CCD 已经在系统启动阶段就已经被打开 （快速倒车）
+            public static final int UNKNOWN    = -1;
+            /** CCD OFF */
+            public static final int OFF        = 0;
+            /** CCD ON */
+            public static final int ON         = 1;
+            /** CCD 已经在系统启动阶段就已经被打开 （快速倒车） */
+            public static final int ALREADY_ON = 2;
 
             public static String getName(int status) {
                 return LogNameUtil.getName(status, Status.class, "Unknown ccd status: " + status);
@@ -342,8 +386,10 @@ public class IVICar {
     public static class Handbrake {
         public static class Status {
             public static final int UNKNOWN = -1;
-            public static final int HOLD = 1;       // 手刹拉起，可以观看视频
-            public static final int RELEASE = 0;    // 手刹放下，不可以观看视频
+            /** 手刹拉起，可以观看视频 */
+            public static final int HOLD    = 1;
+            /** 手刹放下，不可以观看视频 */
+            public static final int RELEASE = 0;
 
             public static String getName(int status) {
                 return LogNameUtil.getName(status, Handbrake.Status.class);
@@ -465,11 +511,15 @@ public class IVICar {
     public static class Radar {
         public static class Type {
             public static final int NONE = 0x00;
-            public static final int R3 = 0x01;
-            public static final int F4R4 = 0x02;    // 车头4个，车尾4个
-            public static final int F6R4 = 0x03;    // 车头6个，车尾4个
-            public static final int F6R6 = 0x05;    // 车头6个，车尾6个
-            public static final int BWM = 0x0A;     // 宝马雷达（布局同类型2，车头4个，车尾4个，数据格式不同）
+            public static final int R3   = 0x01;
+            /** 车头4个，车尾4个 */
+            public static final int F4R4 = 0x02;
+            /** 车头6个，车尾4个 */
+            public static final int F6R4 = 0x03;
+            /** 车头6个，车尾6个 */
+            public static final int F6R6 = 0x05;
+            /** 宝马雷达（布局同类型2，车头4个，车尾4个，数据格式不同） */
+            public static final int BWM  = 0x0A;
         }
 
         public int mType;
@@ -502,16 +552,7 @@ public class IVICar {
     }
 
     public static String getFuelConsumptionUnitString(int unit) {
-        switch (unit) {
-            case FuelConsumptionUnit.LP100KM:
-                return "L/100km";
-            case FuelConsumptionUnit.LPH:
-                return "L/H";
-            case FuelConsumptionUnit.MPG:
-                return "MPG";
-            default:
-                return "";
-        }
+        return LogNameUtil.getName(unit, FuelConsumptionUnit.class);
     }
 
     public static String getFuelConsumptionString(float consumption, int unit) {
@@ -531,12 +572,18 @@ public class IVICar {
 
     // mcu 升级错误消息码定义
     public static class McuUpgradeErrorMsg {
-        public static final int FILE_NOT_EXISTS     = 0; // 文件不存在
-        public static final int FILE_NOT_READ       = 1; // 文件不能读
-        public static final int FILE_FORMAT_ERROR   = 2; // 文件格式错误，后缀错误，暂时只支持.iap和.mcu格式升级
-        public static final int FILE_CONTENT_ERROR  = 3; // 文件内容错误
-        public static final int UPGRADE_FAILUE      = 4; // 下位机升级失败
-        public static final int UPGRADE_TIME_OUT    = 5; // 升级超时
+        /** 文件不存在 */
+        public static final int FILE_NOT_EXISTS     = 0;
+        /** 文件不能读 */
+        public static final int FILE_NOT_READ       = 1;
+        /** 文件格式错误，后缀错误，暂时只支持.mcu格式升级 */
+        public static final int FILE_FORMAT_ERROR   = 2;
+        /** 文件内容错误 */
+        public static final int FILE_CONTENT_ERROR  = 3;
+        /** 下位机升级失败 */
+        public static final int UPGRADE_FAILUE      = 4;
+        /** 升级超时 */
+        public static final int UPGRADE_TIME_OUT    = 5;
 
         public static String getName(int type) {
             return LogNameUtil.getName(type, McuUpgradeErrorMsg.class);
@@ -561,20 +608,49 @@ public class IVICar {
      */
     public static class ExtraDevice {
         public static class CarId {
-            public static final int GENERAL  = 0;        // 通用车型，不特指是哪个车型
-            public static final int ZHONGTAI = 1;       // 众泰
-            public static final int YUTONG   = 3;         // 宇通
+            /** 通用车型，不特指是哪个车型 */
+            public static final int GENERAL  = 0;
+            /** 众泰 */
+            public static final int ZHONGTAI = 1;
+            /** 宇通 */
+            public static final int YUTONG   = 3;
+
+            /**
+             * 获取车型名字
+             * @param id {@link CarId}
+             * @return
+             */
+            public static String getCarName(int id) {
+                return LogNameUtil.getName(id, ExtraDevice.CarId.class);
+            }
         }
 
         public static class DeviceId {
-            public static final int AVM360       = 0x01;         // 360全景
-            public static final int DRIVING_RECORDER = 0x02;    //行车记录仪
-            public static final int PM2_PONIT_5 = 0x04;         //PM2.5
-            public static final int PEPS = 0x07;                 //PEPS
-            public static final int AMBIENTLIGHT = 0x08;         // 氛围灯
-            public static final int AUTO_PARK  = 0x09;         // 自动泊车
-            public static final int CARSET       = 0x0A;        // 原车设置
-            public static final int RADAR_WARING = 0x0B;       // 雷达报警音
+            /** 360全景 */
+            public static final int AVM360           = 0x01;
+            /** 行车记录仪 */
+            public static final int DRIVING_RECORDER = 0x02;
+            /** PM2.5 */
+            public static final int PM2_PONIT_5      = 0x04;
+            /** PEPS */
+            public static final int PEPS             = 0x07;
+            /** 氛围灯 */
+            public static final int AMBIENTLIGHT     = 0x08;
+            /** 自动泊车 */
+            public static final int AUTO_PARK        = 0x09;
+            /** 原车设置 */
+            public static final int CARSET           = 0x0A;
+            /** 雷达报警音 */
+            public static final int RADAR_WARING     = 0x0B;
+
+            /**
+             * 获取设备名字
+             * @param id {@link DeviceId}
+             * @return
+             */
+            public static String getDeviceName(int id) {
+                return LogNameUtil.getName(id, ExtraDevice.DeviceId.class);
+            }
         }
 
 
@@ -610,6 +686,7 @@ public class IVICar {
             public static final int WARING_ON = 0x05;
         }
     }
+
     /**
      * 配置参数，对应CIV_V2里面的CMD_PARAM
      */
@@ -619,7 +696,8 @@ public class IVICar {
         }
 
         public static class CarId {
-            public static final int GENERAL = 0x01;     // 通用车型
+            /** 通用车型 */
+            public static final int GENERAL = 0x01;
         }
 
         public int mId;
@@ -648,8 +726,10 @@ public class IVICar {
          * 保养ID
          */
         public static class Id {
-            public static final int INTERVAL = 0;          //保养周期
-            public static final int INSPECTION = 1;        //保养检查
+            /** 保养周期 */
+            public static final int INTERVAL   = 0;
+            /** 保养检查 */
+            public static final int INSPECTION = 1;
         }
 
         public int mId;         // 保养ID
@@ -693,13 +773,17 @@ public class IVICar {
     public static class CarReport {
 
         public static class Car {
-            public static final int GOLF = 7;        //Golf7
+            /** Golf7 */
+            public static final int GOLF = 7;
         }
 
         public static class Type {
-            public static final int REPORT = 0;      //警告故障报告
-            public static final int STARTSTOP = 1;   //自动启停报告
-            public static final int AIRCON = 2;      //空调报告
+            /** 警告故障报告 */
+            public static final int REPORT    = 0;
+            /** 自动启停报告 */
+            public static final int STARTSTOP = 1;
+            /** 空调报告 */
+            public static final int AIRCON    = 2;
 
             public static String getName(int type) {
                 return LogNameUtil.getName(type, Type.class);
@@ -707,12 +791,18 @@ public class IVICar {
         }
 
         public static class Control {
-            public static final int HIDE = 0;       //隐藏
-            public static final int SHOW = 1;       //显示
-            public static final int REPAIR = 2;     //已修复
-            public static final int CLEAR = 5;      //mcu开始上传故障码，此时需要清除故障列表
-            public static final int ADD = 7;   //增加这条故障码
-            public static final int DELETE = 9;     //删除这条故障码
+            /** 隐藏 */
+            public static final int HIDE   = 0;
+            /** 显示 */
+            public static final int SHOW   = 1;
+            /** 已修复 */
+            public static final int REPAIR = 2;
+            /** mcu开始上传故障码，此时需要清除故障列表 */
+            public static final int CLEAR  = 5;
+            /** 增加这条故障码 */
+            public static final int ADD    = 7;
+            /** 删除这条故障码 */
+            public static final int DELETE = 9;
 
             public static String getName(int type) {
                 return LogNameUtil.getName(type, Control.class);
@@ -725,7 +815,9 @@ public class IVICar {
         public int mFaultCode;
         public int[] mCurrList;
 
-        //解析
+        /**
+         * 解析
+         */
         public CarReport(int carid, int controlId, int type, int faultcode) {
             mCarId = carid;
             mConTrolId = controlId;
@@ -733,7 +825,9 @@ public class IVICar {
             mFaultCode = faultcode;
         }
 
-        //刷新UI
+        /**
+         * 刷新UI
+         */
         public CarReport(int carid, int type, int[] currlist) {
             mCarId = carid;
             mTypeId = type;
@@ -752,41 +846,71 @@ public class IVICar {
         }
 
         public static class Status {
-            public static final int EXIT = 0x00;                                  //退出自动泊车系统
-            public static final int ENTER = 0x01;                                 //寻找泊车位
-            public static final int ENTER_RIGHT = 0x65;                           //寻找泊车位
-            public static final int SLOW_DOWN = 0x02;                             //减速
-            public static final int SLOW_DOWN_RIGHT = 100 + 0x02;                 //减速右边
-            public static final int FOUND = 0x03;                                 //找到泊车位
-            public static final int FOUND_RIGHT = 100 + 0x03;                     //找到泊车位
-            public static final int DRIVE_FORWARD_OUTSIDE = 0x04;                 //向前开
-            public static final int DRIVE_FORWARD_OUTSIDE_RIGHT = 100 + 0x04;     //向前开
-            public static final int DRIVE_FORWARD_INSIDE = 0x05;                  //往前开
-            public static final int DRIVE_FORWARD_INSIDE_RIGHT = 100 + 0x05;      //往前开
-            public static final int RELEASE_STEER = 0x06;                         //双手离开方向盘，挂倒档
-            public static final int RELEASE_STEER_RIGHT = 100 + 0x06;             //双手离开方向盘，挂倒档
-            public static final int CHECK_SURROUND = 0x07;                        //检测周边，倒车
-            public static final int CHECK_SURROUND_RIGHT = 100 + 0x07;            //检测周边，倒车
-            public static final int STOP_DRIVE_BACKWARD = 0x08;                   //停止,向后
-            public static final int STOP_DRIVE_BACKWARD_RIGHT = 100 + 0x08;       //停止,向后
-            public static final int DRIVE_FORWARD = 0x09;                         //停止,向前
-            public static final int DRIVE_FORWARD_RIGHT = 100 + 0x09;             //停止,向前
-            public static final int DRIVE_BACKWARD = 0x0A;                        //往后开
-            public static final int DRIVE_BACKWARD_RIGHT = 100 + 0x0A;            //往后开
-            public static final int DRIVE_FORWARD_CONTINUE = 0x0B;                //继续向前
-            public static final int DRIVE_FORWARD_CONTINUE_RIGHT = 100 + 0x0B;    //继续向前
-            public static final int DRIVE_BACKWARD_CONTINUE = 0x0C;               //继续向后
-            public static final int DRIVE_BACKWARD_CONTINUE_RIGHT = 100 + 0x0C;   //继续向后
-            public static final int FINISH = 0x0D;                                //完成
-            public static final int FINISH_RIGHT = 100 + 0x0D;                    //完成
-            public static final int MALFUNCTION = 0xC9;                           //故障
-            public static final int NOT_AVAILABLE = 0xCA;                         //不可用
-            public static final int CANCELLED = 0xCB;                             //取消
-            public static final int CANCELLED_BY_SPEEDING = 0xCC;
-            public static final int CANCELLED_BY_STEERING = 0xCD;
-            public static final int CANCELLED_BY_ESP_EVENT = 0xCE;
-            public static final int CANCELLED_BY_ABS_EVENT = 0xCF;
-            public static final int RESUME_AVAILABLE = 0xD0;
+            /** 退出自动泊车系统 */
+            public static final int EXIT                          = 0x00;
+            /** 寻找泊车位 */
+            public static final int ENTER                         = 0x01;
+            /** 寻找泊车位 */
+            public static final int ENTER_RIGHT                   = 0x65;
+            /** 减速 */
+            public static final int SLOW_DOWN                     = 0x02;
+            /** 减速右边 */
+            public static final int SLOW_DOWN_RIGHT               = 100 + 0x02;
+            /** 找到泊车位 */
+            public static final int FOUND                         = 0x03;
+            /** 找到泊车位 */
+            public static final int FOUND_RIGHT                   = 100 + 0x03;
+            /** 向前开 */
+            public static final int DRIVE_FORWARD_OUTSIDE         = 0x04;
+            /** 向前开 */
+            public static final int DRIVE_FORWARD_OUTSIDE_RIGHT   = 100 + 0x04;
+            /** 往前开 */
+            public static final int DRIVE_FORWARD_INSIDE          = 0x05;
+            /** 往前开 */
+            public static final int DRIVE_FORWARD_INSIDE_RIGHT    = 100 + 0x05;
+            /** 双手离开方向盘，挂倒档 */
+            public static final int RELEASE_STEER                 = 0x06;
+            /** 双手离开方向盘，挂倒档 */
+            public static final int RELEASE_STEER_RIGHT           = 100 + 0x06;
+            /** 检测周边，倒车 */
+            public static final int CHECK_SURROUND                = 0x07;
+            /** 检测周边，倒车 */
+            public static final int CHECK_SURROUND_RIGHT          = 100 + 0x07;
+            /** 停止,向后 */
+            public static final int STOP_DRIVE_BACKWARD           = 0x08;
+            /** 停止,向后 */
+            public static final int STOP_DRIVE_BACKWARD_RIGHT     = 100 + 0x08;
+            /** 停止,向前 */
+            public static final int DRIVE_FORWARD                 = 0x09;
+            /** 停止,向前 */
+            public static final int DRIVE_FORWARD_RIGHT           = 100 + 0x09;
+            /** 往后开 */
+            public static final int DRIVE_BACKWARD                = 0x0A;
+            /** 往后开 */
+            public static final int DRIVE_BACKWARD_RIGHT          = 100 + 0x0A;
+            /** 继续向前 */
+            public static final int DRIVE_FORWARD_CONTINUE        = 0x0B;
+            /** 继续向前 */
+            public static final int DRIVE_FORWARD_CONTINUE_RIGHT  = 100 + 0x0B;
+            /** 继续向后 */
+            public static final int DRIVE_BACKWARD_CONTINUE       = 0x0C;
+            /** 继续向后 */
+            public static final int DRIVE_BACKWARD_CONTINUE_RIGHT = 100 + 0x0C;
+            /** 完成 */
+            public static final int FINISH                        = 0x0D;
+            /** 完成 */
+            public static final int FINISH_RIGHT                  = 100 + 0x0D;
+            /** 故障 */
+            public static final int MALFUNCTION                   = 0xC9;
+            /** 不可用 */
+            public static final int NOT_AVAILABLE                 = 0xCA;
+            /** 取消 */
+            public static final int CANCELLED                     = 0xCB;
+            public static final int CANCELLED_BY_SPEEDING         = 0xCC;
+            public static final int CANCELLED_BY_STEERING         = 0xCD;
+            public static final int CANCELLED_BY_ESP_EVENT        = 0xCE;
+            public static final int CANCELLED_BY_ABS_EVENT        = 0xCF;
+            public static final int RESUME_AVAILABLE              = 0xD0;
         }
 
         public static String getName(int code) {
@@ -808,7 +932,7 @@ public class IVICar {
         public int mEngineToTyre;               // 发动机到驱动轮
         public int mEngineToMotor;              // 发动机到马达
         public int mMotorToTyre;                // 马达到驱动轮
-        public int mMotorToBattery;              // 马达到电池
+        public int mMotorToBattery;             // 马达到电池
 
         public byte[] mEnergyData;              //总的buff，给app获取值用
 
@@ -832,10 +956,23 @@ public class IVICar {
         }
 
         public static class Flow {
-            public static final int NO_FLOW = 0x00;                       //无流动
-            public static final int FROM_A_TO_B = 0x01;                   //从A到B，正向流动
-            public static final int FROM_B_TO_A = 0x02;                   //从B到A，反向流动
-            public static final int NO_CONNECTION = 0xFF;                 //两个部件直接没有联系
+            /** 无流动 */
+            public static final int NO_FLOW       = 0x00;
+            /** 从A到B，正向流动 */
+            public static final int FROM_A_TO_B   = 0x01;
+            /** 从B到A，反向流动 */
+            public static final int FROM_B_TO_A   = 0x02;
+            /** 两个部件直接没有联系 */
+            public static final int NO_CONNECTION = 0xFF;
+
+            /**
+             * 打印标记，通过String打印
+             * @param flow {@link Flow}
+             * @return
+             */
+            public static String getName(int flow) {
+                return LogNameUtil.getName(flow, Flow.class);
+            }
         }
     }
 
@@ -993,13 +1130,13 @@ public class IVICar {
      * 协议方控学习按键类
      */
     public static class StudyKeyItem{
-        public int mChannel;           //AD通道
-        public int mMax;               //最大值
-        public int mMin;               //最小值
+        public int mChannel;           // AD通道
+        public int mMax;               // 最大值
+        public int mMin;               // 最小值
         public int mOriMiddle;
-        public boolean isNeedRepeat = false;   //是否需要按下连续执行短按功能，例如：音量加减
-        public String mShortAction = null;    //短按功能
-        public String mLongAction = null;     //长按功能
+        public boolean isNeedRepeat = false;  // 是否需要按下连续执行短按功能，例如：音量加减
+        public String mShortAction = null;    // 短按功能
+        public String mLongAction = null;     // 长按功能
 
         public StudyKeyItem(){
 
@@ -1048,8 +1185,10 @@ public class IVICar {
      * 发送触摸坐标给单片机
      */
     public static class TouchClickEvent {
-        public static final int UP = 1;     //弹起
-        public static final int DOWN = 0;  //按下
+        /** 弹起 */
+        public static final int UP   = 1;
+        /** 按下 */
+        public static final int DOWN = 0;
     }
 
     /**
@@ -1066,8 +1205,10 @@ public class IVICar {
      * 硬件版本号升级状态
      */
     public static class HardwareVersionStatus {
-        public static final int SUCCESS = 0x05;  //表示MCU写入成功;
-        public static final int FAILURE = 0x04;  //表示MCU写入失败（可能EEPROM故障等）
+        /** 表示MCU写入成功 */
+        public static final int SUCCESS = 0x05;
+        /** 表示MCU写入失败（可能EEPROM故障等） */
+        public static final int FAILURE = 0x04;
     }
 
     /**
@@ -1104,26 +1245,49 @@ public class IVICar {
     public static class PEPS {
 
         public static class DisplayContent {
-            public static final int START_BUTTON_END_OF_KEY = 0x01;          //钥匙尾端按下启动按钮
-            public static final int START_SWITCH_P_OR_N = 0x02;              //切换至P或者N档启动
-            public static final int START_DEPRESSING_THE_CLUTCH = 0x03;     //踩下离合按下启动按钮
-            public static final int START_BUTTON_BRAKES = 0x04;              //踩刹车按启动按钮
-            public static final int START_SWITCH_P = 0x05;                   //切换到P档按启动按钮
-            public static final int START_BRAKES_SWITCH_N = 0x06;            //踩下刹车按下启动按钮切换到N档启动
-            public static final int START_DEPRESSING_CLUTCH = 0x07;          //踩下离合按下启动按钮启动
-            public static final int START_SWITCH_N = 0x08;                    //切换至N档启动
-            public static final int NO_EEY_DETECTED = 0x09;                  //未检测到钥匙
-            public static final int KEY_BATTERY_LOW = 0x0A;                   //钥匙电池电量低
+            /** 钥匙尾端按下启动按钮 */
+            public static final int START_BUTTON_END_OF_KEY     = 0x01;
+            /** 切换至P或者N档启动 */
+            public static final int START_SWITCH_P_OR_N         = 0x02;
+            /** 踩下离合按下启动按钮 */
+            public static final int START_DEPRESSING_THE_CLUTCH = 0x03;
+            /** 踩刹车按启动按钮 */
+            public static final int START_BUTTON_BRAKES         = 0x04;
+            /** 切换到P档按启动按钮 */
+            public static final int START_SWITCH_P              = 0x05;
+            /** 踩下刹车按下启动按钮切换到N档启动 */
+            public static final int START_BRAKES_SWITCH_N       = 0x06;
+            /** 踩下离合按下启动按钮启动 */
+            public static final int START_DEPRESSING_CLUTCH     = 0x07;
+            /** 切换至N档启动 */
+            public static final int START_SWITCH_N              = 0x08;
+            /** 未检测到钥匙 */
+            public static final int NO_EEY_DETECTED             = 0x09;
+            /** 钥匙电池电量低 */
+            public static final int KEY_BATTERY_LOW             = 0x0A;
+
+            /**
+             * 调试打印接口
+             * @param id {@ink DisplayContent}
+             * @return
+             */
+            public String getName(int id) {
+                return LogNameUtil.getName(id, DisplayContent.class);
+            }
         }
 
         public static class DisplayTimes {
-            public static final int NOW_DISAPPEAR = 0x00;  //立即消失
-            public static final int ALWAYS = 0xff;         //常显
+            /** 立即消失 */
+            public static final int NOW_DISAPPEAR = 0x00;
+            /** 常显 */
+            public static final int ALWAYS        = 0xff;
         }
 
         public static class NumbeAlarms {
-            public static final int NO = 0x00;               //无报警声
-            public static final int ALWAYS = 0xff;          //常响
+            /** 无报警声 */
+            public static final int NO     = 0x00;
+            /** 常响 */
+            public static final int ALWAYS = 0xff;
         }
     }
 

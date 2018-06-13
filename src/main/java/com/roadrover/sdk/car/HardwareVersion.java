@@ -17,12 +17,12 @@ public class HardwareVersion {
     private String TAG = "HardwareVersion";
 
     public byte[] mData;
-    public int status;  //写入硬件版本号返回状态  0x04表示MCU写入失败（可能EEPROM故障等） 0x05表示MCU写入成功
-    public String mHardwareVersion; //硬件版本号
-    public String mSupplier;  //PCB版本
-    public String mEcnCode; //ECN/DCN编码
-    public String mDate;   //日期
-    public boolean mIsHardwareWriteFeedback; //是否收到MCU反馈
+    public int status;              // 写入硬件版本号返回状态  0x04表示MCU写入失败（可能EEPROM故障等） 0x05表示MCU写入成功
+    public String mHardwareVersion; // 硬件版本号
+    public String mSupplier;        // PCB版本
+    public String mEcnCode;         // ECN/DCN编码
+    public String mDate;            // 日期
+    public boolean mIsHardwareWriteFeedback; // 是否收到MCU反馈
 
 
     public HardwareVersion(int status, String hardware, String supplier, String ecn, String date) {

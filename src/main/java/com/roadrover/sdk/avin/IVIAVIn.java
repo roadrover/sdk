@@ -325,13 +325,20 @@ public class IVIAVIn {
     /**EventBus事件控制类*/
     public static class EventControl {
         public static class Action {
-            public static final int PREV = 1;
-            public static final int NEXT = 2;
-            public static final int SELECT = 3;
-            public static final int QUIT_APP = 4;
-            public static final int STOP = 5;
+            /** 上一曲，其值为 {@value} */
+            public static final int PREV         = 1;
+            /** 下一曲，其值为 {@value} */
+            public static final int NEXT         = 2;
+            /** 选择第几首歌曲，其值为 {@value} */
+            public static final int SELECT       = 3;
+            /** 退出APP，如果不想退出时，也需要停止媒体，否则有可能出现部分平台媒体播放器创建失败问题，其值为 {@value} */
+            public static final int QUIT_APP     = 4;
+            /** 停止播放，其值为 {@value} */
+            public static final int STOP         = 5;
+            /** 视频显示，隐藏，一般为手刹信号，其值为 {@value} */
             public static final int VIDEO_PERMIT = 6;
-            public static final int RESUME = 7;
+            /** 恢复播放，其值为 {@value} */
+            public static final int RESUME       = 7;
         }
 
         /**{@link IVIAVIn.EventControl.Action}*/
@@ -346,6 +353,14 @@ public class IVIAVIn {
         public EventControl(int action, int value) {
             mAction = action;
             mValue = value;
+        }
+
+        /**
+         * 获取打印名字，一般用于打印
+         * @return
+         */
+        public String getName() {
+            return LogNameUtil.getName(mAction, Action.class);
         }
     }
 }

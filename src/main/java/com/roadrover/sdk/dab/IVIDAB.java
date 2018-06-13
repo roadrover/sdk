@@ -1,5 +1,7 @@
 package com.roadrover.sdk.dab;
 
+import com.roadrover.sdk.utils.LogNameUtil;
+
 /**
  * 数字音频广播定义.
  */
@@ -67,21 +69,15 @@ public class IVIDAB {
      * 服务链接状态
      */
     public static class ServiceLinkingStatus {
-        public static final int DAB_ORIGINAL = 0x0; //friendly name: 'DAB original', ordinal=0
-        public static final int FM_BACKUP = 0x1; //friendly name: 'FM Backup', ordinal=1
-        public static final int DAB_ALTERNATIVE = 0x2; //friendly name: 'DAB alternative', ordinal=2
+        /** friendly name: 'DAB original', ordinal=0 */
+        public static final int DAB_ORIGINAL = 0x0;
+        /** friendly name: 'FM Backup', ordinal=1 */
+        public static final int FM_BACKUP    = 0x1;
+        /** friendly name: 'DAB alternative', ordinal=2 */
+        public static final int DAB_ALTERNATIVE = 0x2;
 
         public static String getName(int status) {
-            switch (status) {
-                case DAB_ORIGINAL:
-                    return "DAB original";
-                case FM_BACKUP:
-                    return "FM Backup";
-                case DAB_ALTERNATIVE:
-                    return "DAB alternative";
-                default:
-                    return "Unknown status: " + status;
-            }
+            return LogNameUtil.getName(status, ServiceLinkingStatus.class);
         }
     }
 
@@ -89,24 +85,16 @@ public class IVIDAB {
      * 服务链接模式
      */
     public static class ServiceLinkingMode {
-        public static final int NONE = 0x00;
-        public static final int DABFM = 0x01;     // dab-fm自动无缝连接（转播）
-        public static final int DABDAB = 0x02;    // dab-dab自动无缝连接（可选服务）(only for dual tuner systems)
-        public static final int DABFMDAB = 0x03;  // (only for dual tuner systems)
+        public static final int NONE     = 0x00;
+        /** dab-fm自动无缝连接（转播） */
+        public static final int DABFM    = 0x01;
+        /** dab-dab自动无缝连接（可选服务）(only for dual tuner systems) */
+        public static final int DABDAB   = 0x02;
+        /** (only for dual tuner systems) */
+        public static final int DABFMDAB = 0x03;
 
         public static String getName(int mode) {
-            switch (mode) {
-                case NONE:
-                    return "None";
-                case DABFM:
-                    return "DAB-FM";
-                case DABDAB:
-                    return "DAB-DAB";
-                case DABFMDAB:
-                    return "DAB-FM-DAB";
-                default:
-                    return "Unknown mode: " + mode;
-            }
+            return LogNameUtil.getName(mode, ServiceLinkingStatus.class);
         }
     }
 
@@ -118,14 +106,7 @@ public class IVIDAB {
         public static final int FLASH = 1;
 
         public static String getName(int destination) {
-            switch (destination) {
-                case SDRAM:
-                    return "SD-RAM";
-                case FLASH:
-                    return "Flash";
-                default:
-                    return "Unknown destination: " + destination;
-            }
+            return LogNameUtil.getName(destination, FirmwareDestination.class);
         }
     }
 
@@ -143,31 +124,13 @@ public class IVIDAB {
         public static final int ERROR_OTHER = 99;
 
         public static String getName(int result) {
-            switch (result) {
-                case SUCCESSFUL:
-                    return "Successful";
-                case ERROR_NO_MEMORY:
-                    return "Error no memory";
-                case ERROR_BOOTLOADER_NOT_FOUND:
-                    return "Error bootloader not found";
-                case ERROR_SPI_CONFIG_FAILURE:
-                    return "Error SPI config failure";
-                case ERROR_SECONDARY_BOOTLOAD_WRITE:
-                    return "Error secondary bootloader write";
-                case ERROR_IMAGE_WRITE:
-                    return "Error image write";
-                case ERROR_MIDDLEWARE_RUNNING:
-                    return "Error middleware running";
-                case ERROR_OTHER:
-                    return "Error other";
-                default:
-                    return "Unknown result: " + result;
-            }
+            return LogNameUtil.getName(result, DownloadFirmwareResult.class);
         }
     }
 
     public static class EventSystemStateChanged {
         public int mSystemState;
+
         EventSystemStateChanged(int systemState) {
             mSystemState = systemState;
         }

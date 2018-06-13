@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClimateView {
-    public static int DRAWABLE_ID_HIDE = -1;
-    public static int DRAWABLE_ID_SHOW = -2;
+    public static final int DRAWABLE_ID_HIDE = -1;
+    public static final int DRAWABLE_ID_SHOW = -2;
 
     /**
      * mValue空调对应的值
