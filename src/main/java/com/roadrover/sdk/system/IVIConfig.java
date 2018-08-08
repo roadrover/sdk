@@ -11,9 +11,10 @@ import com.roadrover.sdk.avin.IVIAVIn;
 import com.roadrover.sdk.avin.IVITV;
 import com.roadrover.sdk.avin.VideoParam;
 import com.roadrover.sdk.bluetooth.IVIBluetooth;
+import com.roadrover.sdk.car.Climate;
 import com.roadrover.sdk.car.IVICar;
-import com.roadrover.sdk.dab.IVIDAB;
 import com.roadrover.sdk.cluster.IVICluster;
+import com.roadrover.sdk.dab.IVIDAB;
 import com.roadrover.sdk.radio.IVIRadio;
 import com.roadrover.sdk.utils.EnvironmentUtils;
 import com.roadrover.sdk.utils.IniFileUtil;
@@ -58,6 +59,10 @@ public class IVIConfig {
     private static final String SECTION_BRIGHTNESS = "Brightness";
     /** 背光是否线性调节 */
     private static final String BRIGHTNESS_NEED_LINEAR_VARIATE = "LinearVariation";
+    /** 最大亮度 */
+    private static final String BRIGHTNESS_MAX = "Max";
+    /** 最小亮度 */
+    private static final String BRIGHTNESS_MIN = "Min";
 
     // AV功能配置 start
     /** AV功能配置定义组名 */
@@ -72,6 +77,8 @@ public class IVIConfig {
     private static final String AVIN_DEFAULT_CONTRAST = "DefaultContrast";
     /** 默认饱和度 */
     private static final String AVIN_DEFAULT_SATURATION = "DefaultSaturation";
+    /**延时显示视频 */
+    private static final String AVIN_DELAY_SHOW_VIDEO = "DelayShowVideo";
     /** 倒车摄像头电源是否长供电 */
     private static final String CCD_LONG_SUPPLY_POWER = "CcdLongSupplyPower";
     /** 车内摄像头是否长供电 */
@@ -101,6 +108,10 @@ public class IVIConfig {
     private static final String SECTION_SET_SYSTEM_TIME = "SetSystemTime";
     /** 每秒发一次系统时间 */
     private static final String SEND_TIME_EVERY_SECOND = "SendTimeEverySecond";
+    /** 半小时机制配置 */
+    private static final String SECTION_HALF_HOUR_MECHANISM = "HalfHourMechanism";
+    /** 下位机是否支持半小时机制 */
+    private static final String ENALE_HALF_HOUR_MECHANISM = "EnableHalfHourMechanism";
 
     /** 文件夹监听 */
     private static final String SECTION_FILE_OBSERVER = "MultiFileObserver";
@@ -111,6 +122,11 @@ public class IVIConfig {
     private static final String SECTION_CCD_RADAR = "ccdRadar";
     /** 是否支持倒车雷达声音*/
     private static final String ENABLE_CCD_RADAR = "EnableCcdRadar";
+
+    /** 音频焦点配置 */
+    private static final String SECTION_AUDIO_FOCUS = "audioFocus";
+    /** 是否根据当前音频焦点设置音量 */
+    private static final String ENABLE_DYNAMIC_AUDIO_FOCUS = "EnableDynamicAudioFocus";
 
     // 音量配置 start
     /** 音量配置 */
@@ -204,6 +220,14 @@ public class IVIConfig {
     private static final String RADIO_FM_OUTPUT_GAIN = "FMOutputGain";
     /** 获取AM输出增益 */
     private static final String RADIO_AM_OUTPUT_GAIN = "AMOutputGain";
+    /** 是否开启收音机无信号检测静音功能 */
+    private static final String RADIO_NO_SIGNAL_DETECTION_MUTE = "IsOpenSignalDetectionMute";
+    /** 从有信号到无信号检测次数，一次间隔50ms，实际时间会又偏差，获取信号会有一定的延时，间隔时间肯定会大于50ms */
+    private static final String RADIO_NO_SIGNAL_DETECTION_COUNT = "NoSignalDetectionCount";
+    /** 从无信号到有信号检测次数 */
+    private static final String RADIO_HAS_SIGNAL_DETECTION_COUNT = "HasSignalDetectionCount";
+    /** 临界信号值，最低信号强度 */
+    private static final String RADIO_SIGNAL_MIN = "SignalMin";
     // 收音机定义 end
 
     // mode 键配置 start
@@ -249,6 +273,8 @@ public class IVIConfig {
     private static final String BLUETOOTH_SERIAL_FILE = "BT_SERIAL";
     /** 蓝牙设备串口波特率 */
     private static final String BLUETOOTH_SERIAL_BAUD_RATE = "BT_BAUD_RATE";
+    /** 连接超时自动重连次数 0表示禁止 */
+    private static final String BLUETOOTH_TIMEOUT_RELINK = "BT_TIMEOUT_RELINK";
     /** 自动接听 */
     private static final String AUTO_LISTEN = "AUTO_LISTEN";
     /** 自动连接 */
@@ -288,6 +314,21 @@ public class IVIConfig {
     }
     // 面板按键灯状态配置 end
 
+    // 倒车时媒体状态处理 start
+    /** 倒车时媒体状态处理方式 定义组名 */
+    private static final String CCD_MEDIA_STATUS = "CcdMediaStatus";
+    /** 倒车时媒体状态处理 */
+    private static final String MEDIA_STATUS_ON_CCD = "mediaStatusOnCcd";
+
+    public static class MediaStatusOnCcd {
+        /** 倒车时媒体降音 */
+        public static final int MEDIA_STATUS_ON_CCD_VOLUME_PERCENT = 0;
+        /** 倒车时媒体暂停 */
+        public static final int MEDIA_STATUS_ON_CCD_PAUSE = 1;
+    }
+
+    // 倒车时媒体状态处理 end
+
     // launchApp方法过滤 不后台启动的APP begin
     /** ignore 过滤应用定义组名 */
     private static final String SECTION_IGNORE_APP = "IgnoreLaunchApp";
@@ -302,6 +343,8 @@ public class IVIConfig {
     private static final String SECTION_SYSTEM = "System";
     /** 固件版本号 */
     private static final String FIRMWARE_VERSION = "FIRMWARE_VERSION";
+    /** 下位机升级文件头部编号 */
+    private static final String MCU_FILE_HEAD_CODE = "MCU_FILE_HEAD_CODE";
     // 系统配置 定义 end
 
     /**
@@ -394,6 +437,8 @@ public class IVIConfig {
     private static final String A2DP_PRE_VOLUME = "A2DP_PreVolume";
     /** BLUETOOTH_TEL内置前置音量 */
     private static final String BLUETOOTH_TEL_PRE_VOLUME = "BLUETOOTH_TEL_PreVolume";
+    /** 电话通道的内置前置音量 */
+    private static final String PHONE_TELE_PRE_VOLUME = "PHONE_TEL_PreVolume";
 
     /** AK7601音量曲线 */
     private static final String AK7601_VOLUME_CURVE = "AK7601VolumeCurve";
@@ -424,6 +469,11 @@ public class IVIConfig {
     /** Radio音源情况下硬件最大音量 */
     private static final String AUDIO_HW_VOL_RADIO = "Audio_HW_Vol_Radio";
     // AC8音频参数 end
+
+    // 音效配置 start
+    /** 音效配置 */
+    private static final String SECTION_AUDIO_EFFECT = "AudioEffect";
+    // 音效配置 end
     // 音频 end
 
     // 状态栏设置
@@ -480,6 +530,10 @@ public class IVIConfig {
     private static final String CLUSTER_ID = "Cluster";
     /**日志文件的时间显示，取值为整型，单位为小时*/
     private static final String LogcatTimeLimit = "LogcatTimeLimit";
+    /**PowerOff 下能否发送ACC id*/
+    private static final String IS_POWER_OFF_CAN_SEND_ACCID = "IsPowerOffCanSendAccId";
+    /**是否静音按键显示弹框*/
+    private static final String IS_MUTE_SHOW_VOLUMEBAR = "IsMuteShowVolumeBar";
 
     /** 倒车音量 */
     private static final String SECTION_CCD_VOLUME = "CcdVolume";
@@ -496,6 +550,17 @@ public class IVIConfig {
     /** 日期时间 */
     private static final String SECTION_DATETIME = "DateTime";
     private static final String DATETIME_SYNC_MCU = "SyncMcu";
+
+    /** TBox 相关配置*/
+    private static final String SECTION_TBOX = "TBox";
+    /** TBox 端口 配置 */
+    private static final String TBOX_PORT_CONFIG = "TBoxPort";
+    /** TBox 端口 默认配置 */
+    private static final int DEF_TBOX_PORT = 20000;
+    /** TBox HOST 配置 */
+    private static final String TBOX_HOST_CONFIG = "TBoxHost";
+    /** TBox HOST 默认配置 */
+    private static final String DEF_TBOX_HOST = "192.168.100.1";
 
     private static IniFileUtil mIniFileUtil = null; // INI文件工具类对象
     // 动态轨迹线 start
@@ -556,6 +621,18 @@ public class IVIConfig {
     /** 屏保默认时间 */
     private static final String SCREEN_PROTECTION_TIME = "time";
     // 屏保 end
+
+
+    // 空调功能配置 start
+    /** 空调功能配置定义组名 */
+    private static final String SECTION_CLIMATE = "Climate";
+    /** 空调针对锁屏的操作 */
+    private static final String CLIMATE_LOCKS_SCREEN_ID = "climate_locks_screen_id";
+    /** 空调弹框消失时间 */
+    private static final String CLIMATE_MISS_TIME = "climate_miss_time";
+    /** 空调相同数据是否过滤 */
+    private static final String CLIMATE_SAME_VALUE = "climate_same_value";
+    // 空调 end
 
     /**
      * 区域变化
@@ -1031,6 +1108,14 @@ public class IVIConfig {
         return getInteger(SECTION_AVIN, AVIN_CHANGE_CVBS_TYPE_COUNT, def);
     }
 
+    /**
+     * 获取AVI视频是否需要延时显示
+     * @return
+     */
+    public static boolean getAVDelayShowVideo() {
+        return getBoolean(SECTION_AVIN_VIDEO_ADJUST, AVIN_DELAY_SHOW_VIDEO, false);
+    }
+
     public static int getPowerKeyLongAction() {
         return getInteger(SECTION_POWER, POWER_LONG_ACTION, IVIKey.PowerKeyAction.NONE);
     }
@@ -1224,6 +1309,38 @@ public class IVIConfig {
     }
 
     /**
+     * 是否开启检测收音机信号功能
+     * @return
+     */
+    public static boolean isOpenDetectionRadioSignal() {
+        return getBoolean(SECTION_RADIO, RADIO_NO_SIGNAL_DETECTION_MUTE, false);
+    }
+
+    /**
+     * 获取从有信号到无信号的检测次数
+     * @return
+     */
+    public static int getNoSignalDetectionCount() {
+        return getInteger(SECTION_RADIO, RADIO_NO_SIGNAL_DETECTION_COUNT, 10);
+    }
+
+    /**
+     * 获取从无信号到有信号的检测次数
+     * @return
+     */
+    public static int getHasSignalDetectionCount() {
+        return getInteger(SECTION_RADIO, RADIO_HAS_SIGNAL_DETECTION_COUNT, 10);
+    }
+
+    /**
+     * 获取信号的最小值
+     * @return
+     */
+    public static int getRadioSignalMin() {
+        return getInteger(SECTION_RADIO, RADIO_SIGNAL_MIN, 8);
+    }
+
+    /**
      * 获取MediaDemo的音频目录
      * @return 音频目录
      */
@@ -1261,6 +1378,22 @@ public class IVIConfig {
      */
     public static boolean getBrightnessChangeLinearable() {
         return getBoolean(SECTION_BRIGHTNESS, BRIGHTNESS_NEED_LINEAR_VARIATE, false);
+    }
+
+    /**
+     * 获取最大亮度
+     * @return
+     */
+    public static int getBrightnessMax() {
+        return getInteger(SECTION_BRIGHTNESS, BRIGHTNESS_MAX, 100);
+    }
+
+    /**
+     * 获取最小亮度
+     * @return
+     */
+    public static int getBrightnessMin() {
+        return getInteger(SECTION_BRIGHTNESS, BRIGHTNESS_MIN, 0);
     }
 
     /**
@@ -1331,6 +1464,14 @@ public class IVIConfig {
         }
 
         return 9600;
+    }
+
+    /**
+     * 获取蓝牙连接超时自动重连最大次数 0表示禁止，默认为0
+     * @return
+     */
+    public static int getBluetoothTimeoutRelink() {
+        return getInteger(SECTION_BLUETOOTH, BLUETOOTH_TIMEOUT_RELINK, 0);
     }
 
     /**
@@ -1564,6 +1705,9 @@ public class IVIConfig {
             case IVIAudio.Channel.BLUETOOTH_TEL:
                 return getFloat(SECTION_AUDIO, BLUETOOTH_TEL_PRE_VOLUME, defaultValue);
 
+            case IVIAudio.Channel.PHONE:
+                return getFloat(SECTION_AUDIO, PHONE_TELE_PRE_VOLUME, defaultValue);
+
             default:
                 Logcat.w("Not realization channel: " + IVIAudio.Channel.getName(channel));
                 return defaultValue;
@@ -1733,7 +1877,7 @@ public class IVIConfig {
         checkRead();
         return mIniFileUtil;
     }
-	
+
 	/**
      * 获取配置字段
      *
@@ -1935,7 +2079,7 @@ public class IVIConfig {
         }
         return -1;
     }
-	
+
 	/**
      * 获取是否需要发送播放时间
      * @return
@@ -2149,6 +2293,7 @@ public class IVIConfig {
             try {
                 ret = Integer.valueOf(string);
             } catch (Exception e) {
+                e.printStackTrace();
                 Logcat.w("failed, " + section + " " + key);
             }
         }
@@ -2469,6 +2614,12 @@ public class IVIConfig {
     }
 
     /**
+     * 下位机是否支持半小时机制
+     */
+    public static boolean isSupportHalfHourMechanism() {
+        return getBoolean(SECTION_HALF_HOUR_MECHANISM, ENALE_HALF_HOUR_MECHANISM, false);
+    }
+    /**
      * 获取屏幕保护驱动节点路径
      * @return
      */
@@ -2499,8 +2650,8 @@ public class IVIConfig {
     public static boolean isNeedFileObserver() {
         return getBoolean(SECTION_FILE_OBSERVER, NEED_OBSERVER, true);
     }
-	
-	
+
+
     /**
      * 获取默认设置的主音量值
      */
@@ -2538,6 +2689,14 @@ public class IVIConfig {
         return getBoolean(SECTION_CCD_RADAR, ENABLE_CCD_RADAR, false);
     }
 
+    /**
+     * 获取根据音频焦点调节音量
+     * @return 是返回true， 默认返回false
+     */
+    public static boolean getEnableAuduoFocus() {
+        return getBoolean(SECTION_AUDIO_FOCUS, ENABLE_DYNAMIC_AUDIO_FOCUS, false);
+    }
+
      /* 获取面板按键灯默认状态
      * @return
      */
@@ -2556,5 +2715,129 @@ public class IVIConfig {
      */
     public static String getFirmwareVersion() {
         return getString(SECTION_SYSTEM, FIRMWARE_VERSION, "");
+    }
+
+    /**
+     * 获取下位机升级文件头部编号
+     * @return
+     */
+    public static String[] getMcuFileHeadCodes() {
+        return getStringArray(SECTION_SYSTEM, MCU_FILE_HEAD_CODE);
+    }
+
+	/**
+     * 获取倒车时多媒体的处理方式
+     * @return
+     */
+    public static int getMediaStatusCcdOn() {
+        int status = MediaStatusOnCcd.MEDIA_STATUS_ON_CCD_VOLUME_PERCENT;
+        if (checkRead() && mIniFileUtil != null) {
+            status = getInteger(CCD_MEDIA_STATUS, MEDIA_STATUS_ON_CCD, MediaStatusOnCcd.MEDIA_STATUS_ON_CCD_VOLUME_PERCENT);
+            Logcat.d("status:" + status);
+        }
+        return status;
+    }
+
+    /**
+     * 获取空调弹框消失时间
+     * @return
+     */
+    public static int getClimateMissTime() {
+        return getInteger(SECTION_CLIMATE, CLIMATE_MISS_TIME, 0);
+    }
+
+    /**
+     * 获取空调对锁屏的操作
+     * @return
+     */
+    public static int getClimateLockScreenId() {
+        return getInteger(SECTION_CLIMATE, CLIMATE_LOCKS_SCREEN_ID, Climate.ClimateLockScreenId.NONE);
+    }
+
+    /**
+     * 获取空调相同数据是否过滤
+     * @return
+     */
+    public static boolean getClimateSameValue() {
+        return getBoolean(SECTION_CLIMATE, CLIMATE_SAME_VALUE, true);
+    }
+
+    /**
+     * 获取PowerOff 下能否发送ACC id
+     * @return
+     */
+    public static boolean isPowerOffCanSendAccId() {
+        return getBoolean(SECTION_PLATFORM, IS_POWER_OFF_CAN_SEND_ACCID, false);
+    }
+
+    /**
+     * 是否静音按键显示弹框
+     * @return
+     */
+    public static boolean isMuteShowVolumeBar() {
+        return getBoolean(SECTION_PLATFORM, IS_MUTE_SHOW_VOLUMEBAR, false);
+    }
+
+    /**
+     * 获取TBox 端口配置
+     * @return 默认Host配置"192.168.100.1"
+     */
+    public static int getTBoxPort() {
+        return getInteger(SECTION_TBOX, TBOX_PORT_CONFIG, DEF_TBOX_PORT);
+    }
+
+    /**
+     * 获取TBox Host配置
+     * @return 默认Host配置"192.168.100.1"
+     */
+    public static String getTBoxHost() {
+        return getString(SECTION_TBOX, TBOX_HOST_CONFIG, DEF_TBOX_HOST);
+    }
+
+    /**
+     * 获取音效配置
+     * @return 返回eq等音效配置结果
+     */
+    public static Map<Integer, int[]> getAudioEffect() {
+        Map<Integer, int[]> results = new HashMap<>();
+        boolean isHasRet = false;
+        if (checkRead() && mIniFileUtil != null) {
+            IniFileUtil.Section section = mIniFileUtil.get(SECTION_AUDIO_EFFECT);
+            if (section != null) {
+                Map<String, Object> maps = section.getValues();
+                Set<String> keys = maps.keySet();
+                if (keys != null && keys.size() != 0) {
+                    try {
+                        for (String key : keys) {
+                            String values = (String) maps.get(key);
+                            String[] effects = values.split(",");
+                            if (!ListUtils.isEmpty(effects)) {
+                                int[] intEffects = new int[effects.length];
+                                for (int i = 0; i < effects.length; ++i) {
+                                    intEffects[i] = Integer.valueOf(effects[i]);
+                                }
+                                results.put(Integer.valueOf(key), intEffects);
+                            }
+                        }
+                        isHasRet = true;
+                    } catch (Exception e) {
+                        // 异常，没有数据
+                    }
+                }
+            }
+        }
+
+        if (!isHasRet) { // 默认数据
+            results.clear();
+            results.put(AudioParam.EqMode.DEFAULT,  new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            results.put(AudioParam.EqMode.USER,     new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            results.put(AudioParam.EqMode.CLASSICAL,new int[]{5, 5, 3, 0, 0, 0, 0, 2, 2, 2});
+            results.put(AudioParam.EqMode.POP,      new int[]{3, 1, -2, -3, -4, -3, -2, 0, 1, 2});
+            results.put(AudioParam.EqMode.DANCE,    new int[]{3, 5, 1, -1, -1, 0, 0, 4, 4, 4});
+            results.put(AudioParam.EqMode.ROCK,     new int[]{1, 2, 3, -1, -1, 0, 0, 4, 4, 4});
+            results.put(AudioParam.EqMode.LIVE,     new int[]{0, 0, 3, 4, 2, 5, 2, 0, 0, 0});
+            results.put(AudioParam.EqMode.SOFT,     new int[]{0, 2, 1, 0, 1, 0, 0, -2, -3, -5});
+        }
+        return results;
     }
 }

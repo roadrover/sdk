@@ -34,6 +34,10 @@ public class CarManager extends BaseManager {
     private int mLightStatusMask;
     private ClimateGroup mClimates = new ClimateGroup();
     private IVICar.Radar mRadar = null;
+    private IVICar.ExtraDevice mExtraDevice = null;
+    /*服务收到数据反馈到此处，因为I9协议问题，数据延时收到，导致UI刷新问题。这里直接监听数据改变 */
+    private ClimateChangedListener mClimateChangeListener;
+
     public interface CarListener {
         void onMcuVersion(String version);
 
@@ -108,8 +112,23 @@ public class CarManager extends BaseManager {
         void onFastReverseChanged(boolean on);
 
         //硬件版本号更新通知
-        void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date);
+        void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date, String manufactureDate);
 
+    }
+
+    /**
+     * 此接口是为处理 数据更新缓慢，导致UI刷新异常
+     */
+    public interface ClimateChangedListener {
+        void onClimateChange(int id, int rawValue);
+    }
+
+    /**
+     * 注册数据直接监听的回调，若数据正常可不用注册
+     * @param climateChangeListener
+     */
+    public void setClimateChangedListener(ClimateChangedListener climateChangeListener) {
+        this.mClimateChangeListener = climateChangeListener ;
     }
 
     public CarManager(Context context, ConnectListener connectListener, CarListener carListener) {
@@ -132,7 +151,9 @@ public class CarManager extends BaseManager {
         mFilters = null;
         mClimates = null;
         mRadar = null;
+        mExtraDevice = null;
         mIMcuUpgradeCallback = null;
+        mClimateChangeListener = null;
         super.disconnect();
     }
 
@@ -247,7 +268,7 @@ public class CarManager extends BaseManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventHardwareVersion(HardwareVersion hardwareVersion) {
         if (mCarListener != null) {
-            mCarListener.onEventHardwareVersion(hardwareVersion.status, hardwareVersion.mHardwareVersion, hardwareVersion.mSupplier, hardwareVersion.mEcnCode, hardwareVersion.mDate);
+            mCarListener.onEventHardwareVersion(hardwareVersion.status, hardwareVersion.mHardwareVersion, hardwareVersion.mSupplier, hardwareVersion.mEcnCode, hardwareVersion.mDate, hardwareVersion.mManufactureDate);
         }
     }
 
@@ -463,6 +484,9 @@ public class CarManager extends BaseManager {
             if (mClimates != null) {
                 mClimates.set(id, rawValue);
             }
+            if (mClimateChangeListener != null) {
+                mClimateChangeListener.onClimateChange(id, rawValue);
+            }
             if (id == Climate.Id.INSIDE_TEMP) {
                 post(new IVICar.InsideTemp(rawValue));
             } else {
@@ -481,8 +505,8 @@ public class CarManager extends BaseManager {
         }
 
         @Override
-        public void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date) throws RemoteException {
-            post(new HardwareVersion(status, hardware, supplier, ecn, date));
+        public void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date, String manufactureDate) throws RemoteException {
+            post(new HardwareVersion(status, hardware, supplier, ecn, date, manufactureDate));
         }
 
         @Override
@@ -523,7 +547,8 @@ public class CarManager extends BaseManager {
 
         @Override
         public void onExtraDeviceChanged(int carId, int deviceId, byte[] extraDeviceData) {
-            post(new IVICar.ExtraDevice(carId, deviceId, extraDeviceData));
+            mExtraDevice = new IVICar.ExtraDevice(carId, deviceId, extraDeviceData);
+            post(mExtraDevice);
         }
 
         @Override
@@ -709,7 +734,7 @@ public class CarManager extends BaseManager {
      * @param value 参数值
      */
     public void setClimate(int id, int value) {
-        if (mClimates != null) {
+        if (mClimates != null && !isAddDecClimateCmd(id,value)) {
             mClimates.set(id, value);
         }
         if (mCarInterface != null) {
@@ -719,6 +744,21 @@ public class CarManager extends BaseManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 有的空调项是一个id下发的时候数值代表增加和减小(比如：温度、风量)，没有实际意义
+     * 这个时候应该不加到本地的mClimates里，不然下次取可能会有问题
+     * @param id
+     * @param value
+     * @return
+     */
+    private boolean isAddDecClimateCmd(int id, int value) {
+        if ((id == Climate.Id.REAR_FAN_LEVEL || id == Climate.Id.FAN_LEVEL)
+                && (value == Climate.Action.FAN_ADD || value == Climate.Action.FAN_DEC)) {
+            return true;
+        }
+        return false;
     }
 
      /**
@@ -788,7 +828,47 @@ public class CarManager extends BaseManager {
         }
         return null;
     }
-	
+
+    /**
+     * 获取雷达距离值
+     * @return
+     */
+    public byte[] getRadarDistanceBytes() {
+        if (mCarInterface != null) {
+            try {
+                return mCarInterface.getRadarDistanceBytes();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    /**
+     * 获取雷达警报值
+     */
+	public byte[] getRadarWarmingBytes() {
+        if (mCarInterface != null) {
+            try {
+                return mCarInterface.getRadarWarmingBytes();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 通知mcu再发雷达信息
+     */
+    public void needRadarValue() {
+        if (mCarInterface != null) {
+            try {
+                mCarInterface.needRadarValue();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * 得到里程数
      *
@@ -928,6 +1008,21 @@ public class CarManager extends BaseManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 获取CMD_PARAM参数
+     * @param id {@link IVICar.CmdParam.Id}
+     */
+    public byte[] getCmdParam(int id) {
+        if (mCarInterface != null) {
+            try {
+                return mCarInterface.getCmdParams(id);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**
@@ -1393,6 +1488,29 @@ public class CarManager extends BaseManager {
     }
 
     /**
+     * 获取外设数据
+     * @return
+     */
+	public IVICar.ExtraDevice getExtraDevice() {
+		return mExtraDevice;
+	}
+
+    /**
+     * 获取转向车轮转角
+     * @return 转角
+     */
+    public float getRealAngle() {
+        if (mCarInterface != null) {
+            try {
+                return mCarInterface.getRealTimeInfo(IVICar.RealTimeInfo.Id.WHEEL_ANGLE);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * 从服务刷新空调信息
      * @param id 空调信息ID
      * @return 服务没有收到该空调ID
@@ -1414,7 +1532,7 @@ public class CarManager extends BaseManager {
         return false;
     }
 
-    private int getClimateRawValue(int id) {
+    public int getClimateRawValue(int id) {
         if (mCarInterface == null) {
             return Climate.CLIMATE_VALUE_UNKNOWN;
         }

@@ -166,13 +166,14 @@ interface ICarCallback {
     void onTirePressureChanged(int id, int rawValue, int extraValue, int dotType);
 
     /**
-     * @param status    写入硬件版本号返回状态 见{@link com.roadrover.sdk.car.HardwareVersion}
-     * @param hardware  硬件版本号 见{@link com.roadrover.sdk.car.HardwareVersion}
-     * @param supplier  PCB版本 见{@link com.roadrover.sdk.car.HardwareVersion}
-     * @param ecn       ECN/DCN编码 见{@link com.roadrover.sdk.car.HardwareVersion}
-     * @param date      日期 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param status            写入硬件版本号返回状态 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param hardware          硬件版本号 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param supplier          PCB版本 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param ecn               ECN/DCN编码 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param date              SMT日期 见{@link com.roadrover.sdk.car.HardwareVersion}
+     * @param manufactureDate   机器生产日期 见{@link com.roadrover.sdk.car.HardwareVersion}
      */
-    void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date);
+    void onEventHardwareVersion(int status, String hardware, String supplier, String ecn, String date, String manufactureDate);
 
     /**
      * 保养提示

@@ -31,4 +31,9 @@ interface IMediaInfoCallback {
      * @param zone IVIMedia.Zone
      */
     void onMediaZoneChanged(int mediaType, int zone);
+
+    /**
+    *  当前媒体源显示的媒体类型信息发生改变。
+    */
+    void onCurrentShownMediaTypeChanged(int mediaType);
 }

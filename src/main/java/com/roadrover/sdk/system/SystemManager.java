@@ -804,4 +804,20 @@ public class SystemManager extends BaseManager {
             }
         }
     }
+
+    /**
+     * 设置通话状态
+     * @param status {@link IVISystem.EventTelPhone.Status}
+     * @param phoneNumber 电话号码，没有可以不填
+     * @param phoneName   联系人名字，没有可以不填
+     */
+    public void setTelPhoneStatus(int status, String phoneNumber, String phoneName) {
+        if (mSystemInterface != null) {
+            try {
+                mSystemInterface.setTelPhoneStatus(status, phoneNumber, phoneName);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

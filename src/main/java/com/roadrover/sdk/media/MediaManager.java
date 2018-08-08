@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.roadrover.sdk.BaseManager;
 import com.roadrover.sdk.utils.LogNameUtil;
+import com.roadrover.sdk.utils.Logcat;
 import com.roadrover.services.media.IGetMediaListCallback;
 import com.roadrover.services.media.IMedia;
 import com.roadrover.services.media.IMediaControlCallback;
@@ -15,12 +16,10 @@ import com.roadrover.services.media.IMediaInfoCallback;
 import com.roadrover.services.media.IMediaScannerCallback;
 import com.roadrover.services.media.IMusicControlCallback;
 import com.roadrover.services.media.StMusic;
-import com.roadrover.sdk.utils.Logcat;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1040,6 +1039,11 @@ public class MediaManager extends BaseManager {
         public void onMediaZoneChanged(int mediaType, int zone) {
             post(new IVIMedia.MediaZone(mediaType, zone));
         }
+
+        @Override
+        public void onCurrentShownMediaTypeChanged(int mediaType) throws RemoteException {
+            post(new IVIMedia.MediaTypeShownInfo(mediaType));
+        }
     };
 
     /**
@@ -1224,6 +1228,20 @@ public class MediaManager extends BaseManager {
         if (mMediaInterface != null) {
             try {
                 mMediaInterface.setMediaState(mediaType, playState, position, duration);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 设置当前播放状态信息
+     * 仅作为当前不能作为媒体源的媒体类型信息，如图库。
+     */
+    public void setCurrentShownMediaType(int mediaType) {
+        if (mMediaInterface != null) {
+            try {
+                mMediaInterface.setCurrentShownMediaType(mediaType);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

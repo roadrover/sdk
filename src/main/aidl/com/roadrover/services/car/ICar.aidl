@@ -97,6 +97,21 @@ interface ICar {
 	void setCarSetting(int id, int value);
 
 	/**
+     * 获取雷达距离值
+     */
+	byte[] getRadarDistanceBytes();
+
+	/**
+     * 获取雷达报警值
+     */
+	byte[] getRadarWarmingBytes();
+
+	/**
+     * 通知mcu发送雷达数据
+     */
+	void needRadarValue();
+
+	/**
      * 获取车外温度，需要通过IVICar.OutsideTemp来解析
      */
     int getOutsideTempRawValue();
@@ -162,6 +177,12 @@ interface ICar {
      * @param paramData 参数数据
      */
     void setCmdParam(int id, in byte[] paramData);
+
+    /**
+     * 获取CMD_PARAM参数
+     * @param id IVICar.CmdParam.Id
+     */
+    byte[] getCmdParams(int id);
 
     /**
      * 请求发送所有service端缓存的CMD_PARAM参数，通过ICarCallback回调获取

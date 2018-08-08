@@ -30,6 +30,8 @@ public class AVInManager extends BaseManager {
     private int mAvId = IVIAVIn.Id.NONE;
     /**媒体是否打开*/
     private boolean mMediaIsOpen = false;
+    /**{@link com.roadrover.sdk.avin.IVIAVIn.Id}，记录倒车时，在services还未连上上时，调用setAndroidCameraOpenPrepared*/
+    private int mPreparedAvId = IVIAVIn.Id.NONE;
 
     /** 记录打开的摄像头 */
     private CameraUtil mCameraUtil;
@@ -110,6 +112,10 @@ public class AVInManager extends BaseManager {
         // 对是媒体类型的AVIN，重新打开它
         if (mMediaIsOpen) {
             open(mAvId);
+        }
+        if (mPreparedAvId != IVIAVIn.Id.NONE) {
+            setAndroidCameraOpenPrepared(mPreparedAvId);
+            mPreparedAvId = IVIAVIn.Id.NONE;
         }
     }
 
@@ -857,6 +863,7 @@ public class AVInManager extends BaseManager {
                 e.printStackTrace();
             }
         } else {
+            mPreparedAvId = avId;
             Logcat.d("Service not connected");
         }
     }

@@ -7,7 +7,7 @@ import com.roadrover.sdk.utils.Logcat;
 public class TirePressure {
 
     public String TAG = "TirePressure";
-    public static final int TIRE_PRESSURE_VULUE_UNKNOWN = -1;
+    public static final int TIRE_PRESSURE_VALUE_UNKNOWN = -1;
 
     public int mId;         // ID 定义
     public byte[] mData;
@@ -291,15 +291,15 @@ public class TirePressure {
         if (data != null && data.length > 0) {
             if (data.length > 1) {
                 if ((data[0] == (byte) 0xff) && (data[1] == (byte) 0xff)) {
-                    rawValue = TIRE_PRESSURE_VULUE_UNKNOWN;
+                    rawValue = TIRE_PRESSURE_VALUE_UNKNOWN;
                 } else {
                     rawValue = ((data[0] & 0xff) << 8) | (data[1] & 0xff);
                 }
             } else {
-                rawValue = TIRE_PRESSURE_VULUE_UNKNOWN;
+                rawValue = TIRE_PRESSURE_VALUE_UNKNOWN;
             }
         } else {
-            rawValue = TIRE_PRESSURE_VULUE_UNKNOWN;
+            rawValue = TIRE_PRESSURE_VALUE_UNKNOWN;
         }
     }
 

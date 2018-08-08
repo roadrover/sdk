@@ -1,5 +1,7 @@
 package com.roadrover.sdk.car;
 
+import com.roadrover.sdk.utils.LogNameUtil;
+
 import java.text.DecimalFormat;
 
 /**
@@ -167,6 +169,16 @@ public class Climate {
         public static final int NONE = 0xFF;
     }
 
+    /**
+     * 空调操作定义
+     */
+    public class Action {
+        /** 风速量增加 */
+        public static final int FAN_ADD  = 101;
+        /** 风速量减小 */
+        public static final int FAN_DEC  = 102;
+    }
+
     public int mId;
     public int mRawValue;
     protected static Climate mUnknown = new Climate(Id.UNKNOWN, CLIMATE_VALUE_UNKNOWN);
@@ -254,5 +266,35 @@ public class Climate {
 
     public boolean isAcAuto() {
         return mRawValue == 6;
+    }
+
+    /**
+     * 空调针对锁屏的操作
+     */
+    public static class ClimateLockScreenId {
+        /** 锁屏时，不操作 */
+        public static final int NONE = 0;
+        /** 锁屏时，空调解锁 */
+        public static final int UNLOCK = 1;
+        /** 收到START_CLIMATE_COMMON 解锁 */
+        public static final int START_CLIMATE_COMMON_UNLOCK = 2;
+
+        /**
+         * 打印指定的id
+         * @param id {@link ClimateLockScreenId}
+         * @return
+         */
+        public static String getName(int id) {
+            return LogNameUtil.getName(id, ClimateLockScreenId.class);
+        }
+
+        /**
+         * 是否当前需要解屏
+         * @param id {@link ClimateLockScreenId}
+         * @return
+         */
+        public static boolean isClimateUnlockScreen(int id) {
+            return id != NONE;
+        }
     }
 }

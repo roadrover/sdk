@@ -17,20 +17,21 @@ public class HardwareVersion {
     private String TAG = "HardwareVersion";
 
     public byte[] mData;
-    public int status;              // 写入硬件版本号返回状态  0x04表示MCU写入失败（可能EEPROM故障等） 0x05表示MCU写入成功
-    public String mHardwareVersion; // 硬件版本号
-    public String mSupplier;        // PCB版本
-    public String mEcnCode;         // ECN/DCN编码
-    public String mDate;            // 日期
+    public int status;                // 写入硬件版本号返回状态  0x04表示MCU写入失败（可能EEPROM故障等） 0x05表示MCU写入成功
+    public String mHardwareVersion;   // 硬件版本号
+    public String mSupplier;          // PCB版本
+    public String mEcnCode;           // ECN/DCN编码
+    public String mDate;              // SMT日期
+    public String mManufactureDate;   //机器生产日期
     public boolean mIsHardwareWriteFeedback; // 是否收到MCU反馈
 
-
-    public HardwareVersion(int status, String hardware, String supplier, String ecn, String date) {
+    public HardwareVersion(int status, String hardware, String supplier, String ecn, String date, String manufactureDate) {
         this.status = status;
         this.mHardwareVersion = hardware;
         this.mSupplier = supplier;
         this.mEcnCode = ecn;
         this.mDate = date;
+        this.mManufactureDate = manufactureDate;
         this.mIsHardwareWriteFeedback = false;
     }
 
@@ -47,13 +48,15 @@ public class HardwareVersion {
      * 3. data[2] PCB版本号 例如返回 3，需显示0.3
      * 4. data[3] PCB供应商
      * 5. data[4] - data[6] ECN/DCN编号  将data[4]+ data[5] +data[6]拼接一起
-     * 6. data[7] - data[9] 日期  将data[7] 表示年的后两位 data[8]表示月 data[9]表示日，通过.拼接成年.月.日
-     * 7. 例如 Data = 00 05 07 0c 01 48 17 12 01 0d
+     * 6. data[7] - data[9] SMT日期  将data[7] 表示年的后两位 data[8]表示月 data[9]表示日，通过.拼接成年.月.日
+     * 7. data[10] - data[12] 机器生产日期  将data[10] 表示年的后两位 data[11]表示月 data[12]表示日，通过.拼接成年.月.日
+     * 8. 例如 Data = 00 05 07 0c 01 48 17 12 01 17 12 01 0d
      *    a. 則data[1] = 0x05，表示成功
      *    b. data[2] = 0x07,  PCB版本号为7，显示0.7
      *    c. data[3] = 0x0c,  PCB供应商为12
      *    d. 将data[4] + data[5] + data[6]拼接为: 17223
      *    e. 将data[7] + data[8] + data[9]拼接为: 2018.1.13
+     *    f. 将data[10] + data[11] + data[12]拼接为: 2018.1.13
      */
     private void parseData(byte[] data) {
         Logcat.d("data = " + ByteUtil.bytesToString(ByteUtil.subBytes(data, 0, data.length)));
@@ -64,23 +67,50 @@ public class HardwareVersion {
             }
 
             if (data.length > 3) {
-                mSupplier = String.format("%2d", data[3]);
+                mSupplier = String.format("%02d", data[3]);
             }
 
             if (data.length > 6) {
-                mEcnCode = String.format("%2d", data[4]) + String.format("%2d", data[5]) + String.format("%2d", data[6]);
+                mEcnCode = String.format("%02d", data[4]) + String.format("%02d", data[5]) + String.format("%02d", data[6]);
             }
 
             if (data.length > 9) {
-                String year = "20" + String.format("%d", data[7]);
-                String month = String.format("%d", data[8]);
-                String day = String.format("%d", data[9]);
-                mDate = year + "." + month + "." + day;
+                mDate = getYear(data[7]) + getMonth(data[8]) + getDay(data[9]);
             }
 
+            if (data.length > 12) {
+                mManufactureDate = getYear(data[10]) + getMonth(data[11]) + getDay(data[12]);
+            }
             Logcat.d(TAG, "status = " + status + "  mHardwareVersion = " + mHardwareVersion
-                    + " mSupplier = " + mSupplier + " mEcnCode = " + mEcnCode + "  mDate = " + mDate);
+                    + " mSupplier = " + mSupplier + " mEcnCode = " + mEcnCode + "  mDate = " + mDate + " mManufactureDate = " +mManufactureDate);
         }
+    }
+
+    /**
+     * 获取年
+     * @param year
+     * @return
+     */
+    public String getYear(byte year) {
+        return "20" + String.format("%02d", year);
+    }
+
+    /**
+     * 获取月
+     * @param month
+     * @return
+     */
+    public String getMonth(byte month) {
+        return String.format("%02d", month);
+    }
+
+    /**
+     * 获取天
+     * @param day
+     * @return
+     */
+    public String getDay(byte day) {
+        return String.format("%02d", day);
     }
 
 }

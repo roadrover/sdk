@@ -7,7 +7,9 @@ import android.text.TextUtils;
 
 import com.roadrover.sdk.system.IVIConfig;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -468,5 +470,65 @@ public class EnvironmentUtils {
         }
 
         return ret;
+    }
+
+    /**
+     * 获取全部挂载上的存储设备Uuid列表
+     * @return 返回全部挂载上的存储设备Uuid列表
+     */
+    public List<String> getMountAllUsbUuid() {
+        List<String> ret = new ArrayList<>();
+        try {
+            Class storeManagerClazz = Class.forName("android.os.storage.StorageManager");
+            Method getVolumesMethod = storeManagerClazz.getMethod("getVolumes");
+            List<?> volumeInfos = (List<?>) getVolumesMethod.invoke(mStorageManager);
+            Class volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
+            Method getFsUuidMethod = volumeInfoClazz.getMethod("getFsUuid");
+
+            if (volumeInfos != null) {
+                for (Object volumeInfo : volumeInfos) {
+                    String uuid = (String) getFsUuidMethod.invoke(volumeInfo);
+                    if (uuid != null) {
+                        Logcat.d(" uuid = " + uuid);
+                        ret.add(uuid);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    /**
+     * 根据路径获取挂载上的USB存储设备Uuid
+     * @return USB存储设备Uuid  null 为空时表示不存在
+     */
+    public String getMountUsbUuid(String path) {
+        Logcat.d(" path = " + path);
+        try {
+            Class storeManagerClazz = Class.forName("android.os.storage.StorageManager");
+            Method getVolumesMethod = storeManagerClazz.getMethod("getVolumes");
+            List<?> volumeInfos = (List<?>) getVolumesMethod.invoke(mStorageManager);
+            Class volumeInfoClazz = Class.forName("android.os.storage.VolumeInfo");
+            Method getFsUuidMethod = volumeInfoClazz.getMethod("getFsUuid");
+            Field pathField = volumeInfoClazz.getDeclaredField("path");
+
+            if (volumeInfos != null) {
+                for (Object volumeInfo : volumeInfos) {
+                    String uuid = (String) getFsUuidMethod.invoke(volumeInfo);
+                    if (uuid != null) {
+                        String pathString = (String) pathField.get(volumeInfo);//U盘路径
+                        Logcat.d(" uuid = " + uuid + " pathString = " + pathString);
+                        if (path.equals(pathString)) {
+                            return uuid;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

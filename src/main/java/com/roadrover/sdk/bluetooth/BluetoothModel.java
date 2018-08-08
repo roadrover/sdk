@@ -29,19 +29,112 @@ public class BluetoothModel {
     public static class Contact {
         public String mName; // 名字
         public String mPhoneNumber; // 电话号码
+
+        @Override
+        public String toString() {
+            return "Contact{" +
+                    "mName='" + mName + '\'' +
+                    ", mPhoneNumber='" + mPhoneNumber + '\'' +
+                    '}';
+        }
+    }
+
+    /**
+     * 历史记录定义类
+     */
+    public static class CallHistory {
+        public int mStatus = 0; // 状态
+        public String mName = ""; // 名字
+        public String mPhoneNumber = ""; // 电话号码
+        public String mTime = ""; // 显示时间
+        public String mSort = ""; // 排序
+
+        @Override
+        public String toString() {
+            return "CallHistory{" +
+                    "mStatus=" + mStatus +
+                    ", mName='" + mName + '\'' +
+                    ", mPhoneNumber='" + mPhoneNumber + '\'' +
+                    ", mTime='" + mTime + '\'' +
+                    ", mSort='" + mSort + '\'' +
+                    '}';
+        }
+    }
+
+    /**
+     * 蓝牙电话表格
+     */
+    public static class BluetoothTable {
+        /**
+         * 联系人表格
+         */
+        public static final String TABLE_CONTACT = "tbl_stPhoneBook";
+        /**
+         * 通话记录表格
+         */
+        public static final String TABLE_CALL_HISTORY = "tbl_stCallHistory";
     }
 
     /**
      * 联系人的ContentProvider的数据接口
      */
     public static class Provider {
-        private static final String AUTHORITY = "com.roadrover.bluetooth";
-        public static final Uri URI = Uri.parse("content://"+ AUTHORITY +"/tbl_stPhoneBook");
+        public static final String AUTHORITY = "com.roadrover.bluetooth";
+        public static final Uri URI = Uri.parse("content://" + AUTHORITY + "/" + BluetoothTable.TABLE_CONTACT);
+        /**
+         * 通话记录表
+         */
+        public static final Uri URI_CALL_HISTORY = Uri.parse("content://" + AUTHORITY + "/" + BluetoothTable.TABLE_CALL_HISTORY);
+        private static final String KEY_STATUS = "status";
         private static final String KEY_NAME = "name";
         private static final String KEY_PHONE_NUMBER = "phoneNumber";
+        private static final String KEY_TIME = "time";
+        private static final String KEY_SORT = "sort";
+        private static final String KEY_ADDR = "addr";
+
+
     }
 
     private static final int EQUALS_PHONE_NUMBER_COUNT = 7; // 判断两个电话号码是否一样，只判断最后7位
+
+    /**
+     * 获取蓝牙历史通话记录列表，该方法时直接获取蓝牙联系数据库的数据，不是从串口获取
+     * @param context 上下文
+     * @param address 蓝牙设备地址
+     * @return 返回历史通话记录列表
+     */
+    public static List<CallHistory> getCallHistoryList(Context context, String address) {
+        List<CallHistory> callHistorys = new ArrayList<>();
+        if (context != null && checkValidProvider(Provider.URI_CALL_HISTORY, context)) {
+            Cursor cursor = null;
+            try {
+                String selection = Provider.KEY_ADDR + "=?";
+                String[] selectionArgs = new String[]{address};
+                cursor = context.getContentResolver().query(Provider.URI_CALL_HISTORY,
+                        new String[]{Provider.KEY_STATUS, Provider.KEY_NAME, Provider.KEY_PHONE_NUMBER, Provider.KEY_TIME, Provider.KEY_SORT},
+                        selection, selectionArgs, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    do { // 获取蓝牙联系人数据
+                        CallHistory callHistory = new CallHistory();
+                        callHistory.mStatus = cursor.getInt(cursor.getColumnIndex(Provider.KEY_STATUS));
+                        callHistory.mName = cursor.getString(cursor.getColumnIndex(Provider.KEY_NAME));
+                        callHistory.mPhoneNumber = cursor.getString(cursor.getColumnIndex(Provider.KEY_PHONE_NUMBER));
+                        callHistory.mTime = cursor.getString(cursor.getColumnIndex(Provider.KEY_TIME));
+                        callHistory.mSort = cursor.getString(cursor.getColumnIndex(Provider.KEY_SORT));
+                        callHistorys.add(callHistory);
+                    } while (cursor.moveToNext());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                    cursor = null;
+                }
+            }
+        }
+        return callHistorys;
+    }
 
     /**
      * 获取蓝牙联系人列表，该方法时直接获取蓝牙联系数据库的数据，不是从串口获取
@@ -127,7 +220,15 @@ public class BluetoothModel {
         void onChange(List<Contact> contacts);
     }
 
+    /**
+     * 监听数据库的改变接口定义
+     */
+    public interface ModelCallHistoryListener {
+        void onChange();
+    }
+
     private static ContentObserver mContentObserver = null;
+    private static ContentObserver mCallHistoryObserver = null;
 
     /**
      * 监听下载联系人的接口，语音等应用需要知道蓝牙联系人发生改变
@@ -155,6 +256,33 @@ public class BluetoothModel {
     }
 
     /**
+     * 监听通话记录数据改变
+     *
+     * @param context
+     * @param listener
+     */
+    public static void registerCallHistoryListener(final Context context, final ModelCallHistoryListener listener) {
+        if (context != null && listener != null) {
+            if (mCallHistoryObserver != null) {
+                return;
+            }
+            mCallHistoryObserver = new ContentObserver(new Handler()) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    Logcat.d("selfChange:" + selfChange);
+                    if (!selfChange) {
+                        if (listener != null) {
+                            listener.onChange();
+                        }
+                    }
+                }
+            };
+            context.getContentResolver().registerContentObserver(Provider.URI_CALL_HISTORY, false, mCallHistoryObserver);
+        }
+    }
+
+
+    /**
      * 不再监听联系人的改变消息
      * @param context
      */
@@ -162,6 +290,18 @@ public class BluetoothModel {
         if (context != null && mContentObserver != null) {
             context.getContentResolver().unregisterContentObserver(mContentObserver);
             mContentObserver = null;
+        }
+    }
+
+    /**
+     * 不再监听通话记录的改变消息
+     *
+     * @param context
+     */
+    public static void unregisterCallHistoryListener(Context context) {
+        if (context != null && mCallHistoryObserver != null) {
+            context.getContentResolver().unregisterContentObserver(mCallHistoryObserver);
+            mCallHistoryObserver = null;
         }
     }
 

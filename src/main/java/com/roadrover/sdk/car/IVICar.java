@@ -4,12 +4,7 @@ import android.text.TextUtils;
 
 import com.roadrover.sdk.utils.LogNameUtil;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class IVICar {
     public static final int RPM_UNKNOWN = -1;
@@ -615,6 +610,9 @@ public class IVICar {
             /** 宇通 */
             public static final int YUTONG   = 3;
 
+            /** 众泰L10 外设功能配置 **/
+            public static final int ZHONGTAI_L10 = 0x11;
+
             /**
              * 获取车型名字
              * @param id {@link CarId}
@@ -630,6 +628,8 @@ public class IVICar {
             public static final int AVM360           = 0x01;
             /** 行车记录仪 */
             public static final int DRIVING_RECORDER = 0x02;
+            /** 导航信息 */
+            public static final int NAVAGATION       = 0x03;
             /** PM2.5 */
             public static final int PM2_PONIT_5      = 0x04;
             /** PEPS */
@@ -642,6 +642,10 @@ public class IVICar {
             public static final int CARSET           = 0x0A;
             /** 雷达报警音 */
             public static final int RADAR_WARING     = 0x0B;
+            /** 双屏互动 */
+            public static final int CLUSTER          = 0x0C;
+            /** 空调按键 */
+            public static final int AIRCONKEY        = 0x0D;
 
             /**
              * 获取设备名字
@@ -651,6 +655,7 @@ public class IVICar {
             public static String getDeviceName(int id) {
                 return LogNameUtil.getName(id, ExtraDevice.DeviceId.class);
             }
+
         }
 
 
@@ -670,6 +675,20 @@ public class IVICar {
             }
 
             return mData[index] & 0xFF;
+        }
+
+        /**
+         * 双屏互动反控Id
+         */
+        public static class ClusterId {
+            /** 当前更新 */
+            public static final int UPDATE       = 0x01;
+            /** 向上更新 */
+            public static final int UPDATE_UP    = 0x02;
+            /** 向下更新 */
+            public static final int UPDATE_DOWM  = 0x03;
+            /** 拨打号码，后面接number  ID */
+            public static final int TELL         = 0x04;
         }
     }
 
@@ -1289,6 +1308,73 @@ public class IVICar {
             /** 常响 */
             public static final int ALWAYS = 0xff;
         }
+    }
+
+    /**
+     * 原车设置
+     */
+    public static class CarSet {
+        public static class Id {
+            /** 车速上锁 */
+            public static final int CODE_SPEED_LOCK                    = 0x01;
+            /** 熄火解锁 */
+            public static final int CODE_FLAME_OUT_UNLOCK              = 0x02;
+            /** 遥控解锁*/
+            public static final int CODE_REMOTE_UNLOCK                 = 0x03;
+            /** 紧急制动双闪 */
+            public static final int CODE_EBL                           = 0x04;
+            /** 后遮阳帘倒车自动收回 */
+            public static final int CODE_RCAD                          = 0x05;
+            /** 辅助登车 */
+            public static final int CODE_EASY_ENTRY                    = 0x06;
+            /** 驾驶员位置记忆 */
+            public static final int CODE_DRIVER_POSITION               = 0x07;
+            /** 随速雨刷 */
+            public static final int CODE_FOLLOW_WIPER                  = 0x08;
+            /** 倒车自动后雨刷 */
+            public static final int CODE_BACKOFF_WIPER                 = 0x09;
+            /** 日间行车灯 */
+            public static final int CODE_DRLS                          = 0x0A;
+            /** 迎宾灯*/
+            public static final int CODE_CDSL                          = 0x0B;
+            /** 回家照明时长设置 */
+            public static final int CODE_FMH                           = 0x0C;
+            /** 氛围灯设置 */
+            public static final int CODE_APL                           = 0x0D;
+            /** 后视镜倒车自动下翻 */
+            public static final int CODE_REVERSE_MIRROR                = 0x0E;
+            /** 智能远光灯 */
+            public static final int CODE_HBA                           = 0x0F;
+            /** AEB自动紧急制动 */
+            public static final int CODE_AEB                           = 0x10;
+            /** PCW前向碰撞预警 */
+            public static final int CODE_PCW                           = 0x11;
+            /** 限速信息报警 */
+            public static final int CODE_SLIF                          = 0x12;
+            /** 灵敏度设置 */
+            public static final int CODE_SENSITIVITY                   = 0x13;
+            /** 报警强度设置 */
+            public static final int CODE_ALARM_INTENSITY               = 0x14;
+            /** 座椅方便出入 */
+            public static final int CODE_SEAT_EASY_IN_OUT              = 0x16;
+            /** 方向盘方便出入 */
+            public static final int CODE_WHEEL_EASY_IN_OUT             = 0x17;
+            /** 脚踏板使能 */
+            public static final int CODE_PEDAL_ENABLE                  = 0x18;
+            /** 电动蹬车踏板 */
+            public static final int CODE_ELECTRIC_PEDAL                = 0x19;
+        }
+
+    }
+
+    /**
+     * 360全景状态
+     */
+    public static class AvmStatus {
+        /**  全景关闭 */
+        public static final int OFF = 0x00;
+        /**  全景打开 */
+        public static final int ON = 0x01;
     }
 
 }

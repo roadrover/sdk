@@ -24,7 +24,9 @@ public abstract class BaseThreeAppUtil {
     };
 
     public BaseThreeAppUtil(@NonNull Context context) {
-        mContext = context;
+        if (context != null) {
+            mContext = context.getApplicationContext();
+        }
     }
 
     /**

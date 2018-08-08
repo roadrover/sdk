@@ -17,6 +17,7 @@ import com.roadrover.btservice.bluetooth.IBluetoothStatusCallback;
 import com.roadrover.btservice.bluetooth.IBluetoothVCardCallback;
 import com.roadrover.btservice.bluetooth.IDeviceCallback;
 import com.roadrover.btservice.bluetooth.ISearchDeviceCallback;
+import com.roadrover.sdk.system.IVIConfig;
 import com.roadrover.sdk.utils.ListUtils;
 import com.roadrover.sdk.utils.Logcat;
 import com.roadrover.sdk.utils.TimerUtil;
@@ -47,7 +48,17 @@ public class BluetoothManager extends BaseManager {
      * @param listener 连接的监听
      */
     public BluetoothManager(Context context, ConnectListener listener) {
-        super(context, listener, true);
+        this(context, listener, true);
+    }
+
+    /**
+     * 蓝牙接口类的构造函数
+     * @param context 上下文
+     * @param listener 连接的监听
+     * @param useDefaultEventBus 是否使用默认的EventBus，如果不使用默认的EventBus，可以使用false
+     */
+    public BluetoothManager(Context context, ConnectListener listener, boolean useDefaultEventBus) {
+        super(context, listener, useDefaultEventBus);
     }
 
     /**
@@ -423,22 +434,29 @@ public class BluetoothManager extends BaseManager {
         }
     }
 
-
-
     /**
      * 连接指定地址的设备
      * @param addr 蓝牙模块的地址
      * @param callback
      */
-    public void linkDevice(String addr, final IBluetoothExecCallback.Stub callback) {
+    public void linkDevice(final String addr, final IBluetoothExecCallback.Stub callback) {
         if (isSendToService(callback)) {
             mLinkDeviceCallback = callback;
-            startLinkDeviceTimer(); // 开启定时器
-            try {
-                mIBluetooth.linkDevice(addr, mBluetoothLinkDeviceCallback);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            startLinkDeviceTimer(new Runnable() {
+                @Override
+                public void run() {
+                    doLinkDevice(addr);
+                }
+            }); // 开启定时器
+            doLinkDevice(addr);
+        }
+    }
+
+    private void doLinkDevice(final String addr) {
+        try {
+            mIBluetooth.linkDevice(addr, mBluetoothLinkDeviceCallback);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -1985,22 +2003,29 @@ public class BluetoothManager extends BaseManager {
     /**
      * 开启连接设备的定时器
      */
-    private void startLinkDeviceTimer() {
+    private void startLinkDeviceTimer(final Runnable relinkAction) {
         if (mBtCommandTimerUtil == null) {
             mBtCommandTimerUtil = new TimerUtil(new TimerUtil.TimerCallback() {
+                private int mTimeoutRelink = IVIConfig.getBluetoothTimeoutRelink(); // 获取蓝牙连接超时自动重连最大次数
+
                 @Override
                 public void timeout() {
-                    mBtCommandTimerUtil.stop();
-
-                    CmdExecResultUtil.execError(mBluetoothLinkDeviceCallback, IVIBluetooth.BluetoothExecErrorMsg.ERROR_TIMER_OUT);
-
-                    // 连接超时
-                    post(new IVIBluetooth.EventLinkDevice(
-                            IVIBluetooth.BluetoothConnectStatus.CONNECTFAIL,
-                            "",
-                            ""
-                    ));
-                    Logcat.w("connect device time out!");
+                    if (mTimeoutRelink == 0) { // 超时自动连接次数用完直接处理相关逻辑
+                        mBtCommandTimerUtil.stop();
+                        CmdExecResultUtil.execError(mBluetoothLinkDeviceCallback, IVIBluetooth.BluetoothExecErrorMsg.ERROR_TIMER_OUT);
+                        // 连接超时
+                        post(new IVIBluetooth.EventLinkDevice(
+                                IVIBluetooth.BluetoothConnectStatus.CONNECTFAIL,
+                                "",
+                                ""
+                        ));
+                        Logcat.w("connect device time out!");
+                    } else {
+                        // 自动重连一次
+                        Logcat.w("auto relink device TimeoutRelink: " + mTimeoutRelink);
+                        mTimeoutRelink--;
+                        relinkAction.run();
+                    }
                 }
             });
         }

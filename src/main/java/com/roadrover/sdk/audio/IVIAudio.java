@@ -87,8 +87,8 @@ public class IVIAudio {
         public static final int PC_VOICE                = 5;
         /**大巴乘客区（第二路PC通道），其值为 {@value}*/
         public static final int PC_SECONDARY            = 6;
-        /** 倒车雷达声音  **/
-        public static final int PC_CCD_RADAR            = 7;
+        /** 雷达声音  **/
+        public static final int PC_RADAR                = 7;
 
         /**收音机，其值为 {@value}*/
         public static final int RADIO                   = 11;
@@ -146,7 +146,7 @@ public class IVIAudio {
         /**AndroidAuto电话，其值为 {@value}*/
         public static final int ANDROID_AUTO_TEL        = 64;
         /**AndroidAuto车联网电话，其值为 {@value}*/
-        public static final int TBOX                    = 65;
+        public static final int PHONE                   = 65;
 
         /**混音通道，其值为 {@value}*/
         public static final int MONO                    = 70;

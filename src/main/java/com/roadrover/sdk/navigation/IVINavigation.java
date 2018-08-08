@@ -199,6 +199,41 @@ public class IVINavigation {
     }
 
     /**
+     * 限速类型
+     */
+    public static class LimitType {
+        /** 导航启动无法传输限速值，导航退出 */
+        public static final int UNKNOWM_LIMIIT = 0;
+        /** 导航启动并可以正常提供限速值 */
+        public static final int NORMAL_LIMIIT     = 1;
+        /** 复杂路况例如上下坡，高速城快出入口(有引导点属性) */
+        public static final int MOST_LIMIIT     = 3;
+
+        public static String getName(int type) {
+            return LogNameUtil.getName(type, LimitType.class);
+        }
+    }
+
+    /**
+     * 道路类型
+     */
+    public static class RodeType {
+        /** 无效 */
+        public static final int ERROR = 0;
+        /** 高速 */
+        public static final int HIGH_SPEED     = 1;
+        /** 城快 */
+        public static final int CITY_FAST     = 2;
+        /** 普通 */
+        public static final int NORMAL     = 3;
+        /** 航道 */
+        public static final int AIRCRAFT_CHANNEL     = 4;
+        public static String getName(int type) {
+            return LogNameUtil.getName(type, RodeType.class);
+        }
+    }
+
+    /**
      * 导航引导类型的Event工具类
      */
     public static class EventNavigationType {
@@ -291,6 +326,52 @@ public class IVINavigation {
             mType = type;
             mDistance = distance;
             mSpeedLimit = speedLimit;
+        }
+    }
+
+    /**
+     * 限速值改变提示，event通知消息类
+     */
+    public static class EventNavigationLimitSpeedInfo {
+        /** 限速值 */
+        public int mLimitSpeed;
+
+        public EventNavigationLimitSpeedInfo(int limitSpeed) {
+            mLimitSpeed = limitSpeed;
+        }
+    }
+
+    /**
+     * 限速类型改变提示，event通知消息类
+     */
+    public static class EventNavigationLimitType {
+        /** 限速类型 {@link LimitType}*/
+        public int mLimitType;
+
+        public EventNavigationLimitType(int limittype) {
+            mLimitType = limittype;
+        }
+    }
+
+    /**
+     * 道路类型改变提示，event通知消息类
+     */
+    public static class EventNavigationRoadType {
+        /** 道路类型 {@link RodeType}*/
+        public int mRoadType;
+
+        public EventNavigationRoadType(int roadtype) {
+            mRoadType = roadtype;
+        }
+    }
+
+
+    /**
+     * 停止导航，event通知消息类
+     */
+    public static class EventNavigationStopGuidance {
+
+        public EventNavigationStopGuidance() {
         }
     }
 }

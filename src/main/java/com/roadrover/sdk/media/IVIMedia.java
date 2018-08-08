@@ -101,9 +101,9 @@ public class IVIMedia {
         public static final int VIDEO_DAC2  = 22;
 
         /**
-         * TBOX ，其值为 {@value}
+         * PHONE ，其值为 {@value}
          */
-        public static final int TBOX = 23;
+        public static final int PHONE       = 23;
 
         /**
          * 通过类型获取当前的通道
@@ -126,7 +126,7 @@ public class IVIMedia {
                 case GALLERY:           return IVIAudio.Channel.PC;
                 case MUSIC_DAC2:        return IVIAudio.Channel.PC_SECONDARY;
                 case VIDEO_DAC2:        return IVIAudio.Channel.PC_SECONDARY;
-                case TBOX:              return IVIAudio.Channel.TBOX;
+                case PHONE:             return IVIAudio.Channel.PHONE;
                 default:                return IVIAudio.Channel.PC;
             }
         }
@@ -588,6 +588,30 @@ public class IVIMedia {
         public MediaZone(int mediaType, int zone) {
             mMediaType = mediaType;
             mZone = zone;
+        }
+    }
+
+    /**
+     * 媒体源媒体类型显示信息。
+     * 用于显示非媒体源的媒体类型信息，如图库等。
+     */
+    public static class MediaTypeShownInfo {
+
+        /**
+         * 媒体类型， {@link Type}
+         */
+        public int mMediaType;
+
+        public MediaTypeShownInfo() {
+            mMediaType = -1;
+        }
+
+        /**
+         * 构造函数
+         * @param mediaType 媒体类型 {@link Type}
+         */
+        public MediaTypeShownInfo(int mediaType) {
+            mMediaType = mediaType;
         }
     }
 

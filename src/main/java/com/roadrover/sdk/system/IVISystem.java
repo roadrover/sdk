@@ -457,6 +457,8 @@ public class IVISystem {
     public static final String ACTIVITY_CAR_INFORM = PACKAGE_CAR_INFORM + ".activity.MainActivity";
     /** 车联网主Activity名 */
     public static final String ACTIVITY_CAR_NET = PACKAGE_CAR_NET + ".business.home.CarnetworkingActivity";
+    /** TBoxService通话Activity */
+    public static final String ACTIVITY_TBOX_SERVICE = "com.roadrover.activity.PhoneActivity";
     // 本机APP Activity名定义 end
 
     // android 原生APP Activity名定义 start
@@ -538,7 +540,7 @@ public class IVISystem {
     /** 蓝牙App服务的 service 名 */
     public static final String SERVICE_BLUETOOTH_APP = PACKAGE_BLUETOOTH + ".services.BtAppService";
     /** 蓝牙服务的 service 名 */
-    public static final String SERVICE_BLUETOOTH = PACKAGE_BT_SERVICE + ".BluetoothService";
+    public static final String SERVICE_BLUETOOTH = PACKAGE_BT_SERVICE + ".bluetooth.BluetoothService";
     /** 360全景服务的 service 名 */
     public static final String SERVICE_AVM = PACKAGE_AVM + ".AVMService";
 
@@ -573,7 +575,8 @@ public class IVISystem {
 
     /** Activity切换广播 */
     public static final String ACTION_ACTIVITY_CHANGED = "android.intent.action.ACTIVITY_CHANGED";
-    /** Activity切换广播带的参数 */
+    /** Activity切换广播带的参数，该参数已弃用，建议使用base包中的ActivityChangedUtil类监听 */
+    @Deprecated
     public static final String KEY_PACKAGE_NAME = "packageName";
 
     /** 截屏完成通知其它应用广播 */
@@ -598,6 +601,12 @@ public class IVISystem {
     public static final String ACTION_NAVIGATION_CURRENT_DISTRICT = "com.mxnavi.mxnavi.NAVI_CURRENT_DISTRICT";
     /***导航指南针协议****/
     public static final String ACTION_TO_CTRL_COMPASS_INFO = "com.mxnavi.mxnavi.TO_CTRL_COMPASS_INFO";
+    /***有限速时，限速值，单位km/h****/
+    public static final String ACTION_TO_CTRL_LIMIT_SPEED = "com.mxnavi.mxnavi.TO_CTRL_LIMIT_SPEED";
+    /***导航限速类型****/
+    public static final String ACTION_TO_CTRL_LIMIT_TYPE = "com.mxnavi.mxnavi.TO_CTRL_LIMIT_TYPE";
+    /***道路类型变更****/
+    public static final String ACTION_TO_CTRL_ROAD_TYPE = "com.mxnavi.mxnavi.TO_CTRL_ROAD_TYPE";
     /***电子眼协议****/
     public static final String ACTION_TO_CTRL_EEYE_INFO = "com.mxnavi.mxnavi.TO_CTRL_EEYE_INFO";
     /***引导类型有2种方式:0=普通引导类型,  1= 12点钟方向引导类型; ****/
@@ -628,6 +637,12 @@ public class IVISystem {
     public static final String PARAM_MX_EEYE_DISTANCE = "distance";
     /***限速****/
     public static final String PARAM_MX_SPEED_LIMIT = "speedLimit";
+    /***限速值****/
+    public static final String PARAM_MX_LIMITSPEED = "LimitSpeed";
+    /***道路类型****/
+    public static final String PARAM_MX_RODE_TYPE = "RodeType";
+    /***限速类型****/
+    public static final String PARAM_MX_LIMIT_TYPE = "LimitType";
     /***车头方向****/
     public static final String PARAM_MX_DIRECTION = "direction";
     /***自车行政区省****/
@@ -637,6 +652,13 @@ public class IVISystem {
     /***自车行政区区****/
     public static final String PARAM_MX_COUNTY = "County";
     // 美行地图定义的广播 end
+
+    //倒车状态禁用美行TTS 的广播定义 start
+    /***倒车状态禁用美行TTS 的广播****/
+    public static final String ACTION_COM_IFLYTEK_MEIXING_TTS = "com.iflytek.meixing.tts";
+     /***静音通知****/
+    public static final String PARAM_MUTE = "mute";
+    //倒车状态禁用美行TTS 的广播定义 end
 
     /***讯飞告诉其他应用录音开始,通知应用蓝牙来去电，需要退出录音***/
     public static final String ACTION_IFLYTEK_RECORD_EXIT_BY_CALL = "action_iflytek_record_exit_by_call";
@@ -705,6 +727,45 @@ public class IVISystem {
             mGpsInUse = iGpsInUse;
             mGlonassInView = iGlonassInView;
             mGlonassInUse = iGLonassInUse;
+        }
+    }
+
+    /**
+     * 电话类
+     */
+    public static class EventTelPhone {
+        /**
+         * 如果没办法区分来电，去电，通话，可以统一发通话-挂断，一一对应既可
+         */
+        public class Status {
+            /** 来电 */
+            public static final int STATUS_INCOMING = 0;
+            /** 去电 */
+            public static final int STATUS_OUTGOING = 1;
+            /** 通话 */
+            public static final int STATUS_TALKING  = 2;
+            /** 挂断 */
+            public static final int STATUS_HANGUP   = 3;
+        }
+        /** {@link Status} */
+        public int mPhoneStatus;
+        /** 电话号码 */
+        public String mPhoneNumber;
+        /** 电话名字 */
+        public String mPhoneName;
+
+        public EventTelPhone(int status, String phoneNumber, String phoneName) {
+            mPhoneStatus = status;
+            mPhoneNumber = phoneNumber;
+            mPhoneName   = phoneName;
+        }
+
+        /**
+         * 当前电话是否是可用状态
+         * @return
+         */
+        public boolean isPhoneUsing() {
+            return mPhoneStatus != Status.STATUS_HANGUP;
         }
     }
 }

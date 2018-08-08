@@ -5,6 +5,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -124,6 +125,19 @@ public class SettingModel {
     }
 
     /**
+     * 获取关屏模式
+     * @param context 上下文对象
+     * @return 0 黑屏； 1 显示时钟
+     */
+    public static int getCloseScreenMode(Context context) {
+        if (context == null) {
+            Logcat.w("context is null!");
+            return -1;
+        }
+        return getContentInt(context, IVISetting.Global.NAME, IVISetting.Global.CloseScreenMode, -1);
+    }
+
+    /**
      * 注册面板按键灯监听
      * @param context  上下文对象
      * @param listener 监听对象
@@ -215,7 +229,7 @@ public class SettingModel {
                 }
             });
             if (sHandler == null) {
-                sHandler = new Handler();
+                sHandler = new Handler(Looper.getMainLooper());
             }
             bean.contentObserver = new ContentObserver(new Handler()) {
                 @Override

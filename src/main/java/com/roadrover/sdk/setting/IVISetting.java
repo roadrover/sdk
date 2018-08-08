@@ -164,6 +164,8 @@ public class IVISetting {
 
         /**舒适&便捷设置-辅助登车设置, 其值 {@value}*/
         public static final String EasyEntry = "EasyEntry";
+        /**驾驶辅助设置, 其值 {@value}*/
+        public static final String AdasSetting = "AdasSetting";
         /**驾驶辅助设置-盲区监测开关, 其值 {@value}*/
         public static final String BSMSwitch = "BSMSwitch";
     }
@@ -202,6 +204,14 @@ public class IVISetting {
         public static final String RestoreFactory = "RestoreFactory";
         /**应用管理, 其值 {@value}*/
         public static final String AppManager = "AppManager";
+        /**亿联APP在应用列表中的可见性, 其值 {@value}*/
+        public static final String ElinkApp = "ElinkApp";
+        /**亿联APP在应用列表中的可见性, 其值 {@value}*/
+        public static final String AirconditionApp = "AirconditionApp";
+        /**导航APP在应用列表中的可见性, 其值 {@value}*/
+        public static final String NaviApp = "NaviApp";
+        /**语音助理APP在应用列表中的可见性, 其值 {@value}*/
+        public static final String VoiceApp = "VoiceApp";
         /**360全景在应用列表中的可见性，其值 {@value}*/
         public static final String Avm360App = "Avm360App";
         /**行车记录仪在应用列表中的可见性，其值 {@value}*/
@@ -223,6 +233,8 @@ public class IVISetting {
 
         /**背光亮度, 其值 {@value}*/
         public static final String BackLight = "BackLight";
+        /**关屏模式, 其值 {@value}*/
+        public static final String CloseScreenMode = "CloseScreenMode";
         /**LED亮度, 其值 {@value}*/
         public static final String LEDLight = "LEDLight";
         /**浮动菜单设置, 其值 {@value}*/
@@ -338,6 +350,8 @@ public class IVISetting {
         public static final String CarCharsetSettings = "CarCharsetSettings";
         /**是否记忆搜索到的蓝牙设备*/
         public static final String BluetoothDevicesCache = "BluetoothDevicesCache";
+        /**按键音*/
+        public static final String TouchTone = "TouchTone";
     }
 
     /**
@@ -417,6 +431,18 @@ public class IVISetting {
         public static final String On = "true";
         /**关, 其值 {@value}*/
         public static final String Off = "false";
+    }
+
+    /**
+     * 按键音的状态
+     */
+    public static class TouchToneStatus {
+        /**默认 {@value}*/
+        public static final int DEFAULT = -1;
+        /**无, 其值 {@value}*/
+        public static final int NO = 0;
+        /**有, 其值 {@value}*/
+        public static final int YES = 1;
     }
 
     /**
@@ -1177,6 +1203,14 @@ public class IVISetting {
     }
 
     /**
+     * 获取驾驶辅助设置项的可见性
+     * @return
+     */
+    public static boolean getAdasSettingVisible() {
+        return getVisible(Car.NAME, Car.AdasSetting);
+    }
+
+    /**
      * 获取盲区监测开关项的可见性
      * @return
      */
@@ -1254,6 +1288,38 @@ public class IVISetting {
      */
     public static boolean getAppManagerVisible() {
         return getVisible(System.NAME, System.AppManager);
+    }
+
+    /**
+     * 获取亿联APP在应用列表中的可见性
+     * @return
+     */
+    public static boolean getElinkAppVisible() {
+        return getVisible(System.NAME, System.ElinkApp);
+    }
+
+    /**
+     * 获取空调APP在应用列表中的可见性
+     * @return
+     */
+    public static boolean getAirconditionAppVisible() {
+        return getVisible(System.NAME, System.AirconditionApp);
+    }
+
+    /**
+     * 获取导航APP在应用列表中的可见性
+     * @return
+     */
+    public static boolean getNaviAppVisible() {
+        return getVisible(System.NAME, System.NaviApp);
+    }
+
+    /**
+     * 获取语音助理APP在应用列表中的可见性
+     * @return
+     */
+    public static boolean getVoiceAppVisible() {
+        return getVisible(System.NAME, System.VoiceApp);
     }
 
     /**

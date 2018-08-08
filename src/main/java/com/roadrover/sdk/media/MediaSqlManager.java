@@ -41,6 +41,7 @@ public class MediaSqlManager {
 	private static final String ALBUM    = "album";
 	private static final String ARTIST   = "artist";
 	private static final String DURATION = "duration";
+	private static final String TYPE = "type";
 
 	private Context mContext = null;
 	
@@ -150,10 +151,10 @@ public class MediaSqlManager {
 		String selection;
 		String[] selectionArgs = null;
 		if (TextUtils.isEmpty(path)) { // 路径为空
-			selection = "type=?";
+			selection = (TYPE + "=?");
 			selectionArgs = new String[]{MENU_TYPES[type].replace("\'", "")};
 		} else { // 存在路径，用 like
-			selection = "type=? and path like ?";
+			selection = (TYPE + "=? and " + PATH + " like ?");
 			selectionArgs = new String[]{MENU_TYPES[type].replace("\'", ""), path + "%"};
 		}
 		Cursor cursor = null;
@@ -212,6 +213,18 @@ public class MediaSqlManager {
 	 * @return 返回列表
      */
 	public List<StMusic> queryAudioInfoS(String path) {
+		return queryAudioInfoSByID3(path, null, null, null);
+	}
+
+	/**
+	 * 查询指定目录下指定歌手的指定音频信息列表
+	 * @param path     指定路径
+	 * @param artist   艺术家
+	 * @param album   专辑
+	 * @param songName 歌曲名
+	 * @return 返回列表
+	 */
+	public List<StMusic> queryAudioInfoSByID3(String path, String artist, String album, String songName) {
 		if (null == mContext) {
 			Logcat.w("mContext is null!");
 			return new ArrayList<>();
@@ -225,11 +238,30 @@ public class MediaSqlManager {
 		String selection;
 		String[] selectionArgs;
 		if (TextUtils.isEmpty(path)) {
-			selection = "type=?";
+			selection = (TYPE + "=?");
 			selectionArgs = new String[]{MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", "")};
 		} else {
-			selection = "type=? and path like ?";
-			selectionArgs = new String[]{MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", ""), path + "%"};
+			selection = (TYPE + "=? and " + PATH + " like ?");
+			List<String> selectionArgList = new ArrayList<>();
+			selectionArgList.add(MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", ""));
+			selectionArgList.add(path + "%");
+
+			if (!TextUtils.isEmpty(artist)) {
+				selection += (" and " + ARTIST + " like ?");
+				selectionArgList.add("%" + artist + "%");
+			}
+			if (!TextUtils.isEmpty(album)) {
+				selection += (" and " + ALBUM + " like ?");
+				selectionArgList.add("%" + album + "%");
+			}
+			if (!TextUtils.isEmpty(songName)) {
+				selection += (" and " + NAME + " like ?");
+				selectionArgList.add("%" + songName + "%");
+			}
+
+			selectionArgs = new String[selectionArgList.size()];
+			selectionArgList.toArray(selectionArgs);
+			// selectionArgs = new String[]{MENU_TYPES[IVIMedia.MediaSqlDataType.AUDIO_TYPE].replace("\'", ""), path + "%", "%" + artist + "%", "%" + songName + "%"};
 		}
 
 		Cursor cursor = mContext.getContentResolver().query(uri,

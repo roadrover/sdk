@@ -312,10 +312,16 @@ public class AudioParam extends Param {
          * 柔和模式，其值为{@value}
          */
         public static final int SOFT = 8;
+
+        /**
+         * 爵士模式，其值为{@value}
+         */
+        public static final int JAZZ = 9;
+
         /**
          * EQ结束，不是实际EQ模式，其值为{@value}
          */
-        public static final int END = 8;
+        public static final int END = 9;
 
         /**
          * 通过eqMode获取他的名字，一般用于打印log

@@ -423,9 +423,12 @@ public class IVIKey {
         }
 
         public static class Type {
-            public static final int DOWN = 1;   //按键下压
-            public static final int UP = 0;     //按键抬起
-            public static final int ONCE = 2;   //不分下压和抬起，只处理一次
+            /** 按键下压 */
+            public static final int DOWN = 1;
+            /** 按键抬起 */
+            public static final int UP   = 0;
+            /** 不分下压和抬起，只处理一次 */
+            public static final int ONCE = 2;
         }
 
         public int mId;

@@ -211,4 +211,10 @@ interface IMedia {
      * 注销语音控制音乐的回调接口
      */
     void unregisterMusicControlCallback(IMusicControlCallback callback);
+
+    /**
+     * 设置当前用于显示的媒体类型信息
+     * 用于设置当前不能作为媒体源的媒体类型信息供三方使用，如图库等。
+     */
+    void setCurrentShownMediaType(int meidaType);
 }

@@ -174,4 +174,12 @@ interface ISystem {
      * @param from
      */
     void requestScreenOperate(int from);
+
+    /**
+     * 设置通话状态
+     * @param status {@link IVISystem.EventTelPhone.Status}
+     * @param phoneNumber 电话号码，没有可以不填
+     * @param phoneName   联系人名字，没有可以不填
+     */
+    void setTelPhoneStatus(int status, String phoneNumber, String phoneName);
 }
